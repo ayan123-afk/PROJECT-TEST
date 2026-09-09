@@ -2,125 +2,207 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BSS World Smart School</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSS World Smart City 2027</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
 body{
   overflow:hidden;
-  background:#05070d;
-  font-family:Arial,sans-serif;
+  background:#05080f;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+canvas{
+  display:block;
 }
 
 #loading{
   position:fixed;
   inset:0;
+  z-index:1000;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#05070d;
+  flex-direction:column;
+  gap:12px;
+  background:#05080f;
   color:white;
-  z-index:100;
   font-size:22px;
 }
 
-#hint{
+#loading small{
+  color:#82d8ff;
+  font-size:13px;
+}
+
+#hud{
   position:fixed;
-  top:20px;
-  left:20px;
-  z-index:20;
+  top:18px;
+  left:18px;
+  z-index:30;
+  padding:15px 18px;
   color:white;
-  background:rgba(5,10,20,.78);
-  padding:14px 18px;
-  border:1px solid rgba(80,180,255,.35);
+  background:rgba(3,10,20,.82);
+  border:1px solid rgba(70,190,255,.4);
   border-radius:14px;
-  backdrop-filter:blur(12px);
+  backdrop-filter:blur(15px);
+  box-shadow:0 10px 35px rgba(0,0,0,.3);
+}
+
+#hud .title{
+  font-size:18px;
+  font-weight:bold;
+}
+
+#hud .sub{
+  margin-top:5px;
+  color:#91dfff;
+  font-size:12px;
+}
+
+#hud .controls{
+  margin-top:8px;
+  color:#d4dfeb;
+  font-size:11px;
+  line-height:1.6;
 }
 
 #panel{
   position:fixed;
+  z-index:100;
   top:50%;
-  right:30px;
-  transform:translateY(-50%) translateX(30px);
-  width:330px;
-  padding:24px;
+  right:25px;
+  width:365px;
+  max-height:80vh;
+  overflow:auto;
+  padding:26px;
   color:white;
-  background:rgba(5,10,20,.92);
-  border:1px solid rgba(70,190,255,.5);
-  border-radius:18px;
-  backdrop-filter:blur(18px);
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  background:rgba(3,9,18,.95);
+  border:1px solid rgba(75,195,255,.55);
+  border-radius:20px;
+  box-shadow:0 25px 80px rgba(0,0,0,.65);
+  backdrop-filter:blur(20px);
   opacity:0;
   pointer-events:none;
-  transition:.3s;
-  z-index:50;
+  transform:translate(30px,-50%);
+  transition:.3s ease;
 }
 
 #panel.show{
   opacity:1;
   pointer-events:auto;
-  transform:translateY(-50%) translateX(0);
-}
-
-#panel h1{
-  font-size:24px;
-  margin-bottom:10px;
-}
-
-#panel p{
-  color:#c8d5e5;
-  line-height:1.6;
-  margin-bottom:15px;
-}
-
-#panel ul{
-  padding-left:20px;
-  line-height:1.9;
-  color:#e7f3ff;
+  transform:translate(0,-50%);
 }
 
 #close{
   position:absolute;
   top:10px;
-  right:14px;
-  cursor:pointer;
+  right:15px;
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:white;
   font-size:22px;
+  cursor:pointer;
+}
+
+#close:hover{
+  background:rgba(255,255,255,.18);
+}
+
+#zone{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:6px 10px;
+  border-radius:20px;
+  background:rgba(70,190,255,.13);
+  border:1px solid rgba(70,190,255,.3);
+  color:#7edbff;
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:.5px;
+}
+
+#panelTitle{
+  font-size:26px;
+  margin-bottom:12px;
+}
+
+#panelText{
+  color:#c7d6e6;
+  font-size:14px;
+  line-height:1.65;
+  margin-bottom:16px;
+}
+
+#panelList{
+  padding-left:20px;
+  color:#edf7ff;
+  font-size:13px;
+  line-height:2;
+}
+
+#status{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%);
+  z-index:20;
+  padding:9px 15px;
+  border-radius:20px;
+  background:rgba(3,10,20,.75);
+  border:1px solid rgba(80,180,255,.25);
+  color:#bcd5e8;
+  font-size:11px;
+  backdrop-filter:blur(10px);
 }
 </style>
 </head>
 
 <body>
 
-<div id="loading">Loading BSS Smart School... 0%</div>
+<div id="loading">
+  <div>Loading BSS World...</div>
+  <small id="loadText">Preparing Smart City</small>
+</div>
 
-<div id="hint">
-  <b>BSS SMART SCHOOL</b><br>
-  Drag = Rotate &nbsp; | &nbsp; Scroll = Zoom<br>
-  Click School = Explore
+<div id="hud">
+  <div class="title">BSS WORLD — SMART CITY 2027</div>
+  <div class="sub">Sustainability • Accessibility • Inclusion</div>
+  <div class="controls">
+    Drag = Rotate<br>
+    Scroll = Zoom<br>
+    Right Click = Pan<br>
+    Click a building = Explore
+  </div>
 </div>
 
 <div id="panel">
-  <span id="close">×</span>
 
-  <h1>BSS SMART SCHOOL</h1>
+  <button id="close">×</button>
 
-  <p>
-    A next-generation sustainable school designed
-    for smart, accessible and inclusive education.
-  </p>
+  <div id="zone">SMART CITY ZONE</div>
 
-  <ul>
-    <li>Smart Digital Classrooms</li>
-    <li>Interactive Learning Technology</li>
-    <li>Solar Energy Integration</li>
-    <li>Green & Sustainable Campus</li>
-    <li>Accessible Facilities</li>
-    <li>Student Innovation Spaces</li>
-    <li>Safe Smart-Campus System</li>
-  </ul>
+  <h1 id="panelTitle">BSS SMART SCHOOL</h1>
+
+  <p id="panelText"></p>
+
+  <ul id="panelList"></ul>
+
 </div>
+
+<div id="status">
+  Interactive 3D Smart City
+</div>
+
 
 <script type="importmap">
 {
@@ -131,395 +213,653 @@ body{
 }
 </script>
 
+
 <script type="module">
 
 import * as THREE from "three";
-import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+
+import {
+  OrbitControls
+} from "three/addons/controls/OrbitControls.js";
+
+import {
+  GLTFLoader
+} from "three/addons/loaders/GLTFLoader.js";
 
 
-// =====================================
-// SCENE
-// =====================================
+// ======================================================
+// BASIC SETUP
+// ======================================================
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x05070d);
+scene.background =
+  new THREE.Color(0x05080f);
 
 
-// =====================================
-// CAMERA
-// =====================================
+const camera =
+  new THREE.PerspectiveCamera(
+    45,
+    innerWidth / innerHeight,
+    0.1,
+    5000
+  );
 
-const camera = new THREE.PerspectiveCamera(
-  45,
-  innerWidth/innerHeight,
-  .1,
-  5000
+camera.position.set(
+  40,
+  28,
+  40
 );
 
-camera.position.set(35,25,35);
+
+const renderer =
+  new THREE.WebGLRenderer({
+    antialias:true
+  });
+
+renderer.setSize(
+  innerWidth,
+  innerHeight
+);
+
+renderer.setPixelRatio(
+  Math.min(devicePixelRatio,2)
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+  THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace;
+
+document.body.appendChild(
+  renderer.domElement
+);
 
 
-// =====================================
-// RENDERER
-// =====================================
-
-const renderer = new THREE.WebGLRenderer({
-  antialias:true
-});
-
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-
-renderer.shadowMap.enabled=true;
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-
-document.body.appendChild(renderer.domElement);
-
-
-// =====================================
+// ======================================================
 // LIGHTING
-// =====================================
+// ======================================================
 
-scene.add(
+const ambient =
   new THREE.HemisphereLight(
     0xffffff,
-    0x172033,
+    0x172030,
     2.5
-  )
+  );
+
+scene.add(ambient);
+
+
+const sun =
+  new THREE.DirectionalLight(
+    0xffffff,
+    4
+  );
+
+sun.position.set(
+  40,
+  60,
+  30
 );
 
-const sun = new THREE.DirectionalLight(
-  0xffffff,
-  4
-);
+sun.castShadow = true;
 
-sun.position.set(40,60,30);
-sun.castShadow=true;
-
-sun.shadow.mapSize.width=2048;
-sun.shadow.mapSize.height=2048;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
 
 scene.add(sun);
 
-const fill = new THREE.DirectionalLight(
-  0x66aaff,
-  1.5
-);
 
-fill.position.set(-30,20,-30);
+const fill =
+  new THREE.DirectionalLight(
+    0x69baff,
+    1.4
+  );
+
+fill.position.set(
+  -35,
+  25,
+  -30
+);
 
 scene.add(fill);
 
 
-// =====================================
+// ======================================================
 // GROUND
-// =====================================
+// ======================================================
 
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(200,200),
-  new THREE.MeshStandardMaterial({
-    color:0x17231c,
-    roughness:.9
-  })
-);
+const ground =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      200,
+      200
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0x17231c,
+      roughness:.9
+    })
+  );
 
-ground.rotation.x=-Math.PI/2;
-ground.receiveShadow=true;
+ground.rotation.x =
+  -Math.PI / 2;
+
+ground.receiveShadow = true;
 
 scene.add(ground);
 
 
-// =====================================
+// ======================================================
 // CONTROLS
-// =====================================
+// ======================================================
 
-const controls = new OrbitControls(
-  camera,
-  renderer.domElement
-);
+const controls =
+  new OrbitControls(
+    camera,
+    renderer.domElement
+  );
 
-controls.enableDamping=true;
-controls.dampingFactor=.05;
+controls.enableDamping = true;
 
-controls.minDistance=5;
-controls.maxDistance=200;
+controls.dampingFactor = .05;
+
+controls.minDistance = 4;
+
+controls.maxDistance = 250;
 
 
-// =====================================
+// ======================================================
+// LOADER
+// ======================================================
+
+const loader =
+  new GLTFLoader();
+
+
+// ======================================================
+// OBJECT STORAGE
+// ======================================================
+
+let school = null;
+let hospital = null;
+
+let schoolMeshes = [];
+let hospitalMeshes = [];
+
+const students = [];
+
+
+// ======================================================
 // SCHOOL
-// =====================================
-
-let school;
-let schoolObjects=[];
-
-const loader=new GLTFLoader();
+// ======================================================
 
 loader.load(
+
   "./high_school.glb",
 
-  gltf=>{
+  function(gltf){
 
-    school=gltf.scene;
+    school = gltf.scene;
 
-    school.traverse(obj=>{
+    school.traverse(
+      function(obj){
 
-      if(obj.isMesh){
+        if(obj.isMesh){
 
-        obj.castShadow=true;
-        obj.receiveShadow=true;
+          obj.castShadow = true;
+          obj.receiveShadow = true;
 
-        schoolObjects.push(obj);
+          schoolMeshes.push(obj);
+
+        }
 
       }
-
-    });
+    );
 
     scene.add(school);
 
 
-    // =================================
-    // AUTO CENTER
-    // =================================
+    // Center model
 
-    const box=new THREE.Box3()
-      .setFromObject(school);
+    const box =
+      new THREE.Box3()
+        .setFromObject(school);
 
-    const center=box.getCenter(
-      new THREE.Vector3()
-    );
+    const center =
+      box.getCenter(
+        new THREE.Vector3()
+      );
 
-    const size=box.getSize(
-      new THREE.Vector3()
-    );
+    const size =
+      box.getSize(
+        new THREE.Vector3()
+      );
 
-    school.position.sub(center);
-
-
-    // =================================
-    // AUTO SCALE
-    // =================================
-
-    const largest=Math.max(
-      size.x,
-      size.y,
-      size.z
-    );
-
-    const scale=25/largest;
-
-    school.scale.setScalar(scale);
-
-
-    // =================================
-    // PUT ON GROUND
-    // =================================
-
-    const newBox=new THREE.Box3()
-      .setFromObject(school);
-
-    school.position.y-=newBox.min.y;
-
-
-    // =================================
-    // CAMERA
-    // =================================
-
-    const finalBox=new THREE.Box3()
-      .setFromObject(school);
-
-    const finalSize=finalBox.getSize(
-      new THREE.Vector3()
-    );
-
-    const d=Math.max(
-      finalSize.x,
-      finalSize.y,
-      finalSize.z
-    )*1.8;
-
-    camera.position.set(
-      d,
-      d*.7,
-      d
-    );
-
-    controls.target.set(
-      0,
-      finalSize.y*.35,
-      0
-    );
-
-    controls.update();
-
-
-    // =================================
-    // SCHOOL TAG
-    // =================================
-
-    createSchoolTag(
-      finalSize.y+4
+    school.position.sub(
+      center
     );
 
 
-    // =================================
-    // STUDENTS
-    // =================================
+    // Scale
+
+    const largest =
+      Math.max(
+        size.x,
+        size.y,
+        size.z
+      );
+
+    school.scale.setScalar(
+      25 / largest
+    );
+
+
+    // Ground placement
+
+    const groundBox =
+      new THREE.Box3()
+        .setFromObject(school);
+
+    school.position.y -=
+      groundBox.min.y;
+
+
+    // School label
+
+    const finalBox =
+      new THREE.Box3()
+        .setFromObject(school);
+
+    const finalSize =
+      finalBox.getSize(
+        new THREE.Vector3()
+      );
+
+    createLabel(
+      "BSS SMART SCHOOL",
+      "Education • Innovation • Sustainability",
+      new THREE.Vector3(
+        0,
+        finalSize.y + 5,
+        0
+      )
+    );
+
+
+    // Students
 
     createStudents();
 
 
-    document.getElementById(
-      "loading"
-    ).style.display="none";
+    hideLoading();
 
   },
 
-  xhr=>{
+  function(xhr){
 
     if(xhr.total){
 
-      const p=Math.round(
-        xhr.loaded/xhr.total*100
-      );
+      const percent =
+        Math.round(
+          xhr.loaded /
+          xhr.total *
+          100
+        );
 
       document.getElementById(
-        "loading"
-      ).textContent=
-        "Loading BSS Smart School... "+
-        p+"%";
+        "loadText"
+      ).textContent =
+        "Loading School... " +
+        percent +
+        "%";
+
     }
 
   },
 
-  error=>{
+  function(error){
 
-    console.error(error);
+    console.error(
+      "School error:",
+      error
+    );
 
     document.getElementById(
-      "loading"
-    ).textContent=
-      "ERROR: high_school.glb could not load.";
+      "loadText"
+    ).textContent =
+      "School file could not load.";
 
   }
+
 );
 
 
-// =====================================
-// 3D SCHOOL TAG
-// =====================================
+// ======================================================
+// HOSPITAL
+// ======================================================
 
-function createSchoolTag(height){
+loader.load(
 
-  const canvas=document.createElement("canvas");
+  "./stylized_modern_hospital.glb",
 
-  canvas.width=1024;
-  canvas.height=256;
+  function(gltf){
 
-  const ctx=canvas.getContext("2d");
+    hospital =
+      gltf.scene;
 
-  ctx.fillStyle="rgba(5,15,30,.92)";
-  ctx.roundRect(20,35,984,180,40);
+    hospital.traverse(
+      function(obj){
+
+        if(obj.isMesh){
+
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+
+          hospitalMeshes.push(obj);
+
+        }
+
+      }
+    );
+
+    scene.add(hospital);
+
+
+    // Center
+
+    const box =
+      new THREE.Box3()
+        .setFromObject(hospital);
+
+    const center =
+      box.getCenter(
+        new THREE.Vector3()
+      );
+
+    const size =
+      box.getSize(
+        new THREE.Vector3()
+      );
+
+    hospital.position.sub(
+      center
+    );
+
+
+    // Scale
+
+    const largest =
+      Math.max(
+        size.x,
+        size.y,
+        size.z
+      );
+
+    hospital.scale.setScalar(
+      22 / largest
+    );
+
+
+    // Position beside school
+
+    hospital.position.set(
+      38,
+      0,
+      0
+    );
+
+
+    // Ground placement
+
+    const hospitalBox =
+      new THREE.Box3()
+        .setFromObject(hospital);
+
+    hospital.position.y -=
+      hospitalBox.min.y;
+
+
+    // Label
+
+    const finalBox =
+      new THREE.Box3()
+        .setFromObject(hospital);
+
+    const finalSize =
+      finalBox.getSize(
+        new THREE.Vector3()
+      );
+
+    createLabel(
+      "SMART HOSPITAL",
+      "Healthcare • Technology • Accessibility",
+      new THREE.Vector3(
+        38,
+        finalSize.y + 5,
+        0
+      )
+    );
+
+  },
+
+  undefined,
+
+  function(error){
+
+    console.log(
+      "Hospital GLB not found yet."
+    );
+
+  }
+
+);
+
+
+// ======================================================
+// 3D LABEL
+// ======================================================
+
+function createLabel(
+  title,
+  subtitle,
+  position
+){
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width = 1024;
+  canvas.height = 256;
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  ctx.fillStyle =
+    "rgba(4,12,25,.94)";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    20,
+    30,
+    984,
+    195,
+    40
+  );
+
   ctx.fill();
 
-  ctx.strokeStyle="#55c7ff";
-  ctx.lineWidth=8;
-  ctx.roundRect(20,35,984,180,40);
+
+  ctx.strokeStyle =
+    "#55c7ff";
+
+  ctx.lineWidth = 7;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    20,
+    30,
+    984,
+    195,
+    40
+  );
+
   ctx.stroke();
 
-  ctx.fillStyle="white";
-  ctx.font="bold 72px Arial";
-  ctx.textAlign="center";
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "bold 70px Arial";
+
   ctx.fillText(
-    "BSS SMART SCHOOL",
+    title,
     512,
-    135
+    125
   );
 
-  ctx.font="32px Arial";
-  ctx.fillStyle="#80d8ff";
+
+  ctx.fillStyle =
+    "#80d8ff";
+
+  ctx.font =
+    "30px Arial";
+
   ctx.fillText(
-    "Education • Innovation • Sustainability",
+    subtitle,
     512,
-    180
+    178
   );
 
-  const texture=new THREE.CanvasTexture(canvas);
 
-  const material=new THREE.SpriteMaterial({
-    map:texture,
-    transparent:true,
-    depthTest:false
-  });
+  const texture =
+    new THREE.CanvasTexture(
+      canvas
+    );
 
-  const sprite=new THREE.Sprite(material);
 
-  sprite.scale.set(12,3,1);
+  const material =
+    new THREE.SpriteMaterial({
+      map:texture,
+      transparent:true,
+      depthTest:false
+    });
 
-  sprite.position.set(
-    0,
-    height,
-    0
+
+  const sprite =
+    new THREE.Sprite(
+      material
+    );
+
+
+  sprite.scale.set(
+    13,
+    3.25,
+    1
   );
+
+
+  sprite.position.copy(
+    position
+  );
+
 
   scene.add(sprite);
 
 }
 
 
-// =====================================
-// STUDENT CREATION
-// =====================================
+// ======================================================
+// STUDENT MODEL
+// ======================================================
 
-function createStudent(x,z,scale=1){
+function createStudent(
+  x,
+  z,
+  scale = 1,
+  path = 0
+){
 
-  const group=new THREE.Group();
+  const group =
+    new THREE.Group();
 
 
-  // BODY
+  // Body
 
-  const body=new THREE.Mesh(
-    new THREE.CapsuleGeometry(.22,.65,4,8),
-    new THREE.MeshStandardMaterial({
-      color:0x263a65
-    })
-  );
+  const body =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .22,
+        .65,
+        4,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x294675
+      })
+    );
 
-  body.position.y=.65;
+  body.position.y =
+    .68;
 
   group.add(body);
 
 
-  // HEAD
+  // Head
 
-  const head=new THREE.Mesh(
-    new THREE.SphereGeometry(.22,16,16),
-    new THREE.MeshStandardMaterial({
-      color:0xc58f70
-    })
-  );
+  const head =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .22,
+        16,
+        16
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0xc58f70
+      })
+    );
 
-  head.position.y=1.25;
+  head.position.y =
+    1.28;
 
   group.add(head);
 
 
-  // LEGS
+  // Legs
 
-  for(let i=-1;i<=1;i+=2){
+  for(
+    let side = -1;
+    side <= 1;
+    side += 2
+  ){
 
-    const leg=new THREE.Mesh(
-      new THREE.CylinderGeometry(
-        .07,.07,.55,8
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x111827
-      })
-    );
+    const leg =
+      new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          .07,
+          .07,
+          .55,
+          8
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0x101827
+        })
+      );
 
     leg.position.set(
-      i*.1,
+      side * .1,
       .15,
       0
     );
@@ -535,80 +875,246 @@ function createStudent(x,z,scale=1){
     z
   );
 
-  group.scale.setScalar(scale);
+
+  group.scale.setScalar(
+    scale
+  );
+
+
+  group.userData = {
+
+    startX:x,
+
+    startZ:z,
+
+    phase:
+      Math.random() *
+      Math.PI *
+      2,
+
+    speed:
+      .45 +
+      Math.random() *
+      .3,
+
+    path:path
+
+  };
+
 
   scene.add(group);
 
+  students.push(group);
+
 }
 
 
-// =====================================
-// STUDENTS AROUND SCHOOL
-// =====================================
+// ======================================================
+// CREATE STUDENTS
+// ======================================================
 
 function createStudents(){
 
-  const positions=[
-    [-10,9,1],
-    [-7,11,.9],
-    [-4,10,1],
-    [4,10,.95],
-    [7,11,1],
-    [10,8,.9],
+  const positions = [
 
-    [-11,-6,1],
-    [-8,-9,.9],
-    [-4,-10,1],
-    [4,-10,.9],
-    [8,-9,1],
-    [11,-6,.9]
+    [-11,9,1,0],
+    [-8,11,.9,1],
+    [-5,10,1,0],
+
+    [5,10,.95,1],
+    [8,11,1,0],
+    [11,8,.9,1],
+
+    [-11,-6,1,0],
+    [-8,-9,.9,1],
+    [-4,-10,1,0],
+
+    [4,-10,.9,1],
+    [8,-9,1,0],
+    [11,-6,.9,1]
+
   ];
 
-  positions.forEach(p=>{
-    createStudent(
-      p[0],
-      p[1],
-      p[2]
-    );
-  });
+
+  positions.forEach(
+    function(p){
+
+      createStudent(
+        p[0],
+        p[1],
+        p[2],
+        p[3]
+      );
+
+    }
+  );
 
 }
 
 
-// =====================================
-// CLICK SCHOOL
-// =====================================
+// ======================================================
+// STUDENT MOVEMENT
+// ======================================================
 
-const raycaster=new THREE.Raycaster();
-const mouse=new THREE.Vector2();
+const clock =
+  new THREE.Clock();
+
+
+function animateStudents(){
+
+  const time =
+    clock.getElapsedTime();
+
+
+  students.forEach(
+    function(student,index){
+
+      const data =
+        student.userData;
+
+
+      const radiusX =
+        1.7 +
+        (index % 3) * .7;
+
+
+      const radiusZ =
+        1.2 +
+        (index % 2) * .5;
+
+
+      const oldX =
+        student.position.x;
+
+
+      student.position.x =
+        data.startX +
+        Math.sin(
+          time *
+          data.speed +
+          data.phase
+        ) *
+        radiusX;
+
+
+      student.position.z =
+        data.startZ +
+        Math.cos(
+          time *
+          data.speed +
+          data.phase
+        ) *
+        radiusZ;
+
+
+      // Walking bob
+
+      student.position.y =
+        Math.abs(
+          Math.sin(
+            time *
+            data.speed *
+            4 +
+            data.phase
+          )
+        ) * .05;
+
+
+      // Face direction of movement
+
+      if(
+        Math.abs(
+          student.position.x -
+          oldX
+        ) > .001
+      ){
+
+        student.rotation.y =
+          student.position.x >
+          oldX
+          ? Math.PI / 2
+          : -Math.PI / 2;
+
+      }
+
+    }
+  );
+
+}
+
+
+// ======================================================
+// RAYCASTING
+// ======================================================
+
+const raycaster =
+  new THREE.Raycaster();
+
+const mouse =
+  new THREE.Vector2();
+
 
 renderer.domElement.addEventListener(
   "click",
-  event=>{
+  function(event){
 
-    mouse.x=
-      event.clientX/innerWidth*2-1;
+    mouse.x =
+      event.clientX /
+      innerWidth *
+      2 -
+      1;
 
-    mouse.y=
-      -(event.clientY/innerHeight)*2+1;
+    mouse.y =
+      -(event.clientY /
+      innerHeight) *
+      2 +
+      1;
+
 
     raycaster.setFromCamera(
       mouse,
       camera
     );
 
-    if(!school) return;
 
-    const hits=raycaster.intersectObjects(
-      schoolObjects,
-      true
-    );
+    // School
 
-    if(hits.length){
+    if(school){
 
-      document.getElementById(
-        "panel"
-      ).classList.add("show");
+      const hits =
+        raycaster.intersectObjects(
+          schoolMeshes,
+          true
+        );
+
+      if(hits.length){
+
+        showSchool();
+
+        return;
+
+      }
+
+    }
+
+
+    // Hospital
+
+    if(hospital){
+
+      const hits =
+        raycaster.intersectObjects(
+          hospitalMeshes,
+          true
+        );
+
+      if(hits.length){
+
+        showHospital();
+
+        return;
+
+      }
 
     }
 
@@ -616,31 +1122,162 @@ renderer.domElement.addEventListener(
 );
 
 
-// =====================================
-// CLOSE PANEL
-// =====================================
+// ======================================================
+// SCHOOL INFORMATION
+// ======================================================
 
-document.getElementById(
-  "close"
-).onclick=()=>{
+function showSchool(){
+
+  document.getElementById(
+    "zone"
+  ).textContent =
+    "EDUCATION ZONE";
+
+
+  document.getElementById(
+    "panelTitle"
+  ).textContent =
+    "BSS SMART SCHOOL";
+
+
+  document.getElementById(
+    "panelText"
+  ).textContent =
+    "A future-ready educational campus "+
+    "designed around smart learning, "+
+    "sustainability, accessibility and "+
+    "student innovation.";
+
+
+  document.getElementById(
+    "panelList"
+  ).innerHTML = `
+
+    <li>Smart Digital Classrooms</li>
+    <li>Interactive Learning Technology</li>
+    <li>Renewable Solar Energy</li>
+    <li>Green Sustainable Campus</li>
+    <li>Accessible Facilities</li>
+    <li>Student Innovation Spaces</li>
+    <li>Smart Campus Safety</li>
+    <li>Technology-Based Education</li>
+
+  `;
+
+
+  openPanel();
+
+}
+
+
+// ======================================================
+// HOSPITAL INFORMATION
+// ======================================================
+
+function showHospital(){
+
+  document.getElementById(
+    "zone"
+  ).textContent =
+    "HEALTHCARE ZONE";
+
+
+  document.getElementById(
+    "panelTitle"
+  ).textContent =
+    "SMART HOSPITAL";
+
+
+  document.getElementById(
+    "panelText"
+  ).textContent =
+    "A modern healthcare facility "+
+    "designed to provide efficient, "+
+    "accessible and technology-enabled "+
+    "medical services for the smart city.";
+
+
+  document.getElementById(
+    "panelList"
+  ).innerHTML = `
+
+    <li>Smart Patient Management</li>
+    <li>Modern Emergency Services</li>
+    <li>Digital Healthcare Systems</li>
+    <li>Accessible Patient Facilities</li>
+    <li>Energy-Efficient Infrastructure</li>
+    <li>Smart Security System</li>
+    <li>Modern Medical Technology</li>
+    <li>Efficient Healthcare Operations</li>
+
+  `;
+
+
+  openPanel();
+
+}
+
+
+// ======================================================
+// OPEN PANEL
+// ======================================================
+
+function openPanel(){
 
   document.getElementById(
     "panel"
-  ).classList.remove("show");
+  ).classList.add(
+    "show"
+  );
 
-};
+}
 
 
-// =====================================
+// ======================================================
+// CLOSE PANEL
+// ======================================================
+
+document.getElementById(
+  "close"
+).addEventListener(
+  "click",
+  function(){
+
+    document.getElementById(
+      "panel"
+    ).classList.remove(
+      "show"
+    );
+
+  }
+);
+
+
+// ======================================================
+// LOADING
+// ======================================================
+
+function hideLoading(){
+
+  document.getElementById(
+    "loading"
+  ).style.display =
+    "none";
+
+}
+
+
+// ======================================================
 // RESIZE
-// =====================================
+// ======================================================
 
 window.addEventListener(
   "resize",
-  ()=>{
+  function(){
 
-    camera.aspect=
-      innerWidth/innerHeight;
+    camera.aspect =
+      innerWidth /
+      innerHeight;
 
     camera.updateProjectionMatrix();
 
@@ -653,13 +1290,17 @@ window.addEventListener(
 );
 
 
-// =====================================
-// ANIMATION
-// =====================================
+// ======================================================
+// MAIN LOOP
+// ======================================================
 
 function animate(){
 
-  requestAnimationFrame(animate);
+  requestAnimationFrame(
+    animate
+  );
+
+  animateStudents();
 
   controls.update();
 
