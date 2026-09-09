@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>BSS World — 3D Smart City 2027</title>
 
 <style>
@@ -10,7 +11,8 @@
     box-sizing:border-box;
 }
 
-html,body{
+html,
+body{
     margin:0;
     width:100%;
     height:100%;
@@ -28,50 +30,7 @@ canvas{
     display:block;
 }
 
-/* LOADING */
-
-#loading{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    background:
-        radial-gradient(circle at center,#102337 0%,#05080d 55%,#020305 100%);
-    color:white;
-    transition:.7s ease;
-}
-
-#loading h1{
-    margin:0;
-    font-size:42px;
-    letter-spacing:6px;
-}
-
-#loading p{
-    margin:12px 0 25px;
-    color:#8ca8bc;
-    letter-spacing:2px;
-}
-
-.loader{
-    width:280px;
-    height:5px;
-    background:#17222c;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-#loaderBar{
-    width:0%;
-    height:100%;
-    background:linear-gradient(90deg,#00aaff,#00ffff);
-    transition:.25s;
-}
-
-/* HUD */
+/* ================= HUD ================= */
 
 #hud{
     position:fixed;
@@ -79,9 +38,11 @@ canvas{
     left:18px;
     right:18px;
     z-index:50;
+
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
+
     pointer-events:none;
 }
 
@@ -90,19 +51,23 @@ canvas{
 #controls button,
 #hint,
 #infoPanel{
-    background:rgba(3,10,17,.82);
+    background:rgba(3,10,17,.84);
     backdrop-filter:blur(14px);
 }
 
 .logo{
     padding:13px 18px;
+
     border:1px solid rgba(0,200,255,.3);
     border-radius:12px;
-    box-shadow:0 10px 40px rgba(0,0,0,.35);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,.35);
 }
 
 .logo strong{
     display:block;
+
     color:#fff;
     font-size:20px;
     letter-spacing:3px;
@@ -110,7 +75,9 @@ canvas{
 
 .logo span{
     display:block;
+
     margin-top:4px;
+
     color:#4fdfff;
     font-size:11px;
     letter-spacing:2px;
@@ -118,10 +85,13 @@ canvas{
 
 .status{
     padding:11px 15px;
+
     border:1px solid rgba(0,200,255,.25);
     border-radius:12px;
+
     color:#b7d5e4;
     font-size:12px;
+
     text-align:right;
 }
 
@@ -129,13 +99,15 @@ canvas{
     color:#45e4ff;
 }
 
-/* CONTROLS */
+/* ================= CONTROLS ================= */
 
 #controls{
     position:fixed;
     bottom:18px;
     left:18px;
+
     z-index:50;
+
     display:flex;
     gap:8px;
     flex-wrap:wrap;
@@ -143,94 +115,148 @@ canvas{
 
 button{
     border:1px solid rgba(0,210,255,.35);
+
     background:rgba(4,11,18,.86);
+
     color:#d8f8ff;
+
     padding:10px 14px;
+
     border-radius:9px;
+
     cursor:pointer;
+
     font-size:12px;
+
     transition:.2s;
 }
 
 button:hover{
     background:#073044;
     border-color:#19d9ff;
+
     transform:translateY(-1px);
 }
 
-/* INFO PANEL */
+/* ================= INFO PANEL ================= */
 
 #infoPanel{
     position:fixed;
+
     right:18px;
     top:100px;
+
     width:340px;
-    max-height:calc(100vh - 140px);
+
+    max-height:
+        calc(100vh - 140px);
+
     overflow:auto;
+
     z-index:60;
+
     padding:20px;
+
     border-radius:16px;
-    border:1px solid rgba(0,220,255,.3);
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
+
+    border:1px solid
+        rgba(0,220,255,.3);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.5);
+
     color:#d9edf5;
-    transform:translateX(380px);
+
+    transform:
+        translateX(380px);
+
     transition:.35s ease;
 }
 
 #infoPanel.open{
-    transform:translateX(0);
+    transform:
+        translateX(0);
 }
 
 #infoPanel h2{
     margin:0 0 5px;
+
     color:white;
+
     font-size:23px;
 }
 
 .subtitle{
     color:#42dcff;
+
     font-size:11px;
+
     letter-spacing:1.5px;
+
     margin-bottom:18px;
 }
 
 #infoPanel p{
     color:#a8c1cc;
+
     line-height:1.65;
+
     font-size:13px;
 }
 
 .feature{
     margin:8px 0;
+
     padding:9px 11px;
-    border-left:2px solid #14cfff;
-    background:rgba(20,207,255,.055);
+
+    border-left:
+        2px solid #14cfff;
+
+    background:
+        rgba(20,207,255,.055);
+
     font-size:12px;
 }
 
 .close{
     position:absolute;
+
     top:10px;
     right:10px;
+
     padding:5px 9px;
 }
 
+/* ================= HINT ================= */
+
 #hint{
     position:fixed;
+
     bottom:18px;
     right:18px;
+
     z-index:50;
+
     padding:9px 13px;
+
     border-radius:9px;
-    border:1px solid rgba(255,255,255,.08);
+
+    border:1px solid
+        rgba(255,255,255,.08);
+
     color:#8ca5b2;
+
     font-size:11px;
 }
+
+/* ================= MOBILE ================= */
 
 @media(max-width:700px){
 
     #infoPanel{
-        width:calc(100vw - 30px);
+        width:
+            calc(100vw - 30px);
+
         right:15px;
     }
 
@@ -249,28 +275,38 @@ button:hover{
 
 <div id="app"></div>
 
-<div id="loading">
-    <h1>BSS WORLD</h1>
-    <p>3D SMART CITY • 2027</p>
 
-    <div class="loader">
-        <div id="loaderBar"></div>
-    </div>
-</div>
+<!-- ================= HUD ================= -->
 
 <div id="hud">
 
     <div class="logo">
-        <strong>BSS WORLD</strong>
-        <span>3D SMART CITY • 2027</span>
+
+        <strong>
+            BSS WORLD
+        </strong>
+
+        <span>
+            3D SMART CITY • 2027
+        </span>
+
     </div>
 
+
     <div class="status">
+
         CITY STATUS<br>
-        <b>SMART SYSTEMS ONLINE</b>
+
+        <b>
+            SMART SYSTEMS ONLINE
+        </b>
+
     </div>
 
 </div>
+
+
+<!-- ================= CONTROLS ================= -->
 
 <div id="controls">
 
@@ -292,13 +328,25 @@ button:hover{
 
 </div>
 
+
 <div id="hint">
-    Drag = Rotate • Wheel = Zoom • Right Drag = Pan • Click = Explore
+
+    Drag = Rotate •
+    Wheel = Zoom •
+    Right Drag = Pan •
+    Click = Explore
+
 </div>
+
+
+<!-- ================= INFO PANEL ================= -->
 
 <div id="infoPanel">
 
-    <button class="close" id="closeInfo">
+    <button
+        class="close"
+        id="closeInfo"
+    >
         ×
     </button>
 
@@ -306,7 +354,10 @@ button:hover{
         BSS World
     </h2>
 
-    <div class="subtitle" id="infoSubtitle">
+    <div
+        class="subtitle"
+        id="infoSubtitle"
+    >
         3D SMART CITY 2027
     </div>
 
@@ -315,15 +366,23 @@ button:hover{
 </div>
 
 
+<!-- ================= THREE.JS ================= -->
+
 <script type="module">
 
 import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
-import { OrbitControls } from
+import {
+    OrbitControls
+}
+from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 
-import { GLTFLoader } from
+import {
+    GLTFLoader
+}
+from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
 
@@ -331,10 +390,13 @@ import { GLTFLoader } from
    SCENE
 ========================================================= */
 
-const scene = new THREE.Scene();
+const scene =
+    new THREE.Scene();
 
 scene.background =
-    new THREE.Color(0x071019);
+    new THREE.Color(
+        0x071019
+    );
 
 scene.fog =
     new THREE.Fog(
@@ -344,7 +406,9 @@ scene.fog =
     );
 
 
-/* CAMERA */
+/* =========================================================
+   CAMERA
+========================================================= */
 
 const camera =
     new THREE.PerspectiveCamera(
@@ -362,12 +426,15 @@ camera.position.set(
 );
 
 
-/* RENDERER */
+/* =========================================================
+   RENDERER
+========================================================= */
 
 const renderer =
     new THREE.WebGLRenderer({
         antialias:true,
-        powerPreference:"high-performance"
+        powerPreference:
+            "high-performance"
     });
 
 renderer.setSize(
@@ -393,16 +460,19 @@ renderer.outputColorSpace =
 renderer.toneMapping =
     THREE.ACESFilmicToneMapping;
 
-renderer.toneMappingExposure=1.15;
+renderer.toneMappingExposure =
+    1.15;
 
 document
-.getElementById("app")
-.appendChild(
-    renderer.domElement
-);
+    .getElementById("app")
+    .appendChild(
+        renderer.domElement
+    );
 
 
-/* CONTROLS */
+/* =========================================================
+   ORBIT CONTROLS
+========================================================= */
 
 const controls =
     new OrbitControls(
@@ -411,9 +481,11 @@ const controls =
     );
 
 controls.enableDamping=true;
+
 controls.dampingFactor=.06;
 
 controls.minDistance=30;
+
 controls.maxDistance=500;
 
 controls.maxPolarAngle=
@@ -437,7 +509,9 @@ const hemisphere =
         2.3
     );
 
-scene.add(hemisphere);
+scene.add(
+    hemisphere
+);
 
 
 const sun =
@@ -455,14 +529,20 @@ sun.position.set(
 sun.castShadow=true;
 
 sun.shadow.mapSize.width=2048;
+
 sun.shadow.mapSize.height=2048;
 
 sun.shadow.camera.left=-300;
+
 sun.shadow.camera.right=300;
+
 sun.shadow.camera.top=300;
+
 sun.shadow.camera.bottom=-300;
 
-scene.add(sun);
+scene.add(
+    sun
+);
 
 
 const cityLight =
@@ -478,29 +558,39 @@ cityLight.position.set(
     0
 );
 
-scene.add(cityLight);
+scene.add(
+    cityLight
+);
 
 
 /* =========================================================
-   CITY
+   CITY GROUP
 ========================================================= */
 
 const city =
     new THREE.Group();
 
-scene.add(city);
+scene.add(
+    city
+);
 
 
 const animatedTrees=[];
+
 const movingCars=[];
+
 const walkingStudents=[];
+
 const animatedWater=[];
+
 const turbines=[];
 
 const clickable=[];
 
 
-/* MATERIAL */
+/* =========================================================
+   MATERIAL HELPER
+========================================================= */
 
 function material(
     color,
@@ -509,14 +599,20 @@ function material(
 ){
 
     return new THREE.MeshStandardMaterial({
-        color,
-        roughness,
-        metalness
+
+        color:color,
+
+        roughness:roughness,
+
+        metalness:metalness
+
     });
 }
 
 
-/* BOX */
+/* =========================================================
+   BOX HELPER
+========================================================= */
 
 function createBox(
     width,
@@ -530,13 +626,17 @@ function createBox(
 
     const mesh =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 height,
                 depth
             ),
+
             material(color)
+
         );
+
 
     mesh.position.set(
         x,
@@ -544,38 +644,51 @@ function createBox(
         z
     );
 
+
     mesh.castShadow=true;
+
     mesh.receiveShadow=true;
 
-    city.add(mesh);
+
+    city.add(
+        mesh
+    );
+
 
     return mesh;
 }
 
 
 /* =========================================================
-   GROUND
+   CITY GROUND
 ========================================================= */
 
 const ground =
     new THREE.Mesh(
+
         new THREE.PlaneGeometry(
             520,
             520
         ),
-        material(0x1d3023)
+
+        material(
+            0x1d3023
+        )
+
     );
 
-ground.rotation.x=
-    -Math.PI/2;
+ground.rotation.x =
+    -Math.PI / 2;
 
 ground.receiveShadow=true;
 
-city.add(ground);
+city.add(
+    ground
+);
 
 
 /* =========================================================
-   BORDER ROADS
+   ROADS
 ========================================================= */
 
 function createRoad(
@@ -587,17 +700,21 @@ function createRoad(
 
     const road =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 .35,
                 depth
             ),
+
             material(
                 0x252a2d,
                 .95,
                 .02
             )
+
         );
+
 
     road.position.set(
         x,
@@ -605,9 +722,12 @@ function createRoad(
         z
     );
 
+
     road.receiveShadow=true;
 
-    city.add(road);
+    city.add(
+        road
+    );
 
 
     const lineMaterial =
@@ -626,13 +746,17 @@ function createRoad(
 
             const line =
                 new THREE.Mesh(
+
                     new THREE.BoxGeometry(
                         9,
                         .04,
                         .5
                     ),
+
                     lineMaterial
+
                 );
+
 
             line.position.set(
                 x+p,
@@ -640,7 +764,10 @@ function createRoad(
                 z
             );
 
-            city.add(line);
+
+            city.add(
+                line
+            );
         }
 
     }else{
@@ -653,13 +780,17 @@ function createRoad(
 
             const line =
                 new THREE.Mesh(
+
                     new THREE.BoxGeometry(
                         .5,
                         .04,
                         9
                     ),
+
                     lineMaterial
+
                 );
+
 
             line.position.set(
                 x,
@@ -667,11 +798,16 @@ function createRoad(
                 z+p
             );
 
-            city.add(line);
+
+            city.add(
+                line
+            );
         }
     }
 }
 
+
+/* Border roads */
 
 createRoad(
     0,
@@ -713,25 +849,35 @@ function innerRoad(
     depth
 ){
 
-    const r =
+    const road =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 .25,
                 depth
             ),
-            material(0x30363a,.95)
+
+            material(
+                0x30363a,
+                .95
+            )
+
         );
 
-    r.position.set(
+
+    road.position.set(
         x,
         .15,
         z
     );
 
-    r.receiveShadow=true;
 
-    city.add(r);
+    road.receiveShadow=true;
+
+    city.add(
+        road
+    );
 }
 
 
@@ -791,16 +937,20 @@ function sidewalk(
 
     const s =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 1,
                 depth
             ),
+
             material(
                 0x5b6163,
                 .9
             )
+
         );
+
 
     s.position.set(
         x,
@@ -808,9 +958,12 @@ function sidewalk(
         z
     );
 
+
     s.receiveShadow=true;
 
-    city.add(s);
+    city.add(
+        s
+    );
 }
 
 
@@ -868,9 +1021,11 @@ function loadModel(
             const model =
                 gltf.scene;
 
+
             model.position.copy(
                 position
             );
+
 
             model.scale.setScalar(
                 scale
@@ -880,9 +1035,12 @@ function loadModel(
             model.traverse(
                 function(object){
 
-                    if(object.isMesh){
+                    if(
+                        object.isMesh
+                    ){
 
                         object.castShadow=true;
+
                         object.receiveShadow=true;
 
                     }
@@ -895,41 +1053,32 @@ function loadModel(
                 type;
 
 
-            city.add(model);
+            city.add(
+                model
+            );
 
 
-            if(type)
-                clickable.push(model);
+            if(type){
+
+                clickable.push(
+                    model
+                );
+
+            }
 
 
-            if(callback)
+            if(callback){
+
                 callback(
                     model,
                     gltf
                 );
 
-        },
-
-        function(xhr){
-
-            if(xhr.total){
-
-                const percent =
-                    Math.round(
-                        xhr.loaded /
-                        xhr.total *
-                        100
-                    );
-
-                document
-                .getElementById(
-                    "loaderBar"
-                )
-                .style.width=
-                    percent+"%";
             }
 
         },
+
+        undefined,
 
         function(error){
 
@@ -940,29 +1089,37 @@ function loadModel(
             );
 
         }
+
     );
 }
 
 
 /* =========================================================
-   SCHOOL CAMPUS
+   SCHOOL
 ========================================================= */
 
 const schoolX=-105;
+
 const schoolZ=-105;
 
 
-/* campus ground */
+/* Campus */
 
 const schoolGround =
     new THREE.Mesh(
+
         new THREE.BoxGeometry(
             88,
             .3,
             88
         ),
-        material(0x345b38)
+
+        material(
+            0x345b38
+        )
+
     );
+
 
 schoolGround.position.set(
     schoolX,
@@ -977,7 +1134,7 @@ city.add(
 );
 
 
-/* boundary walls */
+/* Campus walls */
 
 function campusWall(
     x,
@@ -988,13 +1145,19 @@ function campusWall(
 
     const wall =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 3,
                 depth
             ),
-            material(0x7f898d)
+
+            material(
+                0x7f898d
+            )
+
         );
+
 
     wall.position.set(
         x,
@@ -1002,9 +1165,12 @@ function campusWall(
         z
     );
 
+
     wall.castShadow=true;
 
-    city.add(wall);
+    city.add(
+        wall
+    );
 }
 
 
@@ -1037,7 +1203,7 @@ campusWall(
 );
 
 
-/* entrance gate */
+/* Entrance */
 
 createBox(
     16,
@@ -1049,8 +1215,6 @@ createBox(
     schoolZ+44
 );
 
-
-/* gate pillars */
 
 [-10,10].forEach(
     offset=>{
@@ -1069,7 +1233,7 @@ createBox(
 );
 
 
-/* school sign */
+/* School sign */
 
 createBox(
     16,
@@ -1082,9 +1246,10 @@ createBox(
 );
 
 
-/* school model */
+/* SCHOOL GLB */
 
 loadModel(
+
     "high_school.glb",
 
     new THREE.Vector3(
@@ -1096,6 +1261,7 @@ loadModel(
     13,
 
     "school"
+
 );
 
 
@@ -1105,13 +1271,20 @@ loadModel(
 
 const parking =
     new THREE.Mesh(
+
         new THREE.BoxGeometry(
             35,
             .2,
             20
         ),
-        material(0x252a2d,.95)
+
+        material(
+            0x252a2d,
+            .95
+        )
+
     );
+
 
 parking.position.set(
     schoolX,
@@ -1121,7 +1294,9 @@ parking.position.set(
 
 parking.receiveShadow=true;
 
-city.add(parking);
+city.add(
+    parking
+);
 
 
 for(
@@ -1132,15 +1307,19 @@ for(
 
     const stripe =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 .25,
                 .04,
                 8
             ),
+
             new THREE.MeshBasicMaterial({
                 color:0xffffff
             })
+
         );
+
 
     stripe.position.set(
         schoolX+x,
@@ -1148,7 +1327,10 @@ for(
         schoolZ-55
     );
 
-    city.add(stripe);
+
+    city.add(
+        stripe
+    );
 }
 
 
@@ -1157,20 +1339,27 @@ for(
 ========================================================= */
 
 const hospitalX=5;
+
 const hospitalZ=-115;
 
 
-/* hospital ground */
+/* Hospital ground */
 
 const hospitalGround =
     new THREE.Mesh(
+
         new THREE.BoxGeometry(
             92,
             .3,
             72
         ),
-        material(0x465653)
+
+        material(
+            0x465653
+        )
+
     );
+
 
 hospitalGround.position.set(
     hospitalX,
@@ -1185,9 +1374,10 @@ city.add(
 );
 
 
-/* hospital model */
+/* HOSPITAL GLB */
 
 loadModel(
+
     "stylized_modern_hospital.glb",
 
     new THREE.Vector3(
@@ -1199,17 +1389,13 @@ loadModel(
     11,
 
     "hospital"
+
 );
 
 
 /* =========================================================
    MAPLE TREES
 ========================================================= */
-
-/*
-   Multiple maple_tree.glb copies.
-   Each tree gets its own phase and wind settings.
-*/
 
 const treePositions=[
 
@@ -1247,6 +1433,7 @@ const treePositions=[
 
     [65,-60],
     [135,-55]
+
 ];
 
 
@@ -1276,14 +1463,12 @@ treePositions.forEach(
                     .035+
                     Math.random()*.025;
 
-                tree.userData.originalRotation=
-                    tree.rotation.z;
-
                 animatedTrees.push(
                     tree
                 );
 
             }
+
         );
 
     }
@@ -1291,7 +1476,7 @@ treePositions.forEach(
 
 
 /* =========================================================
-   PARKS / GREEN SPACES
+   PARKS
 ========================================================= */
 
 function greenArea(
@@ -1303,13 +1488,19 @@ function greenArea(
 
     const g =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 width,
                 .25,
                 depth
             ),
-            material(0x315c37)
+
+            material(
+                0x315c37
+            )
+
         );
+
 
     g.position.set(
         x,
@@ -1317,9 +1508,12 @@ function greenArea(
         z
     );
 
+
     g.receiveShadow=true;
 
-    city.add(g);
+    city.add(
+        g
+    );
 }
 
 
@@ -1351,13 +1545,19 @@ greenArea(
 
 const sports =
     new THREE.Mesh(
+
         new THREE.BoxGeometry(
             80,
             .3,
             55
         ),
-        material(0x24603d)
+
+        material(
+            0x24603d
+        )
+
     );
+
 
 sports.position.set(
     -105,
@@ -1367,7 +1567,9 @@ sports.position.set(
 
 sports.receiveShadow=true;
 
-city.add(sports);
+city.add(
+    sports
+);
 
 
 /* =========================================================
@@ -1375,64 +1577,92 @@ city.add(sports);
 ========================================================= */
 
 const waterX=-105;
+
 const waterZ=105;
 
 
-for(let i=0;i<3;i++){
+for(
+    let i=0;
+    i<3;
+    i++
+){
 
     const tank =
         new THREE.Mesh(
+
             new THREE.CylinderGeometry(
                 11,
                 11,
                 6,
                 32
             ),
+
             material(
                 0x60777b,
                 .3,
                 .35
             )
+
         );
 
+
     tank.position.set(
-        waterX+(i-1)*25,
+        waterX+
+        (i-1)*25,
         3.5,
         waterZ
     );
 
+
     tank.castShadow=true;
 
-    city.add(tank);
+    city.add(
+        tank
+    );
 
 
     const water =
         new THREE.Mesh(
+
             new THREE.CylinderGeometry(
                 9.5,
                 9.5,
                 .35,
                 32
             ),
+
             new THREE.MeshStandardMaterial({
+
                 color:0x159ed1,
+
                 transparent:true,
+
                 opacity:.75,
+
                 roughness:.15
+
             })
+
         );
 
+
     water.position.set(
-        waterX+(i-1)*25,
+        waterX+
+        (i-1)*25,
         6.6,
         waterZ
     );
 
-    city.add(water);
+
+    city.add(
+        water
+    );
+
 
     animatedWater.push(
         water
     );
+
 }
 
 
@@ -1447,17 +1677,25 @@ function solarPanel(
 
     const panel =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 13,
                 .4,
                 6
             ),
+
             new THREE.MeshStandardMaterial({
+
                 color:0x07192b,
+
                 roughness:.25,
+
                 metalness:.7
+
             })
+
         );
+
 
     panel.position.set(
         x,
@@ -1465,27 +1703,34 @@ function solarPanel(
         z
     );
 
+
     panel.rotation.x=
         -Math.PI*.16;
 
     panel.castShadow=true;
 
-    city.add(panel);
+    city.add(
+        panel
+    );
 
 
     const stand =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 .5,
                 5,
                 .5
             ),
+
             material(
                 0x555b5f,
                 .5,
                 .6
             )
+
         );
+
 
     stand.position.set(
         x,
@@ -1493,7 +1738,11 @@ function solarPanel(
         z
     );
 
-    city.add(stand);
+
+    city.add(
+        stand
+    );
+
 }
 
 
@@ -1512,6 +1761,7 @@ for(
         x,
         40
     );
+
 }
 
 
@@ -1527,60 +1777,79 @@ function createTurbine(
     const group =
         new THREE.Group();
 
+
     group.position.set(
         x,
         0,
         z
     );
 
-    city.add(group);
+
+    city.add(
+        group
+    );
 
 
     const pole =
         new THREE.Mesh(
+
             new THREE.CylinderGeometry(
                 1,
                 1.5,
                 25,
                 12
             ),
+
             material(
                 0xd6dde0,
                 .45,
                 .5
             )
+
         );
+
 
     pole.position.y=12.5;
 
     pole.castShadow=true;
 
-    group.add(pole);
+    group.add(
+        pole
+    );
 
 
     const rotor =
         new THREE.Group();
 
+
     rotor.position.y=25;
 
-    group.add(rotor);
+    group.add(
+        rotor
+    );
 
 
     const center =
         new THREE.Mesh(
+
             new THREE.SphereGeometry(
                 2.2,
                 16,
                 16
             ),
+
             material(
                 0xf0f5f7,
                 .35,
                 .5
             )
+
         );
 
-    rotor.add(center);
+
+    rotor.add(
+        center
+    );
 
 
     for(
@@ -1591,30 +1860,39 @@ function createTurbine(
 
         const blade =
             new THREE.Mesh(
+
                 new THREE.BoxGeometry(
                     .8,
                     11,
                     2
                 ),
+
                 material(
                     0xf4f7f8,
                     .45,
                     .4
                 )
+
             );
+
 
         blade.position.y=5;
 
         blade.rotation.z=
             i*Math.PI*2/3;
 
-        rotor.add(blade);
+
+        rotor.add(
+            blade
+        );
+
     }
 
 
     turbines.push(
         rotor
     );
+
 }
 
 
@@ -1639,7 +1917,9 @@ createTurbine(
 ========================================================= */
 
 const evX=20;
+
 const evZ=110;
+
 
 createBox(
     45,
@@ -1668,6 +1948,7 @@ for(
         evZ-8
     );
 
+
     const glow =
         new THREE.PointLight(
             0x00d9ff,
@@ -1675,13 +1956,18 @@ for(
             18
         );
 
+
     glow.position.set(
         evX-14+i*7,
         4,
         evZ-6
     );
 
-    city.add(glow);
+
+    city.add(
+        glow
+    );
+
 }
 
 
@@ -1698,6 +1984,7 @@ createBox(
     11,
     105
 );
+
 
 createBox(
     55,
@@ -1725,6 +2012,14 @@ createBox(
 );
 
 
+const recyclingColors=[
+    0x1e7d62,
+    0x2879a8,
+    0x9a7c25,
+    0x46545c
+];
+
+
 for(
     let i=0;
     i<4;
@@ -1735,21 +2030,17 @@ for(
         6,
         5,
         6,
-        [
-            0x1e7d62,
-            0x2879a8,
-            0x9a7c25,
-            0x46545c
-        ][i],
+        recyclingColors[i],
         -38+i*9,
         3,
         131
     );
+
 }
 
 
 /* =========================================================
-   POLICE + FIRE
+   POLICE / FIRE
 ========================================================= */
 
 function serviceBuilding(
@@ -1768,6 +2059,11 @@ function serviceBuilding(
             6,
             z
         );
+
+
+    building.userData.cityType=
+        "city";
+
 
     clickable.push(
         building
@@ -1799,18 +2095,22 @@ function streetLight(
 
     const pole =
         new THREE.Mesh(
+
             new THREE.CylinderGeometry(
                 .18,
                 .25,
                 7,
                 8
             ),
+
             material(
                 0x3c474d,
                 .5,
                 .5
             )
+
         );
+
 
     pole.position.set(
         x,
@@ -1818,7 +2118,10 @@ function streetLight(
         z
     );
 
-    city.add(pole);
+
+    city.add(
+        pole
+    );
 
 
     const light =
@@ -1828,13 +2131,18 @@ function streetLight(
             18
         );
 
+
     light.position.set(
         x,
         7,
         z
     );
 
-    city.add(light);
+
+    city.add(
+        light
+    );
+
 }
 
 
@@ -1853,6 +2161,7 @@ for(
         x,
         205
     );
+
 }
 
 
@@ -1871,11 +2180,12 @@ for(
         205,
         z
     );
+
 }
 
 
 /* =========================================================
-   POWER TRANSMISSION
+   POWER TOWERS
 ========================================================= */
 
 function powerTower(
@@ -1886,52 +2196,69 @@ function powerTower(
     const group =
         new THREE.Group();
 
+
     group.position.set(
         x,
         0,
         z
     );
 
-    city.add(group);
+
+    city.add(
+        group
+    );
 
 
     const pole =
         new THREE.Mesh(
+
             new THREE.CylinderGeometry(
                 .6,
                 .9,
                 24,
                 8
             ),
+
             material(
                 0x555c60,
                 .45,
                 .65
             )
+
         );
+
 
     pole.position.y=12;
 
-    group.add(pole);
+    group.add(
+        pole
+    );
 
 
     const top =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 14,
                 .5,
                 .5
             ),
+
             material(
                 0x555c60,
                 .45,
                 .65
             )
+
         );
+
 
     top.position.y=21;
 
-    group.add(top);
+    group.add(
+        top
+    );
+
 }
 
 
@@ -1950,6 +2277,7 @@ for(
         x,
         190
     );
+
 }
 
 
@@ -1967,11 +2295,13 @@ function createCar(
     const car =
         new THREE.Group();
 
+
     car.position.set(
         x,
         1.15,
         z
     );
+
 
     car.userData.speed=
         speed;
@@ -1979,40 +2309,52 @@ function createCar(
 
     const body =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 5,
                 1.5,
                 2.7
             ),
+
             material(
                 color,
                 .45,
                 .15
             )
+
         );
+
 
     body.castShadow=true;
 
-    car.add(body);
+    car.add(
+        body
+    );
 
 
     const roof =
         new THREE.Mesh(
+
             new THREE.BoxGeometry(
                 2.5,
                 1.1,
                 2.3
             ),
+
             material(
                 0x26313a,
                 .25,
                 .1
             )
+
         );
+
 
     roof.position.y=1.2;
 
-    car.add(roof);
+    car.add(
+        roof
+    );
 
 
     [-1.7,1.7].forEach(
@@ -2023,20 +2365,25 @@ function createCar(
 
                     const wheel =
                         new THREE.Mesh(
+
                             new THREE.CylinderGeometry(
                                 .55,
                                 .55,
                                 .35,
                                 16
                             ),
+
                             material(
                                 0x101214,
                                 .9
                             )
+
                         );
+
 
                     wheel.rotation.z=
                         Math.PI/2;
+
 
                     wheel.position.set(
                         wx,
@@ -2044,18 +2391,29 @@ function createCar(
                         wz
                     );
 
-                    car.add(wheel);
+
+                    car.add(
+                        wheel
+                    );
 
                 }
+
             );
 
         }
+
     );
 
 
-    city.add(car);
+    city.add(
+        car
+    );
 
-    movingCars.push(car);
+
+    movingCars.push(
+        car
+    );
+
 }
 
 
@@ -2122,11 +2480,13 @@ function createStudent(
     const student =
         new THREE.Group();
 
+
     student.position.set(
         x,
         0,
         z
     );
+
 
     student.userData.phase=
         phase;
@@ -2134,44 +2494,64 @@ function createStudent(
 
     const body =
         new THREE.Mesh(
+
             new THREE.CapsuleGeometry(
                 .55,
                 1.5,
                 4,
                 8
             ),
-            material(0x315c87)
+
+            material(
+                0x315c87
+            )
+
         );
+
 
     body.position.y=1.4;
 
     body.castShadow=true;
 
-    student.add(body);
+    student.add(
+        body
+    );
 
 
     const head =
         new THREE.Mesh(
+
             new THREE.SphereGeometry(
                 .55,
                 12,
                 12
             ),
-            material(0xc98d68)
+
+            material(
+                0xc98d68
+            )
+
         );
+
 
     head.position.y=2.9;
 
     head.castShadow=true;
 
-    student.add(head);
+    student.add(
+        head
+    );
 
 
-    city.add(student);
+    city.add(
+        student
+    );
+
 
     walkingStudents.push(
         student
     );
+
 }
 
 
@@ -2182,6 +2562,7 @@ for(
 ){
 
     createStudent(
+
         schoolX-30+
         Math.random()*60,
 
@@ -2189,7 +2570,9 @@ for(
         Math.random()*60,
 
         i*.55
+
     );
+
 }
 
 
@@ -2215,6 +2598,7 @@ function cityBuilding(
         height/2,
         z
     );
+
 }
 
 
@@ -2274,7 +2658,7 @@ cityBuilding(
 
 
 /* =========================================================
-   INFO SYSTEM
+   INFO PANEL
 ========================================================= */
 
 const infoPanel =
@@ -2298,15 +2682,20 @@ const infoContent =
     );
 
 
-function showInfo(type){
+function showInfo(
+    type
+){
 
-    if(type==="school"){
+    if(
+        type==="school"
+    ){
 
         infoTitle.textContent=
             "BSS Smart School";
 
         infoSubtitle.textContent=
             "SMART EDUCATION CAMPUS";
+
 
         infoContent.innerHTML=`
 
@@ -2347,30 +2736,26 @@ function showInfo(type){
             </div>
 
             <p>
-                The BSS Smart School represents a
-                future-ready education campus where
-                technology, sustainability and
-                accessibility work together.
+                The BSS Smart School represents
+                a future-ready education campus
+                where technology, sustainability
+                and accessibility work together.
             </p>
 
-            <p>
-                <b>Admission & Fee Information</b><br>
-                Project/demo information only.
-                No official Beaconhouse fee figures
-                are represented.
-            </p>
         `;
 
     }
 
-
-    else if(type==="hospital"){
+    else if(
+        type==="hospital"
+    ){
 
         infoTitle.textContent=
             "Smart Hospital";
 
         infoSubtitle.textContent=
             "CONNECTED HEALTHCARE";
+
 
         infoContent.innerHTML=`
 
@@ -2401,9 +2786,9 @@ function showInfo(type){
             <p>
                 The Smart Hospital is connected
                 to the city's transportation,
-                emergency, energy and
-                communication systems.
+                energy and emergency systems.
             </p>
+
         `;
 
     }
@@ -2415,6 +2800,7 @@ function showInfo(type){
 
         infoSubtitle.textContent=
             "3D SMART CITY 2027";
+
 
         infoContent.innerHTML=`
 
@@ -2448,12 +2834,16 @@ function showInfo(type){
                 infrastructure can create a
                 connected future city.
             </p>
+
         `;
+
     }
+
 
     infoPanel.classList.add(
         "open"
     );
+
 }
 
 
@@ -2462,7 +2852,9 @@ function showInfo(type){
 ========================================================= */
 
 document
-.getElementById("homeBtn")
+.getElementById(
+    "homeBtn"
+)
 .addEventListener(
     "click",
     function(){
@@ -2473,23 +2865,29 @@ document
             190
         );
 
+
         controls.target.set(
             0,
             0,
             0
         );
 
+
         controls.update();
+
 
         showInfo(
             "city"
         );
+
     }
 );
 
 
 document
-.getElementById("schoolBtn")
+.getElementById(
+    "schoolBtn"
+)
 .addEventListener(
     "click",
     function(){
@@ -2500,23 +2898,29 @@ document
             -55
         );
 
+
         controls.target.set(
             schoolX,
             0,
             schoolZ
         );
 
+
         controls.update();
+
 
         showInfo(
             "school"
         );
+
     }
 );
 
 
 document
-.getElementById("hospitalBtn")
+.getElementById(
+    "hospitalBtn"
+)
 .addEventListener(
     "click",
     function(){
@@ -2527,23 +2931,29 @@ document
             -70
         );
 
+
         controls.target.set(
             hospitalX,
             0,
             hospitalZ
         );
 
+
         controls.update();
+
 
         showInfo(
             "hospital"
         );
+
     }
 );
 
 
 document
-.getElementById("closeInfo")
+.getElementById(
+    "closeInfo"
+)
 .addEventListener(
     "click",
     function(){
@@ -2562,13 +2972,17 @@ document
 
 let night=false;
 
+
 document
-.getElementById("dayBtn")
+.getElementById(
+    "dayBtn"
+)
 .addEventListener(
     "click",
     function(){
 
         night=!night;
+
 
         if(night){
 
@@ -2588,7 +3002,9 @@ document
 
             cityLight.intensity=16;
 
-        }else{
+        }
+
+        else{
 
             scene.background=
                 new THREE.Color(
@@ -2605,19 +3021,21 @@ document
             hemisphere.intensity=2.3;
 
             cityLight.intensity=7;
+
         }
+
     }
 );
 
 
 /* =========================================================
-   RAYCAST CLICK
+   RAYCASTING
 ========================================================= */
 
-const raycaster=
+const raycaster =
     new THREE.Raycaster();
 
-const mouse=
+const mouse =
     new THREE.Vector2();
 
 
@@ -2625,19 +3043,25 @@ renderer.domElement.addEventListener(
     "click",
     function(event){
 
-        const rect=
+        const rect =
             renderer.domElement
             .getBoundingClientRect();
 
-        mouse.x=
-            ((event.clientX-
-            rect.left)/
-            rect.width)*2-1;
 
-        mouse.y=
-            -((event.clientY-
-            rect.top)/
-            rect.height)*2+1;
+        mouse.x =
+            (
+                (event.clientX-
+                rect.left) /
+                rect.width
+            )*2-1;
+
+
+        mouse.y =
+            -(
+                (event.clientY-
+                rect.top) /
+                rect.height
+            )*2+1;
 
 
         raycaster.setFromCamera(
@@ -2646,7 +3070,7 @@ renderer.domElement.addEventListener(
         );
 
 
-        const hits=
+        const hits =
             raycaster.intersectObjects(
                 clickable,
                 true
@@ -2657,10 +3081,11 @@ renderer.domElement.addEventListener(
             hits.length>0
         ){
 
-            let object=
+            let object =
                 hits[0].object;
 
             let type=null;
+
 
             while(
                 object
@@ -2671,19 +3096,28 @@ renderer.domElement.addEventListener(
                     object.userData.cityType
                 ){
 
-                    type=
+                    type =
                         object.userData.cityType;
 
                     break;
+
                 }
 
-                object=
+
+                object =
                     object.parent;
+
             }
 
 
-            if(type)
-                showInfo(type);
+            if(type){
+
+                showInfo(
+                    type
+                );
+
+            }
+
         }
 
     }
@@ -2694,7 +3128,7 @@ renderer.domElement.addEventListener(
    ANIMATION
 ========================================================= */
 
-const clock=
+const clock =
     new THREE.Clock();
 
 
@@ -2705,7 +3139,7 @@ function animate(){
     );
 
 
-    const time=
+    const time =
         clock.getElapsedTime();
 
 
@@ -2714,25 +3148,24 @@ function animate(){
     animatedTrees.forEach(
         tree=>{
 
-            const phase=
-                tree.userData.windPhase || 0;
+            const phase =
+                tree.userData
+                .windPhase || 0;
 
-            const strength=
-                tree.userData.windStrength || .04;
 
-            /*
-              Gentle bending.
-              We rotate around Z/X very slightly,
-              producing a natural wind effect.
-            */
+            const strength =
+                tree.userData
+                .windStrength || .04;
 
-            tree.rotation.z=
+
+            tree.rotation.z =
                 Math.sin(
                     time*1.15+
                     phase
                 )*strength;
 
-            tree.rotation.x=
+
+            tree.rotation.x =
                 Math.sin(
                     time*.8+
                     phase*1.7
@@ -2742,12 +3175,12 @@ function animate(){
     );
 
 
-    /* Water movement */
+    /* Water */
 
     animatedWater.forEach(
         (water,index)=>{
 
-            water.scale.y=
+            water.scale.y =
                 1+
                 Math.sin(
                     time*2+
@@ -2763,14 +3196,14 @@ function animate(){
     turbines.forEach(
         rotor=>{
 
-            rotor.rotation.z+=
+            rotor.rotation.z +=
                 .035;
 
         }
     );
 
 
-    /* Moving cars */
+    /* Cars */
 
     movingCars.forEach(
         car=>{
@@ -2787,6 +3220,7 @@ function animate(){
 
             }
 
+
             if(
                 car.position.x<-245
             ){
@@ -2799,13 +3233,14 @@ function animate(){
     );
 
 
-    /* Walking students */
+    /* Students */
 
     walkingStudents.forEach(
         (student,index)=>{
 
-            const phase=
+            const phase =
                 student.userData.phase;
+
 
             student.position.x +=
                 Math.sin(
@@ -2813,13 +3248,15 @@ function animate(){
                     phase
                 )*.008;
 
+
             student.position.z +=
                 Math.cos(
                     time*.45+
                     phase
                 )*.008;
 
-            student.rotation.y=
+
+            student.rotation.y =
                 Math.sin(
                     time*.5+
                     phase
@@ -2831,10 +3268,12 @@ function animate(){
 
     controls.update();
 
+
     renderer.render(
         scene,
         camera
     );
+
 }
 
 
@@ -2842,18 +3281,20 @@ animate();
 
 
 /* =========================================================
-   WINDOW RESIZE
+   RESIZE
 ========================================================= */
 
 window.addEventListener(
     "resize",
     function(){
 
-        camera.aspect=
-            window.innerWidth/
+        camera.aspect =
+            window.innerWidth /
             window.innerHeight;
 
+
         camera.updateProjectionMatrix();
+
 
         renderer.setSize(
             window.innerWidth,
@@ -2861,50 +3302,6 @@ window.addEventListener(
         );
 
     }
-);
-
-
-/* =========================================================
-   LOADING SCREEN
-========================================================= */
-
-setTimeout(
-    function(){
-
-        document
-        .getElementById(
-            "loaderBar"
-        )
-        .style.width="100%";
-
-        setTimeout(
-            function(){
-
-                document
-                .getElementById(
-                    "loading"
-                )
-                .style.opacity="0";
-
-                setTimeout(
-                    function(){
-
-                        document
-                        .getElementById(
-                            "loading"
-                        )
-                        .style.display="none";
-
-                    },
-                    700
-                );
-
-            },
-            500
-        );
-
-    },
-    1200
 );
 
 </script>
