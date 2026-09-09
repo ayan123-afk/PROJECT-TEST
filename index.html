@@ -1,368 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BSS World - Smart School 3D</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BSS World Smart School</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-    body {
-      overflow: hidden;
-      background: #05070d;
-      font-family: Arial, sans-serif;
-    }
+body{
+  overflow:hidden;
+  background:#05070d;
+  font-family:Arial,sans-serif;
+}
 
-    #info {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 10;
-      color: white;
-      background: rgba(0,0,0,.65);
-      padding: 14px 18px;
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-    }
+#loading{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#05070d;
+  color:white;
+  z-index:100;
+  font-size:22px;
+}
 
-    #info h2 {
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
+#hint{
+  position:fixed;
+  top:20px;
+  left:20px;
+  z-index:20;
+  color:white;
+  background:rgba(5,10,20,.78);
+  padding:14px 18px;
+  border:1px solid rgba(80,180,255,.35);
+  border-radius:14px;
+  backdrop-filter:blur(12px);
+}
 
-    #loading {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 22px;
-      background: #05070d;
-      z-index: 20;
-    }
+#panel{
+  position:fixed;
+  top:50%;
+  right:30px;
+  transform:translateY(-50%) translateX(30px);
+  width:330px;
+  padding:24px;
+  color:white;
+  background:rgba(5,10,20,.92);
+  border:1px solid rgba(70,190,255,.5);
+  border-radius:18px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:50;
+}
 
-    canvas {
-      display: block;
-    }
-  </style>
+#panel.show{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(-50%) translateX(0);
+}
+
+#panel h1{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+#panel p{
+  color:#c8d5e5;
+  line-height:1.6;
+  margin-bottom:15px;
+}
+
+#panel ul{
+  padding-left:20px;
+  line-height:1.9;
+  color:#e7f3ff;
+}
+
+#close{
+  position:absolute;
+  top:10px;
+  right:14px;
+  cursor:pointer;
+  font-size:22px;
+}
+</style>
 </head>
 
 <body>
 
-  <div id="loading">Loading Smart School 3D...</div>
+<div id="loading">Loading BSS Smart School... 0%</div>
 
-  <div id="info">
-    <h2>BSS World Smart School</h2>
-    <div>Drag = Rotate</div>
-    <div>Scroll = Zoom</div>
-    <div>Right Click = Pan</div>
-  </div>
+<div id="hint">
+  <b>BSS SMART SCHOOL</b><br>
+  Drag = Rotate &nbsp; | &nbsp; Scroll = Zoom<br>
+  Click School = Explore
+</div>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-    }
+<div id="panel">
+  <span id="close">×</span>
+
+  <h1>BSS SMART SCHOOL</h1>
+
+  <p>
+    A next-generation sustainable school designed
+    for smart, accessible and inclusive education.
+  </p>
+
+  <ul>
+    <li>Smart Digital Classrooms</li>
+    <li>Interactive Learning Technology</li>
+    <li>Solar Energy Integration</li>
+    <li>Green & Sustainable Campus</li>
+    <li>Accessible Facilities</li>
+    <li>Student Innovation Spaces</li>
+    <li>Safe Smart-Campus System</li>
+  </ul>
+</div>
+
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
   }
-  </script>
+}
+</script>
 
-  <script type="module">
+<script type="module">
 
-    import * as THREE from "three";
-    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 
-    // =========================
-    // SCENE
-    // =========================
 
-    const scene = new THREE.Scene();
+// =====================================
+// SCENE
+// =====================================
 
-    scene.background = new THREE.Color(0x05070d);
+const scene = new THREE.Scene();
 
-    // =========================
+scene.background = new THREE.Color(0x05070d);
+
+
+// =====================================
+// CAMERA
+// =====================================
+
+const camera = new THREE.PerspectiveCamera(
+  45,
+  innerWidth/innerHeight,
+  .1,
+  5000
+);
+
+camera.position.set(35,25,35);
+
+
+// =====================================
+// RENDERER
+// =====================================
+
+const renderer = new THREE.WebGLRenderer({
+  antialias:true
+});
+
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+
+renderer.shadowMap.enabled=true;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+
+document.body.appendChild(renderer.domElement);
+
+
+// =====================================
+// LIGHTING
+// =====================================
+
+scene.add(
+  new THREE.HemisphereLight(
+    0xffffff,
+    0x172033,
+    2.5
+  )
+);
+
+const sun = new THREE.DirectionalLight(
+  0xffffff,
+  4
+);
+
+sun.position.set(40,60,30);
+sun.castShadow=true;
+
+sun.shadow.mapSize.width=2048;
+sun.shadow.mapSize.height=2048;
+
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(
+  0x66aaff,
+  1.5
+);
+
+fill.position.set(-30,20,-30);
+
+scene.add(fill);
+
+
+// =====================================
+// GROUND
+// =====================================
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200,200),
+  new THREE.MeshStandardMaterial({
+    color:0x17231c,
+    roughness:.9
+  })
+);
+
+ground.rotation.x=-Math.PI/2;
+ground.receiveShadow=true;
+
+scene.add(ground);
+
+
+// =====================================
+// CONTROLS
+// =====================================
+
+const controls = new OrbitControls(
+  camera,
+  renderer.domElement
+);
+
+controls.enableDamping=true;
+controls.dampingFactor=.05;
+
+controls.minDistance=5;
+controls.maxDistance=200;
+
+
+// =====================================
+// SCHOOL
+// =====================================
+
+let school;
+let schoolObjects=[];
+
+const loader=new GLTFLoader();
+
+loader.load(
+  "./high_school.glb",
+
+  gltf=>{
+
+    school=gltf.scene;
+
+    school.traverse(obj=>{
+
+      if(obj.isMesh){
+
+        obj.castShadow=true;
+        obj.receiveShadow=true;
+
+        schoolObjects.push(obj);
+
+      }
+
+    });
+
+    scene.add(school);
+
+
+    // =================================
+    // AUTO CENTER
+    // =================================
+
+    const box=new THREE.Box3()
+      .setFromObject(school);
+
+    const center=box.getCenter(
+      new THREE.Vector3()
+    );
+
+    const size=box.getSize(
+      new THREE.Vector3()
+    );
+
+    school.position.sub(center);
+
+
+    // =================================
+    // AUTO SCALE
+    // =================================
+
+    const largest=Math.max(
+      size.x,
+      size.y,
+      size.z
+    );
+
+    const scale=25/largest;
+
+    school.scale.setScalar(scale);
+
+
+    // =================================
+    // PUT ON GROUND
+    // =================================
+
+    const newBox=new THREE.Box3()
+      .setFromObject(school);
+
+    school.position.y-=newBox.min.y;
+
+
+    // =================================
     // CAMERA
-    // =========================
+    // =================================
 
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      5000
+    const finalBox=new THREE.Box3()
+      .setFromObject(school);
+
+    const finalSize=finalBox.getSize(
+      new THREE.Vector3()
     );
 
-    camera.position.set(15, 12, 20);
+    const d=Math.max(
+      finalSize.x,
+      finalSize.y,
+      finalSize.z
+    )*1.8;
 
-    // =========================
-    // RENDERER
-    // =========================
-
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: false
-    });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-    document.body.appendChild(renderer.domElement);
-
-    // =========================
-    // LIGHTS
-    // =========================
-
-    const ambient = new THREE.HemisphereLight(
-      0xffffff,
-      0x202030,
-      2.5
+    camera.position.set(
+      d,
+      d*.7,
+      d
     );
 
-    scene.add(ambient);
-
-    const sun = new THREE.DirectionalLight(
-      0xffffff,
-      4
+    controls.target.set(
+      0,
+      finalSize.y*.35,
+      0
     );
 
-    sun.position.set(30, 50, 30);
-    sun.castShadow = true;
+    controls.update();
 
-    sun.shadow.mapSize.width = 2048;
-    sun.shadow.mapSize.height = 2048;
 
-    scene.add(sun);
+    // =================================
+    // SCHOOL TAG
+    // =================================
 
-    const fill = new THREE.DirectionalLight(
-      0x8bbcff,
-      1.5
+    createSchoolTag(
+      finalSize.y+4
     );
 
-    fill.position.set(-20, 15, -20);
 
-    scene.add(fill);
+    // =================================
+    // STUDENTS
+    // =================================
 
-    // =========================
-    // GROUND
-    // =========================
+    createStudents();
 
-    const groundGeometry = new THREE.PlaneGeometry(
-      200,
-      200
-    );
 
-    const groundMaterial = new THREE.MeshStandardMaterial({
-      color: 0x18221c,
-      roughness: 0.9
-    });
+    document.getElementById(
+      "loading"
+    ).style.display="none";
 
-    const ground = new THREE.Mesh(
-      groundGeometry,
-      groundMaterial
-    );
+  },
 
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+  xhr=>{
 
-    scene.add(ground);
+    if(xhr.total){
 
-    // =========================
-    // LOAD GLB
-    // =========================
-
-    const loader = new GLTFLoader();
-
-    loader.load(
-      "./high_school.glb",
-
-      function(gltf) {
-
-        const school = gltf.scene;
-
-        school.traverse(function(object) {
-
-          if (object.isMesh) {
-            object.castShadow = true;
-            object.receiveShadow = true;
-          }
-
-        });
-
-        scene.add(school);
-
-        // =========================
-        // AUTO CENTER + SCALE
-        // =========================
-
-        const box = new THREE.Box3().setFromObject(school);
-
-        const center = box.getCenter(
-          new THREE.Vector3()
-        );
-
-        const size = box.getSize(
-          new THREE.Vector3()
-        );
-
-        school.position.sub(center);
-
-        const maxDimension = Math.max(
-          size.x,
-          size.y,
-          size.z
-        );
-
-        const targetSize = 25;
-
-        const scale =
-          targetSize / maxDimension;
-
-        school.scale.setScalar(scale);
-
-        // Recalculate bounds
-        const newBox =
-          new THREE.Box3().setFromObject(school);
-
-        const newCenter =
-          newBox.getCenter(new THREE.Vector3());
-
-        school.position.y -= newBox.min.y;
-
-        // =========================
-        // CAMERA AUTO POSITION
-        // =========================
-
-        const newSize =
-          newBox.getSize(new THREE.Vector3());
-
-        const maxSize = Math.max(
-          newSize.x,
-          newSize.y,
-          newSize.z
-        );
-
-        const distance = maxSize * 1.8;
-
-        camera.position.set(
-          distance,
-          distance * 0.75,
-          distance
-        );
-
-        controls.target.set(
-          0,
-          newSize.y * 0.35,
-          0
-        );
-
-        controls.update();
-
-        document.getElementById(
-          "loading"
-        ).style.display = "none";
-
-      },
-
-      function(xhr) {
-
-        if (xhr.total) {
-
-          const percent =
-            (xhr.loaded / xhr.total) * 100;
-
-          document.getElementById(
-            "loading"
-          ).textContent =
-            "Loading Smart School 3D... " +
-            Math.round(percent) +
-            "%";
-        }
-
-      },
-
-      function(error) {
-
-        console.error(error);
-
-        document.getElementById(
-          "loading"
-        ).textContent =
-          "Failed to load high_school.glb";
-
-      }
-    );
-
-    // =========================
-    // CONTROLS
-    // =========================
-
-    const controls =
-      new OrbitControls(
-        camera,
-        renderer.domElement
+      const p=Math.round(
+        xhr.loaded/xhr.total*100
       );
 
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
+      document.getElementById(
+        "loading"
+      ).textContent=
+        "Loading BSS Smart School... "+
+        p+"%";
+    }
 
-    controls.minDistance = 3;
-    controls.maxDistance = 200;
+  },
 
-    controls.target.set(0, 5, 0);
+  error=>{
 
-    // =========================
-    // RESIZE
-    // =========================
+    console.error(error);
 
-    window.addEventListener(
-      "resize",
-      function() {
+    document.getElementById(
+      "loading"
+    ).textContent=
+      "ERROR: high_school.glb could not load.";
 
-        camera.aspect =
-          window.innerWidth /
-          window.innerHeight;
+  }
+);
 
-        camera.updateProjectionMatrix();
 
-        renderer.setSize(
-          window.innerWidth,
-          window.innerHeight
-        );
+// =====================================
+// 3D SCHOOL TAG
+// =====================================
 
-      }
+function createSchoolTag(height){
+
+  const canvas=document.createElement("canvas");
+
+  canvas.width=1024;
+  canvas.height=256;
+
+  const ctx=canvas.getContext("2d");
+
+  ctx.fillStyle="rgba(5,15,30,.92)";
+  ctx.roundRect(20,35,984,180,40);
+  ctx.fill();
+
+  ctx.strokeStyle="#55c7ff";
+  ctx.lineWidth=8;
+  ctx.roundRect(20,35,984,180,40);
+  ctx.stroke();
+
+  ctx.fillStyle="white";
+  ctx.font="bold 72px Arial";
+  ctx.textAlign="center";
+  ctx.fillText(
+    "BSS SMART SCHOOL",
+    512,
+    135
+  );
+
+  ctx.font="32px Arial";
+  ctx.fillStyle="#80d8ff";
+  ctx.fillText(
+    "Education • Innovation • Sustainability",
+    512,
+    180
+  );
+
+  const texture=new THREE.CanvasTexture(canvas);
+
+  const material=new THREE.SpriteMaterial({
+    map:texture,
+    transparent:true,
+    depthTest:false
+  });
+
+  const sprite=new THREE.Sprite(material);
+
+  sprite.scale.set(12,3,1);
+
+  sprite.position.set(
+    0,
+    height,
+    0
+  );
+
+  scene.add(sprite);
+
+}
+
+
+// =====================================
+// STUDENT CREATION
+// =====================================
+
+function createStudent(x,z,scale=1){
+
+  const group=new THREE.Group();
+
+
+  // BODY
+
+  const body=new THREE.Mesh(
+    new THREE.CapsuleGeometry(.22,.65,4,8),
+    new THREE.MeshStandardMaterial({
+      color:0x263a65
+    })
+  );
+
+  body.position.y=.65;
+
+  group.add(body);
+
+
+  // HEAD
+
+  const head=new THREE.Mesh(
+    new THREE.SphereGeometry(.22,16,16),
+    new THREE.MeshStandardMaterial({
+      color:0xc58f70
+    })
+  );
+
+  head.position.y=1.25;
+
+  group.add(head);
+
+
+  // LEGS
+
+  for(let i=-1;i<=1;i+=2){
+
+    const leg=new THREE.Mesh(
+      new THREE.CylinderGeometry(
+        .07,.07,.55,8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x111827
+      })
     );
 
-    // =========================
-    // ANIMATION
-    // =========================
+    leg.position.set(
+      i*.1,
+      .15,
+      0
+    );
 
-    function animate() {
+    group.add(leg);
 
-      requestAnimationFrame(animate);
+  }
 
-      controls.update();
 
-      renderer.render(
-        scene,
-        camera
-      );
+  group.position.set(
+    x,
+    0,
+    z
+  );
+
+  group.scale.setScalar(scale);
+
+  scene.add(group);
+
+}
+
+
+// =====================================
+// STUDENTS AROUND SCHOOL
+// =====================================
+
+function createStudents(){
+
+  const positions=[
+    [-10,9,1],
+    [-7,11,.9],
+    [-4,10,1],
+    [4,10,.95],
+    [7,11,1],
+    [10,8,.9],
+
+    [-11,-6,1],
+    [-8,-9,.9],
+    [-4,-10,1],
+    [4,-10,.9],
+    [8,-9,1],
+    [11,-6,.9]
+  ];
+
+  positions.forEach(p=>{
+    createStudent(
+      p[0],
+      p[1],
+      p[2]
+    );
+  });
+
+}
+
+
+// =====================================
+// CLICK SCHOOL
+// =====================================
+
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+
+renderer.domElement.addEventListener(
+  "click",
+  event=>{
+
+    mouse.x=
+      event.clientX/innerWidth*2-1;
+
+    mouse.y=
+      -(event.clientY/innerHeight)*2+1;
+
+    raycaster.setFromCamera(
+      mouse,
+      camera
+    );
+
+    if(!school) return;
+
+    const hits=raycaster.intersectObjects(
+      schoolObjects,
+      true
+    );
+
+    if(hits.length){
+
+      document.getElementById(
+        "panel"
+      ).classList.add("show");
 
     }
 
-    animate();
+  }
+);
 
-  </script>
+
+// =====================================
+// CLOSE PANEL
+// =====================================
+
+document.getElementById(
+  "close"
+).onclick=()=>{
+
+  document.getElementById(
+    "panel"
+  ).classList.remove("show");
+
+};
+
+
+// =====================================
+// RESIZE
+// =====================================
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    camera.aspect=
+      innerWidth/innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight
+    );
+
+  }
+);
+
+
+// =====================================
+// ANIMATION
+// =====================================
+
+function animate(){
+
+  requestAnimationFrame(animate);
+
+  controls.update();
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+animate();
+
+</script>
 
 </body>
 </html>
