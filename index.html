@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSS World - Smart School 3D</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: #05070d;
+      font-family: Arial, sans-serif;
+    }
+
+    #info {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      color: white;
+      background: rgba(0,0,0,.65);
+      padding: 14px 18px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    #info h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      background: #05070d;
+      z-index: 20;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loading">Loading Smart School 3D...</div>
+
+  <div id="info">
+    <h2>BSS World Smart School</h2>
+    <div>Drag = Rotate</div>
+    <div>Scroll = Zoom</div>
+    <div>Right Click = Pan</div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+    // =========================
+    // SCENE
+    // =========================
+
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x05070d);
+
+    // =========================
+    // CAMERA
+    // =========================
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      5000
+    );
+
+    camera.position.set(15, 12, 20);
+
+    // =========================
+    // RENDERER
+    // =========================
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    document.body.appendChild(renderer.domElement);
+
+    // =========================
+    // LIGHTS
+    // =========================
+
+    const ambient = new THREE.HemisphereLight(
+      0xffffff,
+      0x202030,
+      2.5
+    );
+
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(
+      0xffffff,
+      4
+    );
+
+    sun.position.set(30, 50, 30);
+    sun.castShadow = true;
+
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+
+    scene.add(sun);
+
+    const fill = new THREE.DirectionalLight(
+      0x8bbcff,
+      1.5
+    );
+
+    fill.position.set(-20, 15, -20);
+
+    scene.add(fill);
+
+    // =========================
+    // GROUND
+    // =========================
+
+    const groundGeometry = new THREE.PlaneGeometry(
+      200,
+      200
+    );
+
+    const groundMaterial = new THREE.MeshStandardMaterial({
+      color: 0x18221c,
+      roughness: 0.9
+    });
+
+    const ground = new THREE.Mesh(
+      groundGeometry,
+      groundMaterial
+    );
+
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+    // =========================
+    // LOAD GLB
+    // =========================
+
+    const loader = new GLTFLoader();
+
+    loader.load(
+      "./high_school.glb",
+
+      function(gltf) {
+
+        const school = gltf.scene;
+
+        school.traverse(function(object) {
+
+          if (object.isMesh) {
+            object.castShadow = true;
+            object.receiveShadow = true;
+          }
+
+        });
+
+        scene.add(school);
+
+        // =========================
+        // AUTO CENTER + SCALE
+        // =========================
+
+        const box = new THREE.Box3().setFromObject(school);
+
+        const center = box.getCenter(
+          new THREE.Vector3()
+        );
+
+        const size = box.getSize(
+          new THREE.Vector3()
+        );
+
+        school.position.sub(center);
+
+        const maxDimension = Math.max(
+          size.x,
+          size.y,
+          size.z
+        );
+
+        const targetSize = 25;
+
+        const scale =
+          targetSize / maxDimension;
+
+        school.scale.setScalar(scale);
+
+        // Recalculate bounds
+        const newBox =
+          new THREE.Box3().setFromObject(school);
+
+        const newCenter =
+          newBox.getCenter(new THREE.Vector3());
+
+        school.position.y -= newBox.min.y;
+
+        // =========================
+        // CAMERA AUTO POSITION
+        // =========================
+
+        const newSize =
+          newBox.getSize(new THREE.Vector3());
+
+        const maxSize = Math.max(
+          newSize.x,
+          newSize.y,
+          newSize.z
+        );
+
+        const distance = maxSize * 1.8;
+
+        camera.position.set(
+          distance,
+          distance * 0.75,
+          distance
+        );
+
+        controls.target.set(
+          0,
+          newSize.y * 0.35,
+          0
+        );
+
+        controls.update();
+
+        document.getElementById(
+          "loading"
+        ).style.display = "none";
+
+      },
+
+      function(xhr) {
+
+        if (xhr.total) {
+
+          const percent =
+            (xhr.loaded / xhr.total) * 100;
+
+          document.getElementById(
+            "loading"
+          ).textContent =
+            "Loading Smart School 3D... " +
+            Math.round(percent) +
+            "%";
+        }
+
+      },
+
+      function(error) {
+
+        console.error(error);
+
+        document.getElementById(
+          "loading"
+        ).textContent =
+          "Failed to load high_school.glb";
+
+      }
+    );
+
+    // =========================
+    // CONTROLS
+    // =========================
+
+    const controls =
+      new OrbitControls(
+        camera,
+        renderer.domElement
+      );
+
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    controls.minDistance = 3;
+    controls.maxDistance = 200;
+
+    controls.target.set(0, 5, 0);
+
+    // =========================
+    // RESIZE
+    // =========================
+
+    window.addEventListener(
+      "resize",
+      function() {
+
+        camera.aspect =
+          window.innerWidth /
+          window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+          window.innerWidth,
+          window.innerHeight
+        );
+
+      }
+    );
+
+    // =========================
+    // ANIMATION
+    // =========================
+
+    function animate() {
+
+      requestAnimationFrame(animate);
+
+      controls.update();
+
+      renderer.render(
+        scene,
+        camera
+      );
+
+    }
+
+    animate();
+
+  </script>
+
+</body>
+</html>
