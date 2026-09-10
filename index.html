@@ -2,596 +2,90 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BSS WORLD — 3D Smart City</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;color:white}
 
-body{
-  overflow:hidden;
-  background:#9edcf5;
-  font-family:Arial,Helvetica,sans-serif;
-  color:white;
-}
+#ui{position:fixed;top:18px;left:18px;z-index:50;padding:16px 22px;background:rgba(3,13,22,.92);border:1px solid rgba(75,220,255,.45);border-radius:17px;box-shadow:0 15px 55px rgba(0,0,0,.3)}
+#ui .title{font-size:24px;font-weight:900;letter-spacing:5px}
+#ui .sub{margin-top:6px;color:#70e4ff;font-size:11px;letter-spacing:1.4px}
 
-/* ================= MODERN UI ================= */
+#dayNightBtn{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;padding:12px 26px;border-radius:14px;background:linear-gradient(135deg,#1e2a35,#0d1620);border:1px solid rgba(90,225,255,.5);color:#c9f5ff;font-size:14px;font-weight:900;letter-spacing:2px;cursor:pointer;font-family:Arial,Helvetica,sans-serif}
+#dayNightBtn.night{background:linear-gradient(135deg,#0d1a30,#050a15);border-color:rgba(255,220,120,.7);color:#ffe28a}
 
-#ui{
-  position:fixed;
-  top:14px;
-  left:14px;
-  z-index:50;
-  padding:13px 18px;
-  background:rgba(3,13,22,.91);
-  border:1px solid rgba(75,220,255,.42);
-  border-radius:14px;
-  box-shadow:0 12px 40px rgba(0,0,0,.28);
-  backdrop-filter:blur(12px);
-}
+#trafficStatus{position:fixed;top:18px;right:18px;z-index:50;width:340px;padding:16px;border-radius:17px;background:rgba(3,13,22,.92);border:1px solid rgba(70,220,255,.35);box-shadow:0 15px 55px rgba(0,0,0,.3)}
+#trafficStatus .heading{color:#70e4ff;font-size:10px;letter-spacing:2px;margin-bottom:8px}
+#trafficState{font-size:19px;font-weight:900;margin-bottom:5px}
+#incidentReason{color:#ffcf66;font-size:10px;letter-spacing:1px;margin-bottom:12px}
+#trafficInfo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.infoBox{padding:9px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.infoBox span{display:block;color:#91a5ae;font-size:9px;letter-spacing:1px;margin-bottom:3px}
+.infoBox strong{font-size:13px}
 
-#ui .title{
-  font-size:22px;
-  font-weight:900;
-  letter-spacing:4px;
-}
-
-#ui .sub{
-  margin-top:5px;
-  color:#70e4ff;
-  font-size:10px;
-  letter-spacing:1.3px;
-}
-
-#dayNightBtn{
-  position:fixed;
-  top:14px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:60;
-  padding:10px 23px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#1e2a35,#0d1620);
-  border:1px solid rgba(90,225,255,.5);
-  color:#c9f5ff;
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:1.7px;
-  cursor:pointer;
-  font-family:Arial,sans-serif;
-  box-shadow:0 8px 25px rgba(0,0,0,.2);
-}
-
-#dayNightBtn.night{
-  background:linear-gradient(135deg,#0d1a30,#050a15);
-  border-color:rgba(255,220,120,.7);
-  color:#ffe28a;
-}
-
-#trafficStatus{
-  position:fixed;
-  top:14px;
-  right:14px;
-  z-index:50;
-  width:315px;
-  padding:13px;
-  border-radius:14px;
-  background:rgba(3,13,22,.91);
-  border:1px solid rgba(70,220,255,.35);
-  box-shadow:0 12px 40px rgba(0,0,0,.28);
-  backdrop-filter:blur(12px);
-}
-
-#trafficStatus .heading{
-  color:#70e4ff;
-  font-size:9px;
-  letter-spacing:1.8px;
-  margin-bottom:6px;
-}
-
-#trafficState{
-  font-size:17px;
-  font-weight:900;
-  margin-bottom:4px;
-}
-
-#incidentReason{
-  color:#ffcf66;
-  font-size:9px;
-  letter-spacing:.8px;
-  margin-bottom:9px;
-}
-
-#trafficInfo{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px;
-}
-
-.infoBox{
-  padding:7px 8px;
-  border-radius:8px;
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.07);
-}
-
-.infoBox span{
-  display:block;
-  color:#91a5ae;
-  font-size:8px;
-  letter-spacing:.8px;
-  margin-bottom:2px;
-}
-
-.infoBox strong{
-  font-size:12px;
-}
-
-#aiMessage{
-  position:fixed;
-  left:50%;
-  top:92px;
-  transform:translateX(-50%);
-  z-index:55;
-  padding:10px 20px;
-  border-radius:10px;
-  background:rgba(3,13,22,.92);
-  border:1px solid rgba(90,225,255,.4);
-  color:#c9f5ff;
-  font-size:11px;
-  opacity:0;
-  transition:.4s;
-  white-space:nowrap;
-  backdrop-filter:blur(10px);
-}
-
+#aiMessage{position:fixed;left:50%;top:105px;transform:translateX(-50%);z-index:55;padding:12px 24px;border-radius:12px;background:rgba(3,13,22,.92);border:1px solid rgba(90,225,255,.4);color:#c9f5ff;font-size:12px;opacity:0;transition:.4s;white-space:nowrap}
 #aiMessage.show{opacity:1}
 
-#incident{
-  position:fixed;
-  left:14px;
-  bottom:14px;
-  z-index:55;
-  padding:9px 13px;
-  border-radius:10px;
-  background:rgba(3,13,22,.91);
-  border:1px solid rgba(255,190,70,.35);
-  font-size:10px;
-  box-shadow:0 12px 40px rgba(0,0,0,.28);
-}
+#incident{position:fixed;left:18px;bottom:18px;z-index:55;padding:11px 16px;border-radius:12px;background:rgba(3,13,22,.92);border:1px solid rgba(255,190,70,.35);font-size:11px;box-shadow:0 15px 55px rgba(0,0,0,.3)}
+#incident span{color:#ffce65;font-weight:bold}
 
-#incident span{
-  color:#ffce65;
-  font-weight:bold;
-}
+#cycleBar{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:55;width:280px;padding:8px 14px;border-radius:12px;background:rgba(3,13,22,.85);border:1px solid rgba(90,225,255,.3);font-size:10px;color:#c9d6dd;display:none;text-align:center}
+#cycleBar .bar{height:4px;margin-top:6px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
+#cycleBar .fill{height:100%;background:linear-gradient(90deg,#22cfff,#6aff9d);width:0%;transition:width .2s}
+#cycleBar .label{color:#22cfff;font-weight:900;letter-spacing:1px}
 
-#cycleBar{
-  position:fixed;
-  top:62px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:55;
-  width:260px;
-  padding:7px 12px;
-  border-radius:10px;
-  background:rgba(3,13,22,.84);
-  border:1px solid rgba(90,225,255,.3);
-  font-size:9px;
-  color:#c9d6dd;
-  display:none;
-  text-align:center;
-}
+#panel{position:fixed;right:18px;top:185px;width:390px;display:none;z-index:60;padding:24px;border-radius:18px;background:rgba(3,13,22,.92);border:1px solid rgba(70,220,255,.4);box-shadow:0 25px 80px rgba(0,0,0,.55)}
+#panel h2{color:#68e2ff;margin-bottom:9px;font-size:22px}
+#panel .type{color:#8097a2;font-size:11px;letter-spacing:1.5px;margin-bottom:15px}
+#panel p{color:#d0dce1;line-height:1.7;font-size:13px}
+.close{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;border-radius:8px;background:#172731;color:white;font-size:19px;cursor:pointer}
 
-#cycleBar .bar{
-  height:4px;
-  margin-top:5px;
-  border-radius:2px;
-  background:rgba(255,255,255,.1);
-  overflow:hidden;
-}
-
-#cycleBar .fill{
-  height:100%;
-  background:linear-gradient(90deg,#22cfff,#6aff9d);
-  width:0%;
-  transition:width .2s;
-}
-
-#cycleBar .label{
-  color:#22cfff;
-  font-weight:900;
-  letter-spacing:1px;
-}
-
-#panel{
-  position:fixed;
-  right:14px;
-  top:170px;
-  width:360px;
-  display:none;
-  z-index:60;
-  padding:20px;
-  border-radius:15px;
-  background:rgba(3,13,22,.93);
-  border:1px solid rgba(70,220,255,.4);
-  box-shadow:0 22px 65px rgba(0,0,0,.55);
-  backdrop-filter:blur(14px);
-}
-
-#panel h2{
-  color:#68e2ff;
-  margin-bottom:7px;
-  font-size:20px;
-}
-
-#panel .type{
-  color:#8097a2;
-  font-size:10px;
-  letter-spacing:1.3px;
-  margin-bottom:12px;
-}
-
-#panel p{
-  color:#d0dce1;
-  line-height:1.6;
-  font-size:12px;
-}
-
-.close{
-  position:absolute;
-  right:10px;
-  top:10px;
-  width:30px;
-  height:30px;
-  border:0;
-  border-radius:7px;
-  background:#172731;
-  color:white;
-  font-size:18px;
-  cursor:pointer;
-}
-
-#aiReason{
-  position:fixed;
-  bottom:70px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:65;
-  width:590px;
-  max-width:90vw;
-  background:rgba(3,13,22,.95);
-  border:1px solid rgba(90,225,255,.55);
-  border-radius:14px;
-  padding:14px 19px;
-  display:none;
-  box-shadow:0 18px 55px rgba(0,0,0,.75);
-  backdrop-filter:blur(14px);
-}
-
-#aiReason.hidden{
-  opacity:0;
-  pointer-events:none;
-}
-
-#aiReason .title{
-  color:#22cfff;
-  font-size:12px;
-  letter-spacing:1.7px;
-  margin-bottom:8px;
-  font-weight:900;
-  display:flex;
-  align-items:center;
-  gap:7px;
-  padding-right:30px;
-}
-
-#aiReason .title .dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:#22cfff;
-  box-shadow:0 0 10px #22cfff;
-  animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.5;transform:scale(1.3)}
-}
-
-#aiReason .reason{
-  color:#fff;
-  font-size:13px;
-  line-height:1.5;
-  margin-bottom:7px;
-}
-
+#aiReason{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:65;width:620px;max-width:90vw;background:rgba(3,13,22,.96);border:1px solid rgba(90,225,255,.55);border-radius:16px;padding:16px 22px;display:none;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+#aiReason.hidden{opacity:0;pointer-events:none}
+#aiReason .title{color:#22cfff;font-size:13px;letter-spacing:2px;margin-bottom:10px;font-weight:900;display:flex;align-items:center;gap:8px;padding-right:30px}
+#aiReason .title .dot{width:10px;height:10px;border-radius:50%;background:#22cfff;box-shadow:0 0 10px #22cfff;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+#aiReason .reason{color:#ffffff;font-size:14px;line-height:1.6;margin-bottom:8px}
 #aiReason .reason strong{color:#22cfff}
-
-#aiReason .result{
-  color:#6aff9d;
-  font-size:11px;
-  line-height:1.5;
-  padding-top:7px;
-  border-top:1px solid rgba(90,225,255,.2);
-}
-
+#aiReason .result{color:#6aff9d;font-size:12px;line-height:1.5;padding-top:8px;border-top:1px solid rgba(90,225,255,.2)}
 #aiReason .result strong{color:#6aff9d}
+#aiReason .closeReason{position:absolute;top:10px;right:10px;width:26px;height:26px;border:0;border-radius:6px;background:rgba(255,255,255,.1);color:#c9d6dd;font-size:15px;cursor:pointer}
 
-#aiReason .closeReason{
-  position:absolute;
-  top:9px;
-  right:9px;
-  width:25px;
-  height:25px;
-  border:0;
-  border-radius:6px;
-  background:rgba(255,255,255,.1);
-  color:#c9d6dd;
-  font-size:15px;
-  cursor:pointer;
-}
+#showAiBtn{position:fixed;bottom:80px;right:18px;z-index:66;padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,#1a4fc2,#0f2f8a);border:1px solid rgba(90,150,255,.7);color:white;font-weight:900;letter-spacing:1px;font-size:11px;cursor:pointer;display:none;font-family:Arial,Helvetica,sans-serif}
 
-#showAiBtn{
-  position:fixed;
-  bottom:70px;
-  right:14px;
-  z-index:66;
-  padding:9px 16px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#1a4fc2,#0f2f8a);
-  border:1px solid rgba(90,150,255,.7);
-  color:white;
-  font-weight:900;
-  letter-spacing:1px;
-  font-size:10px;
-  cursor:pointer;
-  display:none;
-  font-family:Arial,sans-serif;
-}
+#menuBtn{position:fixed;top:120px;left:18px;z-index:70;padding:12px 20px;border-radius:12px;background:linear-gradient(135deg,#22cfff,#0a8fbf);border:1px solid rgba(255,255,255,.4);color:#03141b;font-weight:900;letter-spacing:1.5px;font-size:13px;cursor:pointer;font-family:Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(30,180,220,.5);display:flex;align-items:center;gap:8px}
+#menuBtn .icon{font-size:18px;line-height:1}
 
-#menuBtn{
-  position:fixed;
-  top:105px;
-  left:14px;
-  z-index:70;
-  padding:10px 17px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#22cfff,#0a8fbf);
-  border:1px solid rgba(255,255,255,.4);
-  color:#03141b;
-  font-weight:900;
-  letter-spacing:1.3px;
-  font-size:12px;
-  cursor:pointer;
-  font-family:Arial,sans-serif;
-  box-shadow:0 8px 25px rgba(30,180,220,.4);
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-#menuBtn .icon{
-  font-size:17px;
-  line-height:1;
-}
-
-#mainMenu{
-  position:fixed;
-  top:0;
-  left:-320px;
-  z-index:75;
-  width:320px;
-  height:100vh;
-  background:linear-gradient(180deg,rgba(3,13,22,.98),rgba(6,20,32,.98));
-  border-right:2px solid rgba(90,225,255,.4);
-  box-shadow:8px 0 40px rgba(0,0,0,.7);
-  transition:left .35s cubic-bezier(.4,0,.2,1);
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-}
-
+#mainMenu{position:fixed;top:0;left:-340px;z-index:75;width:340px;height:100vh;background:linear-gradient(180deg,rgba(3,13,22,.98),rgba(6,20,32,.98));border-right:2px solid rgba(90,225,255,.4);box-shadow:8px 0 40px rgba(0,0,0,.7);transition:left .35s cubic-bezier(.4,.0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
 #mainMenu.open{left:0}
+#mainMenu .menuHeader{padding:20px 22px;border-bottom:1px solid rgba(90,225,255,.25);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(3,13,22,.98);z-index:2}
+#mainMenu .menuHeader .title{font-size:16px;font-weight:900;letter-spacing:2px;color:#22cfff}
+#mainMenu .menuHeader .closeBtn{width:32px;height:32px;border:0;border-radius:8px;background:rgba(255,255,255,.1);color:#c9d6dd;font-size:18px;cursor:pointer}
+#mainMenu .menuSubTitle{padding:14px 22px 8px;color:#70e4ff;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.75}
+#mainMenu .menuList{padding:0 12px 12px;display:flex;flex-direction:column;gap:6px}
 
-#mainMenu .menuHeader{
-  padding:16px 19px;
-  border-bottom:1px solid rgba(90,225,255,.25);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  background:rgba(3,13,22,.98);
-  z-index:2;
-}
-
-#mainMenu .menuHeader .title{
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:1.7px;
-  color:#22cfff;
-}
-
-#mainMenu .menuHeader .closeBtn{
-  width:30px;
-  height:30px;
-  border:0;
-  border-radius:7px;
-  background:rgba(255,255,255,.1);
-  color:#c9d6dd;
-  font-size:17px;
-  cursor:pointer;
-}
-
-#mainMenu .menuSubTitle{
-  padding:11px 19px 6px;
-  color:#70e4ff;
-  font-size:9px;
-  letter-spacing:1.7px;
-  text-transform:uppercase;
-  opacity:.75;
-}
-
-#mainMenu .menuList{
-  padding:0 10px 9px;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-
-.menuItem{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-  color:#d0dce1;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.menuItem:hover{
-  background:rgba(34,207,255,.15);
-  border-color:rgba(34,207,255,.5);
-  color:#22cfff;
-  transform:translateX(4px);
-}
-
-.menuItem .mIcon{
-  font-size:18px;
-  width:26px;
-  text-align:center;
-  filter:drop-shadow(0 0 4px rgba(34,207,255,.5));
-}
-
+.menuItem{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#d0dce1;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.menuItem:hover{background:rgba(34,207,255,.15);border-color:rgba(34,207,255,.5);color:#22cfff;transform:translateX(4px)}
+.menuItem .mIcon{font-size:20px;width:28px;text-align:center;filter:drop-shadow(0 0 4px rgba(34,207,255,.5))}
 .menuItem .mLabel{flex:1}
+.menuItem.active{background:rgba(34,207,255,.25);border-color:#22cfff;color:#22cfff}
+.menuItem .arrow{font-size:12px;opacity:.5}
 
-.menuItem.active{
-  background:rgba(34,207,255,.25);
-  border-color:#22cfff;
-  color:#22cfff;
-}
-
-.menuItem .arrow{
-  font-size:11px;
-  opacity:.5;
-}
-
-.cameraOptions{
-  display:none;
-  flex-direction:column;
-  gap:3px;
-  padding:6px 0 6px 36px;
-}
-
+.cameraOptions{display:none;flex-direction:column;gap:4px;padding:8px 0 8px 40px}
 .cameraOptions.show{display:flex}
+.camOption{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.03);border-left:3px solid #22cfff;color:#c9d6dd;font-size:11px;cursor:pointer;transition:.2s}
+.camOption:hover{background:rgba(34,207,255,.15);color:white;transform:translateX(4px)}
+.camOption .camIcon{font-size:14px}
 
-.camOption{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 10px;
-  border-radius:7px;
-  background:rgba(255,255,255,.03);
-  border-left:3px solid #22cfff;
-  color:#c9d6dd;
-  font-size:10px;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.camOption:hover{
-  background:rgba(34,207,255,.15);
-  color:white;
-  transform:translateX(4px);
-}
-
-.camOption .camIcon{font-size:13px}
-
-#camIndicator{
-  position:fixed;
-  top:14px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:68;
-  padding:9px 18px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#c22b1a,#8a1f0f);
-  border:2px solid rgba(255,150,80,.8);
-  color:white;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:1.3px;
-  display:none;
-  align-items:center;
-  gap:9px;
-  box-shadow:0 9px 30px rgba(200,50,20,.6);
-}
-
+#camIndicator{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:68;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#c22b1a,#8a1f0f);border:2px solid rgba(255,150,80,.8);color:white;font-size:12px;font-weight:900;letter-spacing:1.5px;display:none;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(200,50,20,.6)}
 #camIndicator.show{display:flex}
+#camIndicator .rec{width:10px;height:10px;border-radius:50%;background:white;animation:recBlink 1s infinite}
+@keyframes recBlink{0%,100%{opacity:1}50%{opacity:.3}}
+#camIndicator .camBtn{padding:5px 12px;border:0;border-radius:6px;background:rgba(255,255,255,.2);color:white;font-size:10px;cursor:pointer;font-family:Arial;font-weight:900;letter-spacing:1px}
 
-#camIndicator .rec{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:white;
-  animation:recBlink 1s infinite;
-}
-
-@keyframes recBlink{
-  0%,100%{opacity:1}
-  50%{opacity:.3}
-}
-
-#camIndicator .camBtn{
-  padding:4px 10px;
-  border:0;
-  border-radius:5px;
-  background:rgba(255,255,255,.2);
-  color:white;
-  font-size:9px;
-  cursor:pointer;
-  font-family:Arial;
-  font-weight:900;
-  letter-spacing:1px;
-}
-
-#hint{
-  position:fixed;
-  bottom:14px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:50;
-  padding:8px 15px;
-  border-radius:10px;
-  background:rgba(3,14,22,.88);
-  border:1px solid rgba(255,255,255,.14);
-  color:#d2e1e7;
-  font-size:10px;
-  white-space:nowrap;
-}
-
-/* MOBILE */
-@media(max-width:800px){
-  #trafficStatus{
-    width:250px;
-    transform:scale(.85);
-    transform-origin:top right;
-  }
-
-  #ui .title{font-size:18px}
-  #ui .sub{font-size:8px}
-
-  #panel{
-    width:310px;
-    right:10px;
-  }
-}
+#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;padding:10px 18px;border-radius:12px;background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);color:#d2e1e7;font-size:11px;white-space:nowrap}
 </style>
 </head>
 
@@ -606,7 +100,7 @@ body{
 
 <div id="camIndicator">
   <span class="rec"></span>
-  <span id="camIndicatorText">LOCKED</span>
+  <span id="camIndicatorText">🔒 LOCKED</span>
   <button class="camBtn" onclick="exitCameraView()">✕ EXIT</button>
 </div>
 
@@ -614,56 +108,29 @@ body{
   <div class="heading">AI TRAFFIC MANAGEMENT</div>
   <div id="trafficState">TRAFFIC NORMAL</div>
   <div id="incidentReason">ALL 4 ENTRY ROUTES OPERATING NORMALLY</div>
-
   <div id="trafficInfo">
-    <div class="infoBox">
-      <span>SIMULATION</span>
-      <strong id="simulationTime">00:00</strong>
-    </div>
-
-    <div class="infoBox">
-      <span>TRAFFIC</span>
-      <strong id="trafficLevel">NORMAL</strong>
-    </div>
-
-    <div class="infoBox">
-      <span>FLOW</span>
-      <strong id="trafficFlow">92%</strong>
-    </div>
-
-    <div class="infoBox">
-      <span>AI MODE</span>
-      <strong id="aiMode">MONITORING</strong>
-    </div>
+    <div class="infoBox"><span>SIMULATION</span><strong id="simulationTime">00:00</strong></div>
+    <div class="infoBox"><span>TRAFFIC</span><strong id="trafficLevel">NORMAL</strong></div>
+    <div class="infoBox"><span>FLOW</span><strong id="trafficFlow">92%</strong></div>
+    <div class="infoBox"><span>AI MODE</span><strong id="aiMode">MONITORING</strong></div>
   </div>
 </div>
 
 <div id="aiMessage">AI Traffic Controller</div>
-
-<div id="incident">
-  <span>LIVE:</span> Monitoring 4 city entry routes
-</div>
+<div id="incident"><span>LIVE:</span> Monitoring 4 city entry routes</div>
 
 <div id="cycleBar">
   <div class="label" id="cycleLabel">NEXT TRAFFIC EVENT IN</div>
-  <div class="bar">
-    <div class="fill" id="cycleFill"></div>
-  </div>
+  <div class="bar"><div class="fill" id="cycleFill"></div></div>
 </div>
 
 <div id="aiReason">
   <button class="closeReason" onclick="hideAiReason()">×</button>
-
-  <div class="title">
-    <span class="dot"></span>
-    <span id="aiReasonTitle">AI ACTION LOG</span>
-  </div>
-
+  <div class="title"><span class="dot"></span><span id="aiReasonTitle">AI ACTION LOG</span></div>
   <div class="reason" id="aiReasonText"></div>
   <div class="result" id="aiResultText"></div>
 </div>
-
-<button id="showAiBtn" onclick="showAiReason()">SHOW AI LOG</button>
+<button id="showAiBtn" onclick="showAiReason()">👁 SHOW AI LOG</button>
 
 <button id="menuBtn" onclick="toggleMenu()">
   <span class="icon">☰</span>
@@ -671,32 +138,27 @@ body{
 </button>
 
 <div id="mainMenu">
-
   <div class="menuHeader">
-    <div class="title">SMART CITY</div>
+    <div class="title">🏙 SMART CITY</div>
     <button class="closeBtn" onclick="toggleMenu()">×</button>
   </div>
 
-  <div class="menuSubTitle">LOCATIONS</div>
+  <div class="menuSubTitle">🏛 LOCATIONS</div>
   <div class="menuList" id="menuLocations"></div>
 
-  <div class="menuSubTitle">VEHICLES</div>
+  <div class="menuSubTitle">🚗 VEHICLES</div>
   <div class="menuList" id="menuVehicles"></div>
 
-  <div class="menuSubTitle">CITY VIEW</div>
-
+  <div class="menuSubTitle">🌍 CITY VIEW</div>
   <div class="menuList">
-
     <div class="menuItem" onclick="goToOverview()">
       <span class="mIcon">🌐</span>
       <span class="mLabel">360° CITY OVERVIEW</span>
     </div>
-
     <div class="menuItem" onclick="goToTopDown()">
       <span class="mIcon">🛰</span>
       <span class="mLabel">TOP-DOWN VIEW</span>
     </div>
-
   </div>
 </div>
 
@@ -719,2893 +181,1328 @@ body{
 </script>
 
 <script type="module">
-
 import * as THREE from "three";
-import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-/* =========================================================
+/* ═══════════════════════════════════════════
    SCENE
-========================================================= */
-
+   ═══════════════════════════════════════════ */
 const scene = new THREE.Scene();
-
-const DAY_BG = new THREE.Color(0xa8dff5);
+const DAY_BG = new THREE.Color(0xa9dcf4);
 const NIGHT_BG = new THREE.Color(0x050810);
-
 scene.background = DAY_BG.clone();
 
-const camera = new THREE.PerspectiveCamera(
-  55,
-  window.innerWidth/window.innerHeight,
-  5,
-  20000
-);
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 5, 18000);
+camera.position.set(1500, 1000, 1500);
 
-camera.position.set(1500,1050,1500);
-
-const renderer = new THREE.WebGLRenderer({
-  antialias:true,
-  powerPreference:"high-performance"
-});
-
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
-
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-
 document.body.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(
-  camera,
-  renderer.domElement
-);
-
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = .15;
-
-controls.minDistance = 180;
+controls.dampingFactor = 0.15;
+controls.minDistance = 200;
 controls.maxDistance = 7000;
+controls.target.set(0, 5, 0);
 
-controls.target.set(0,5,0);
-
-/* =========================================================
-   LIGHTING
-========================================================= */
-
-const ambient = new THREE.HemisphereLight(
-  0xf8fcff,
-  0x315c38,
-  3.9
-);
-
+/* ═══════════════════════════════════════════
+   LIGHTS
+   ═══════════════════════════════════════════ */
+const ambient = new THREE.HemisphereLight(0xf8fcff, 0x315c38, 3.7);
 scene.add(ambient);
 
-const sun = new THREE.DirectionalLight(
-  0xffffff,
-  3.7
-);
-
-sun.position.set(-800,1400,500);
-
+const sun = new THREE.DirectionalLight(0xffffff, 3.5);
+sun.position.set(-800, 1400, 500);
 scene.add(sun);
 
-/* =========================================================
+/* ═══════════════════════════════════════════
    MATERIALS
-========================================================= */
-
-function mat(c,r=.8,m=0){
-  return new THREE.MeshStandardMaterial({
-    color:c,
-    roughness:r,
-    metalness:m
-  });
+   ═══════════════════════════════════════════ */
+function mat(c, r=.8, m=0){
+  return new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m });
 }
 
-const grassMaterial = mat(0x3f8248,.98);
+const grassMaterial = mat(0x4d8f50, .98);
+const roadMaterial = mat(0x20272a, .96);
+const yellowLineMaterial = mat(0xf5c84b, .65);
+const curbMaterial = mat(0x697578, .88);
+const darkMaterial = mat(0x182327, .65, .15);
+const blueMaterial = mat(0x087fa8, .35, .25);
 
-const roadMaterial = mat(0x171f23,.82,.15);
-
-const yellowLineMaterial = mat(
-  0xf5c84b,
-  .5,
-  .15
-);
-
-const curbMaterial = mat(
-  0x65747a,
-  .82,
-  .15
-);
-
-const darkMaterial = mat(
-  0x182327,
-  .6,
-  .15
-);
-
-const blueMaterial = mat(
-  0x087fa8,
-  .35,
-  .25
-);
-
-/* =========================================================
-   MODERN GROUND
-========================================================= */
-
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(10000,10000),
-  grassMaterial
-);
-
+/* ═══════════════════════════════════════════
+   GROUND — SMALLER (10000 x 10000)
+   ═══════════════════════════════════════════ */
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(10000, 10000), grassMaterial);
 ground.rotation.x = -Math.PI/2;
-
 scene.add(ground);
 
-/* =========================================================
-   ROADS — COMPACT CITY
-========================================================= */
-
-function makeRoad(x,z,w,d){
-
-  const r = new THREE.Mesh(
-    new THREE.BoxGeometry(w,.45,d),
-    roadMaterial
-  );
-
-  r.position.set(x,4.7,z);
-
-  scene.add(r);
-
-  const line = new THREE.Mesh(
-    new THREE.BoxGeometry(
-      w>d?w:2,
-      .08,
-      w>d?2:d
-    ),
+/* ═══════════════════════════════════════════
+   ROADS — WIDER (80 units) and LONGER
+   ═══════════════════════════════════════════ */
+function makeRoad(x, z, w, d){
+  const r = new THREE.Mesh(new THREE.BoxGeometry(w, .45, d), roadMaterial);
+  r.position.set(x, 4.7, z); scene.add(r);
+  const c = new THREE.Mesh(
+    new THREE.BoxGeometry(w > d ? w : 3, .1, w > d ? 3 : d),
     yellowLineMaterial
   );
-
-  line.position.set(x,5,z);
-
-  scene.add(line);
+  c.position.set(x, 5, z); scene.add(c);
 }
 
-/*
-  CITY COMPACTED:
-  old ±1500 / 2500
-  new ±1250 / 2100
-*/
+makeRoad(0, -1400, 5500, 80);
+makeRoad(0, 0, 5500, 80);
+makeRoad(0, 1400, 5500, 80);
+makeRoad(-1400, 0, 80, 3800);
+makeRoad(0, 0, 80, 3800);
+makeRoad(1400, 0, 80, 3800);
 
-makeRoad(0,-1250,4200,50);
-makeRoad(0,0,4200,50);
-makeRoad(0,1250,4200,50);
-
-makeRoad(-1250,0,50,3500);
-makeRoad(0,0,50,3500);
-makeRoad(1250,0,50,3500);
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    SIDEWALKS
-========================================================= */
-
-function sw(x,z,w,d){
-
-  const s = new THREE.Mesh(
-    new THREE.BoxGeometry(w,.28,d),
-    curbMaterial
-  );
-
-  s.position.set(x,5.05,z);
-
-  scene.add(s);
+   ═══════════════════════════════════════════ */
+function sw(x, z, w, d){
+  const s = new THREE.Mesh(new THREE.BoxGeometry(w, .28, d), curbMaterial);
+  s.position.set(x, 5.05, z); scene.add(s);
 }
+sw(-1000, -1400, 2000, 10);
+sw( 1000, -1400, 2000, 10);
+sw(-1000,  1400, 2000, 10);
+sw( 1000,  1400, 2000, 10);
 
-sw(-800,-1250,1600,8);
-sw(800,-1250,1600,8);
-
-sw(-800,1250,1600,8);
-sw(800,1250,1600,8);
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    SIGN BOARD
-========================================================= */
-
-function board(
-  text,
-  x,
-  y,
-  z,
-  w=80,
-  h=12,
-  color
-){
-
+   ═══════════════════════════════════════════ */
+function board(text, x, y, z, w=80, h=12, color){
   const g = new THREE.Group();
-
-  g.position.set(x,y,z);
-
-  const pole = new THREE.Mesh(
-    new THREE.CylinderGeometry(.5,.7,16,6),
-    darkMaterial
+  g.position.set(x, y, z);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.5, .7, 16, 6), darkMaterial);
+  pole.position.y = 8; g.add(pole);
+  const bMat = color ? mat(color, .35, .25) : blueMaterial;
+  const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .9), bMat);
+  b.position.y = 13; g.add(b);
+  const c = document.createElement("canvas");
+  c.width = 1400; c.height = 350;
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = color ? "#" + color.toString(16).padStart(6, "0") : "#075c7b";
+  ctx.fillRect(0, 0, 1400, 350);
+  ctx.strokeStyle = "#78e9ff"; ctx.lineWidth = 12;
+  ctx.strokeRect(10, 10, 1380, 330);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 88px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 700, 175);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Mesh(
+    new THREE.PlaneGeometry(w - 1, h - .8),
+    new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
   );
-
-  pole.position.y=8;
-
-  g.add(pole);
-
-  const bMat = color
-    ? mat(color,.35,.25)
-    : blueMaterial;
-
-  const b = new THREE.Mesh(
-    new THREE.BoxGeometry(w,h,.9),
-    bMat
-  );
-
-  b.position.y=13;
-
-  g.add(b);
-
-  const c=document.createElement("canvas");
-
-  c.width=1400;
-  c.height=350;
-
-  const ctx=c.getContext("2d");
-
-  ctx.fillStyle=color
-    ? "#"+color.toString(16).padStart(6,"0")
-    : "#075c7b";
-
-  ctx.fillRect(0,0,1400,350);
-
-  ctx.strokeStyle="#78e9ff";
-  ctx.lineWidth=12;
-
-  ctx.strokeRect(10,10,1380,330);
-
-  ctx.fillStyle="#fff";
-
-  ctx.font="bold 88px Arial";
-
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-
-  ctx.fillText(text,700,175);
-
-  const tex=new THREE.CanvasTexture(c);
-
-  tex.colorSpace=THREE.SRGBColorSpace;
-
-  const s=new THREE.Mesh(
-    new THREE.PlaneGeometry(w-1,h-.8),
-    new THREE.MeshBasicMaterial({
-      map:tex,
-      side:THREE.DoubleSide
-    })
-  );
-
-  s.position.set(0,13,.5);
-
+  s.position.set(0, 13, .5);
   g.add(s);
-
   scene.add(g);
-
   return g;
 }
 
-/* =========================================================
+/* ═══════════════════════════════════════════
    STREET LIGHTS
-========================================================= */
-
-const streetBulbMats=[];
-
-function sl(x,z){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,5,z);
-
-  const pole=new THREE.Mesh(
-    new THREE.CylinderGeometry(.22,.3,12,5),
-    darkMaterial
-  );
-
-  pole.position.y=6;
-
-  g.add(pole);
-
-  const arm=new THREE.Mesh(
-    new THREE.BoxGeometry(4,.22,.22),
-    darkMaterial
-  );
-
-  arm.position.set(1.7,10.5,0);
-
-  g.add(arm);
-
-  const bMat=new THREE.MeshStandardMaterial({
-    color:0xfff2b0,
-    emissive:0xffd36a,
-    emissiveIntensity:.9
+   ═══════════════════════════════════════════ */
+const streetBulbMats = [];
+function sl(x, z){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.22, .3, 12, 5), darkMaterial);
+  pole.position.y = 6; g.add(pole);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(4, .22, .22), darkMaterial);
+  arm.position.set(1.7, 10.5, 0); g.add(arm);
+  const bMat = new THREE.MeshStandardMaterial({
+    color: 0xfff2b0, emissive: 0xffd36a, emissiveIntensity: 0.9
   });
-
-  const b=new THREE.Mesh(
-    new THREE.SphereGeometry(.6,8,8),
-    bMat
-  );
-
-  b.position.set(3.4,10.3,0);
-
-  g.add(b);
-
+  const b = new THREE.Mesh(new THREE.SphereGeometry(.6, 8, 8), bMat);
+  b.position.set(3.4, 10.3, 0); g.add(b);
   scene.add(g);
-
   streetBulbMats.push(bMat);
 }
+for(let x=-2200; x<=2200; x+=280){ sl(x, -1360); sl(x, 1360); }
+for(let z=-1300; z<=1300; z+=280){ sl(-1360, z); sl(1360, z); }
 
-/* COMPACT LIGHT GRID */
-
-for(let x=-1850;x<=1850;x+=300){
-  sl(x,-1210);
-  sl(x,1210);
-}
-
-for(let z=-1100;z<=1100;z+=300){
-  sl(-1210,z);
-  sl(1210,z);
-}
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    TRAFFIC LIGHTS
-========================================================= */
-
-const trafficLights=[];
-
-function tl(x,z){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,5,z);
-
-  const pole=new THREE.Mesh(
-    new THREE.CylinderGeometry(.2,.25,10,5),
-    darkMaterial
-  );
-
-  pole.position.y=5;
-
-  g.add(pole);
-
-  const box=new THREE.Mesh(
-    new THREE.BoxGeometry(1.8,5.5,1.5),
-    darkMaterial
-  );
-
-  box.position.y=8.5;
-
-  g.add(box);
-
-  function light(color,y){
-
-    const m=new THREE.Mesh(
-      new THREE.SphereGeometry(.38,8,8),
-      new THREE.MeshStandardMaterial({
-        color,
-        emissive:color,
-        emissiveIntensity:0
-      })
+   ═══════════════════════════════════════════ */
+const trafficLights = [];
+function tl(x, z){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.2, .25, 10, 5), darkMaterial);
+  pole.position.y = 5; g.add(pole);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(1.8, 5.5, 1.5), darkMaterial);
+  box.position.y = 8.5; g.add(box);
+  function light(color, y){
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(.38, 8, 8),
+      new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0 })
     );
-
-    m.position.set(0,y,.8);
-
-    g.add(m);
-
+    m.position.set(0, y, .8); g.add(m);
     return m;
   }
-
-  const r=light(0xff2222,10);
-  const y=light(0xffcc22,8.5);
-  const gr=light(0x22ff66,7);
-
+  const r = light(0xff2222, 10);
+  const y = light(0xffcc22, 8.5);
+  const gr = light(0x22ff66, 7);
   scene.add(g);
-
-  trafficLights.push({
-    r,y,gr,
-    phase:Math.random()*10
-  });
+  trafficLights.push({ r, y, gr, phase: Math.random()*10 });
 }
+tl(-1400, -1400); tl(0, -1400); tl(1400, -1400);
+tl(-1400, 0);     tl(0, 0);     tl(1400, 0);
+tl(-1400, 1400);  tl(0, 1400);  tl(1400, 1400);
 
-tl(-1250,-1250);
-tl(0,-1250);
-tl(1250,-1250);
-
-tl(-1250,0);
-tl(0,0);
-tl(1250,0);
-
-tl(-1250,1250);
-tl(0,1250);
-tl(1250,1250);
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    AI TRAFFIC CONTROLLER
-========================================================= */
+   ═══════════════════════════════════════════ */
+const controller = new THREE.Group();
+controller.position.set(0, 5, 0);
 
-const controller=new THREE.Group();
-
-controller.position.set(0,5,0);
-
-const controllerBase=new THREE.Mesh(
-  new THREE.CylinderGeometry(65,72,3,24),
-  mat(0x142f3b,.28,.4)
+const controllerBase = new THREE.Mesh(
+  new THREE.CylinderGeometry(60, 68, 3, 24),
+  mat(0x142f3b, .28, .4)
 );
+controllerBase.position.y = 1.5; controller.add(controllerBase);
 
-controllerBase.position.y=1.5;
-
-controller.add(controllerBase);
-
-const controllerRing=new THREE.Mesh(
-  new THREE.TorusGeometry(63,1.3,8,36),
-  new THREE.MeshStandardMaterial({
-    color:0x32dfff,
-    emissive:0x18cfff,
-    emissiveIntensity:2.2
-  })
+const controllerRing = new THREE.Mesh(
+  new THREE.TorusGeometry(58, 1.3, 8, 36),
+  new THREE.MeshStandardMaterial({ color: 0x32dfff, emissive: 0x18cfff, emissiveIntensity: 2.2 })
 );
-
-controllerRing.rotation.x=Math.PI/2;
-controllerRing.position.y=3.2;
-
+controllerRing.rotation.x = Math.PI/2; controllerRing.position.y = 3.2;
 controller.add(controllerRing);
 
-const controllerRing2=new THREE.Mesh(
-  new THREE.TorusGeometry(52,.8,8,36),
-  new THREE.MeshStandardMaterial({
-    color:0x22bfff,
-    emissive:0x0a9fdf,
-    emissiveIntensity:1.8
-  })
+const controllerRing2 = new THREE.Mesh(
+  new THREE.TorusGeometry(48, .8, 8, 36),
+  new THREE.MeshStandardMaterial({ color: 0x22bfff, emissive: 0x0a9fdf, emissiveIntensity: 1.8 })
 );
-
-controllerRing2.rotation.x=Math.PI/2;
-controllerRing2.position.y=5;
-
+controllerRing2.rotation.x = Math.PI/2; controllerRing2.position.y = 5;
 controller.add(controllerRing2);
 
-const controllerTower=new THREE.Mesh(
-  new THREE.BoxGeometry(26,45,26),
-  mat(0x185a72,.25,.35)
+const controllerTower = new THREE.Mesh(
+  new THREE.BoxGeometry(24, 42, 24),
+  mat(0x185a72, .25, .35)
 );
+controllerTower.position.y = 24; controller.add(controllerTower);
 
-controllerTower.position.y=25;
-
-controller.add(controllerTower);
-
-const controllerUpper=new THREE.Mesh(
-  new THREE.BoxGeometry(22,16,22),
-  new THREE.MeshStandardMaterial({
-    color:0x0a3345,
-    emissive:0x1a7a9a,
-    emissiveIntensity:1.8
-  })
+const controllerUpper = new THREE.Mesh(
+  new THREE.BoxGeometry(20, 15, 20),
+  new THREE.MeshStandardMaterial({ color: 0x0a3345, emissive: 0x1a7a9a, emissiveIntensity: 1.8 })
 );
+controllerUpper.position.y = 48; controller.add(controllerUpper);
 
-controllerUpper.position.y=50;
-
-controller.add(controllerUpper);
-
-const aiScreenMats=[];
-
-const screenPositions=[
-  {x:0,y:25,z:14,ry:0},
-  {x:0,y:25,z:-14,ry:Math.PI},
-  {x:14,y:25,z:0,ry:Math.PI/2},
-  {x:-14,y:25,z:0,ry:-Math.PI/2}
+const aiScreenMats = [];
+const screenPositions = [
+  { x: 0, y: 24, z: 13, ry: 0 },
+  { x: 0, y: 24, z: -13, ry: Math.PI },
+  { x: 13, y: 24, z: 0, ry: Math.PI/2 },
+  { x: -13, y: 24, z: 0, ry: -Math.PI/2 }
 ];
-
-screenPositions.forEach(sp=>{
-
-  const m=new THREE.MeshStandardMaterial({
-    color:0x03141b,
-    emissive:0x21cfff,
-    emissiveIntensity:2.6
+screenPositions.forEach(sp => {
+  const m = new THREE.MeshStandardMaterial({
+    color: 0x03141b, emissive: 0x21cfff, emissiveIntensity: 2.6
   });
-
-  const s=new THREE.Mesh(
-    new THREE.BoxGeometry(12,9,.4),
-    m
-  );
-
-  s.position.set(sp.x,sp.y,sp.z);
-  s.rotation.y=sp.ry;
-
+  const s = new THREE.Mesh(new THREE.BoxGeometry(11, 8, .4), m);
+  s.position.set(sp.x, sp.y, sp.z); s.rotation.y = sp.ry;
   controller.add(s);
-
   aiScreenMats.push(m);
 });
 
-const radar=new THREE.Mesh(
-  new THREE.TorusGeometry(10,.5,8,32),
-  new THREE.MeshStandardMaterial({
-    color:0x61e7ff,
-    emissive:0x23dfff,
-    emissiveIntensity:2.5
-  })
+const radar = new THREE.Mesh(
+  new THREE.TorusGeometry(9, .5, 8, 32),
+  new THREE.MeshStandardMaterial({ color: 0x61e7ff, emissive: 0x23dfff, emissiveIntensity: 2.5 })
 );
+radar.rotation.x = Math.PI/2; radar.position.y = 58; controller.add(radar);
 
-radar.rotation.x=Math.PI/2;
-radar.position.y=60;
-
-controller.add(radar);
-
-const controllerSig=new THREE.Mesh(
-  new THREE.SphereGeometry(2.6,12,12),
-  new THREE.MeshStandardMaterial({
-    color:0x66e5ff,
-    emissive:0x33dfff,
-    emissiveIntensity:3.5
-  })
+const controllerSig = new THREE.Mesh(
+  new THREE.SphereGeometry(2.4, 12, 12),
+  new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 3.5 })
 );
-
-controllerSig.position.y=78;
-
-controller.add(controllerSig);
+controllerSig.position.y = 74; controller.add(controllerSig);
 
 scene.add(controller);
 
-/* =========================================================
-   LOADER
-========================================================= */
+/* ═══════════════════════════════════════════
+   LOADER + CLICKABLE
+   ═══════════════════════════════════════════ */
+const loader = new GLTFLoader();
+const clickable = [];
 
-const loader=new GLTFLoader();
-
-const clickable=[];
-
-function prep(obj,size){
-
-  const box=new THREE.Box3().setFromObject(obj);
-
-  const s=new THREE.Vector3();
-
+function prep(obj, size){
+  const box = new THREE.Box3().setFromObject(obj);
+  const s = new THREE.Vector3();
   box.getSize(s);
-
-  const maxD=Math.max(s.x,s.y,s.z);
-
-  obj.scale.setScalar(
-    size/Math.max(maxD,.001)
-  );
-
-  const b2=new THREE.Box3().setFromObject(obj);
-
-  const c=new THREE.Vector3();
-
+  const maxD = Math.max(s.x, s.y, s.z);
+  obj.scale.setScalar(size / Math.max(maxD, .001));
+  const b2 = new THREE.Box3().setFromObject(obj);
+  const c = new THREE.Vector3();
   b2.getCenter(c);
-
-  obj.position.x-=c.x;
-  obj.position.z-=c.z;
-  obj.position.y-=b2.min.y;
+  obj.position.x -= c.x;
+  obj.position.z -= c.z;
+  obj.position.y -= b2.min.y;
 }
 
-/* =========================================================
-   TREES
-========================================================= */
+/* ═══════════════════════════════════════════
+   TREES + FLOWERS (fill empty spaces)
+   ═══════════════════════════════════════════ */
+const treeTrunkMat = mat(0x6b4a2f, .95, .05);
+const treeLeafMat = mat(0x2d6e3d, .9);
+const treeLeafMat2 = mat(0x3a8a4c, .9);
+const treeGeo1 = new THREE.CylinderGeometry(1.4, 2, 16, 5);
+const treeGeo2 = new THREE.ConeGeometry(13, 26, 6);
 
-const treeTrunkMat=mat(0x6b4a2f,.95,.05);
-const treeLeafMat=mat(0x2d6e3d,.9);
-
-const treeGeo1=
-  new THREE.CylinderGeometry(1.4,2,16,5);
-
-const treeGeo2=
-  new THREE.ConeGeometry(13,26,6);
-
-function tree(x,z,s=1){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,5,z);
-
-  g.scale.setScalar(s);
-
-  const t=new THREE.Mesh(
-    treeGeo1,
-    treeTrunkMat
-  );
-
-  t.position.y=8;
-
-  g.add(t);
-
-  const l=new THREE.Mesh(
-    treeGeo2,
-    treeLeafMat
-  );
-
-  l.position.y=25;
-
-  g.add(l);
-
+function tree(x, z, s=1){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z); g.scale.setScalar(s);
+  const t = new THREE.Mesh(treeGeo1, treeTrunkMat); t.position.y = 8; g.add(t);
+  const l = new THREE.Mesh(treeGeo2, Math.random() > 0.5 ? treeLeafMat : treeLeafMat2);
+  l.position.y = 25; g.add(l);
   scene.add(g);
 }
 
-/* tighter tree groups */
-
-[
-  [430,-650],[620,-650],[810,-650],[1000,-650],
-  [430,-500],[620,-500],[810,-500],[1000,-500],
-
-  [430,650],[620,650],[810,650],[1000,650],
-  [430,500],[620,500],[810,500],[1000,500],
-
-  [-430,-650],[-620,-650],[-810,-650],[-1000,-650],
-  [-430,650],[-620,650],[-810,650],[-1000,650]
-].forEach(p=>tree(p[0],p[1],1.1));
-
-/* =========================================================
-   BUILDINGS — COMPACT POSITIONS
-========================================================= */
-
-function bld(file,size,pos,type,name){
-
-  loader.load(
-    file,
-    g=>{
-
-      const b=g.scene;
-
-      prep(b,size);
-
-      b.position.set(
-        pos[0],
-        5,
-        pos[1]
-      );
-
-      scene.add(b);
-
-      clickable.push({
-        object:b,
-        type,
-        name:name||type
-      });
-
-    },
-    undefined,
-    ()=>{
-      console.log("Missing:",file);
-    }
+/* FLOWERS — colorful small dots */
+const flowerColors = [0xff6b6b, 0xffdd57, 0xff8fab, 0xa29bfe, 0x74b9ff, 0xfd79a8];
+function flower(x, z){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  /* stem */
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(.15, .15, 3, 4),
+    mat(0x2d6e3d, .9)
   );
+  stem.position.y = 1.5;
+  g.add(stem);
+  /* flower head */
+  const head = new THREE.Mesh(
+    new THREE.SphereGeometry(.7, 6, 6),
+    new THREE.MeshStandardMaterial({
+      color: flowerColors[Math.floor(Math.random() * flowerColors.length)],
+      emissive: 0x222222,
+      emissiveIntensity: .3,
+      roughness: .7
+    })
+  );
+  head.position.y = 3.3;
+  g.add(head);
+  scene.add(g);
 }
 
-/*
-  MAIN CITY:
-  School       -650,-650
-  Hospital      650,-650
-  Society      -650, 650
-  Bank          650, 650
-*/
+/* TREES — scattered around the entire city */
+const treePositions = [
+  /* Around school */
+  [-1100, -700], [-1200, -800], [-1200, -900], [-1100, -1000],
+  [-500, -1100], [-400, -1200], [-300, -1100],
+  /* Around hospital */
+  [1100, -700], [1200, -800], [1200, -900], [1100, -1000],
+  [500, -1100], [400, -1200], [300, -1100],
+  /* Around society */
+  [-1100, 700], [-1200, 800], [-1200, 900], [-1100, 1000],
+  [-500, 1100], [-400, 1200], [-300, 1100],
+  /* Around bank */
+  [1100, 700], [1200, 800], [1200, 900], [1100, 1000],
+  [500, 1100], [400, 1200], [300, 1100],
+  /* Around marriage hall */
+  [-500, 1900], [-300, 2000], [300, 2000], [500, 1900],
+  /* Around car wash */
+  [1600, -900], [1700, -1000], [1600, -1300], [1700, -1500],
+  /* Around sewage */
+  [1600, 900], [1700, 1000], [1600, 1300], [1700, 1500],
+  /* Around farm */
+  [1700, -300], [1700, 300], [1800, 0],
+  /* Random in-between */
+  [-1700, -400], [-1700, 400], [1700, -700], [1700, 700],
+  [-700, -400], [-700, 400], [700, -400], [700, 400],
+  [-400, -1700], [400, -1700], [-400, 1700], [400, 1700],
+];
 
-bld(
-  "./american_high_school.glb",
-  320,
-  [-650,-650],
-  "school",
-  "American High School"
-);
+treePositions.forEach(p => {
+  tree(p[0], p[1], 0.9 + Math.random() * 0.4);
+});
 
-bld(
-  "./low_poly_hospital.glb",
-  300,
-  [650,-650],
-  "hospital",
-  "Smart Hospital"
-);
+/* FLOWERS — scattered clusters */
+const flowerClusters = [
+  [-600, -500, 8], [600, -500, 8],
+  [-600, 500, 8], [600, 500, 8],
+  [-1000, 0, 6], [1000, 0, 6],
+  [0, -900, 6], [0, 900, 6],
+  [-500, 1800, 5], [500, 1800, 5],
+  [1500, -500, 5], [1500, 500, 5],
+];
 
-bld(
-  "./low_poly_night_city_building_skyline.glb",
-  420,
-  [-650,650],
-  "society",
-  "Smart Society"
-);
+flowerClusters.forEach(cluster => {
+  const [cx, cz, count] = cluster;
+  for(let i=0; i<count; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const r = 40 + Math.random() * 80;
+    flower(cx + Math.cos(angle) * r, cz + Math.sin(angle) * r);
+  }
+});
 
-bld(
-  "./us_bank_tower.glb",
-  380,
-  [650,650],
-  "bank",
-  "State Bank"
-);
+/* ═══════════════════════════════════════════
+   LOAD BUILDINGS
+   ═══════════════════════════════════════════ */
+function bld(file, size, pos, type, name){
+  loader.load(file, g => {
+    const b = g.scene;
+    prep(b, size);
+    b.position.set(pos[0], 5, pos[1]);
+    scene.add(b);
+    clickable.push({ object: b, type, name: name || type });
+  }, undefined, () => console.log("Missing:", file));
+}
 
-/* OUTER CITY BUILDINGS — CLOSER */
+bld("./american_high_school.glb", 320, [-700, -700], "school", "American High School");
+bld("./low_poly_hospital.glb", 300, [700, -700], "hospital", "Smart Hospital");
+bld("./low_poly_night_city_building_skyline.glb", 420, [-700, 700], "society", "Smart Society");
+bld("./us_bank_tower.glb", 380, [700, 700], "bank", "State Bank");
+bld("./simple_farm_free.glb", 550, [2000, 0], "farm", "Smart Eco Farm");
+bld("./great_hall.glb", 380, [0, 2000], "marriageHall", "Marriage Hall");
+bld("./gas_station.glb", 320, [2000, -1100], "gasStation", "Gas Station · Car Wash");
+bld("./brutalist_building.glb", 380, [2000, 1100], "sewageCompany", "Sewage & Filtration Co.");
 
-bld(
-  "./simple_farm_free.glb",
-  550,
-  [1900,0],
-  "farm",
-  "Smart Eco Farm"
-);
+/* Sign boards */
+board("AMERICAN HIGH SCHOOL", -700, 5, -1050, 220, 15, 0x1a5490);
+board("BSS SMART HOSPITAL", 700, 5, -1050, 220, 15, 0xc0392b);
+board("BSS SMART SOCIETY", -700, 5, 1050, 220, 15, 0x16a085);
+board("SMART CITY STATE BANK", 700, 5, 1050, 220, 15, 0x8e44ad);
+board("SMART ECO FARM", 2000, 5, -400, 220, 15, 0x27ae60);
+board("MARRIAGE HALL", 0, 5, 2400, 240, 17, 0xd4a017);
+board("CAR WASH · GAS STATION", 2000, 5, -1400, 220, 15, 0xc0392b);
+board("SEWAGE & FILTRATION CO.", 2000, 5, 1400, 260, 17, 0x34495e);
+board("AI TRAFFIC CONTROLLER", 0, 5, 250, 200, 15);
 
-bld(
-  "./great_hall.glb",
-  380,
-  [0,1850],
-  "marriageHall",
-  "Marriage Hall"
-);
-
-bld(
-  "./gas_station.glb",
-  320,
-  [1900,-1050],
-  "gasStation",
-  "Gas Station · Car Wash"
-);
-
-bld(
-  "./brutalist_building.glb",
-  380,
-  [1900,1050],
-  "sewageCompany",
-  "Sewage & Filtration Co."
-);
-
-/* =========================================================
-   SIGNS — UPDATED POSITIONS
-========================================================= */
-
-board(
-  "AMERICAN HIGH SCHOOL",
-  -650,5,-1000,
-  220,15,
-  0x1a5490
-);
-
-board(
-  "BSS SMART HOSPITAL",
-  650,5,-1000,
-  220,15,
-  0xc0392b
-);
-
-board(
-  "BSS SMART SOCIETY",
-  -650,5,1000,
-  220,15,
-  0x16a085
-);
-
-board(
-  "SMART CITY STATE BANK",
-  650,5,1000,
-  220,15,
-  0x8e44ad
-);
-
-board(
-  "SMART ECO FARM",
-  1900,5,-300,
-  220,15,
-  0x27ae60
-);
-
-board(
-  "MARRIAGE HALL",
-  0,5,2250,
-  240,17,
-  0xd4a017
-);
-
-board(
-  "CAR WASH · GAS STATION",
-  1900,5,-1350,
-  220,15,
-  0xc0392b
-);
-
-board(
-  "SEWAGE & FILTRATION CO.",
-  1900,5,1350,
-  260,17,
-  0x34495e
-);
-
-board(
-  "AI TRAFFIC CONTROLLER",
-  0,5,250,
-  200,15
-);
-
-/* =========================================================
-   SOCIETY GATE
-========================================================= */
-
-const gate=new THREE.Group();
-
-gate.position.set(-650,5,1000);
-
-const gL=new THREE.Mesh(
-  new THREE.BoxGeometry(12,24,12),
-  mat(0x315d70,.4,.2)
-);
-
-gL.position.set(-65,12,0);
-
-gate.add(gL);
-
-const gR=gL.clone();
-
-gR.position.x=65;
-
-gate.add(gR);
-
-const gT=new THREE.Mesh(
-  new THREE.BoxGeometry(140,6,12),
-  mat(0x164e67,.35,.25)
-);
-
-gT.position.y=22;
-
-gate.add(gT);
-
+/* Society gate */
+const gate = new THREE.Group();
+gate.position.set(-700, 5, 1050);
+const gL = new THREE.Mesh(new THREE.BoxGeometry(12, 24, 12), mat(0x315d70, .4, .2));
+gL.position.set(-65, 12, 0); gate.add(gL);
+const gR = gL.clone(); gR.position.x = 65; gate.add(gR);
+const gT = new THREE.Mesh(new THREE.BoxGeometry(140, 6, 12), mat(0x164e67, .35, .25));
+gT.position.y = 22; gate.add(gT);
 scene.add(gate);
 
-/* =========================================================
-   SHOPS
-========================================================= */
-
-function shop(x,z,scale=1.4,name){
-
-  loader.load(
-    "./dagashiya_shop_japanese_old_snack_shop.glb",
-    g=>{
-
-      const s=g.scene;
-
-      prep(s,55*scale);
-
-      s.position.set(x,5,z);
-
-      scene.add(s);
-
-      clickable.push({
-        object:s,
-        type:"shop",
-        name:name||"Dagashiya Snack Shop"
-      });
-
-    },
-    undefined,
-    ()=>{}
-  );
+/* Shops */
+function shop(x, z, scale=1.4, name){
+  loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", g => {
+    const s = g.scene;
+    prep(s, 55 * scale);
+    s.position.set(x, 5, z);
+    scene.add(s);
+    clickable.push({ object: s, type: "shop", name: name || "Dagashiya Snack Shop" });
+  }, undefined, () => {});
 }
+shop(-1100, -700, 1.4, "School Canteen");
+shop(1100, -700, 1.4, "Hospital Canteen");
+shop(-1100, 700, 1.4, "Society Shop");
+shop(1100, 700, 1.4, "Bank Shop");
 
-shop(-980,-650,1.4,"School Canteen");
-shop(980,-650,1.4,"Hospital Canteen");
-shop(-980,650,1.4,"Society Shop");
-shop(980,650,1.4,"Bank Shop");
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    POWER SUPPLY ZONE
-========================================================= */
-
-const powerZone=new THREE.Group();
-
-powerZone.position.set(-3600,0,2800);
-
+   ═══════════════════════════════════════════ */
+const powerZone = new THREE.Group();
+powerZone.position.set(-4000, 0, 3000);
 scene.add(powerZone);
 
-board(
-  "POWER SUPPLY (SMART-CITY)",
-  -3600,5,3800,
-  450,22,
-  0x0a4d5c
+board("POWER SUPPLY (SMART-CITY)", -4000, 5, 4000, 450, 22, 0x0a4d5c);
+
+const powerPad = new THREE.Mesh(
+  new THREE.BoxGeometry(1800, 1, 1500),
+  mat(0x1d3a2e, .92)
 );
-
-const powerPad=new THREE.Mesh(
-  new THREE.BoxGeometry(1500,1,1300),
-  mat(0x1d3a2e,.92)
-);
-
-powerPad.position.y=4.2;
-
+powerPad.position.y = 4.2;
 powerZone.add(powerPad);
 
-const powerBorderMat=new THREE.MeshStandardMaterial({
-  color:0x00e0ff,
-  emissive:0x00cfff,
-  emissiveIntensity:2.2,
-  metalness:.7,
-  roughness:.2
+const powerBorderMat = new THREE.MeshStandardMaterial({
+  color: 0x00e0ff, emissive: 0x00cfff, emissiveIntensity: 2.2,
+  metalness: .7, roughness: .2
 });
+const pbF = new THREE.Mesh(new THREE.BoxGeometry(1800, 1.8, 5), powerBorderMat);
+pbF.position.set(0, 6.5, -750); powerZone.add(pbF);
+const pbB = pbF.clone(); pbB.position.z = 750; powerZone.add(pbB);
+const pbL = new THREE.Mesh(new THREE.BoxGeometry(5, 1.8, 1500), powerBorderMat);
+pbL.position.set(-900, 6.5, 0); powerZone.add(pbL);
+const pbR = pbL.clone(); pbR.position.x = 900; powerZone.add(pbR);
 
-const pbF=new THREE.Mesh(
-  new THREE.BoxGeometry(1500,1.8,5),
-  powerBorderMat
-);
-
-pbF.position.set(0,6.5,-650);
-
-powerZone.add(pbF);
-
-const pbB=pbF.clone();
-
-pbB.position.z=650;
-
-powerZone.add(pbB);
-
-const pbL=new THREE.Mesh(
-  new THREE.BoxGeometry(5,1.8,1300),
-  powerBorderMat
-);
-
-pbL.position.set(-750,6.5,0);
-
-powerZone.add(pbL);
-
-const pbR=pbL.clone();
-
-pbR.position.x=750;
-
-powerZone.add(pbR);
-
-/* =========================================================
-   POWER CORNERS
-========================================================= */
-
-for(const cx of [-750,750]){
-  for(const cz of [-650,650]){
-
-    const p=new THREE.Mesh(
-      new THREE.CylinderGeometry(5,6,35,10),
-      powerBorderMat
+for(const cx of [-900, 900]){
+  for(const cz of [-750, 750]){
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(5, 6, 35, 10), powerBorderMat);
+    p.position.set(cx, 22, cz); powerZone.add(p);
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(4, 10, 10),
+      new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 3 })
     );
-
-    p.position.set(cx,22,cz);
-
-    powerZone.add(p);
-
-    const cap=new THREE.Mesh(
-      new THREE.SphereGeometry(4,10,10),
-      new THREE.MeshStandardMaterial({
-        color:0x66e5ff,
-        emissive:0x33dfff,
-        emissiveIntensity:3
-      })
-    );
-
-    cap.position.set(cx,42,cz);
-
-    powerZone.add(cap);
+    cap.position.set(cx, 42, cz); powerZone.add(cap);
   }
 }
 
-/* =========================================================
-   ANTENNAS
-========================================================= */
+/* Antennas */
+loader.load("./old_antenna.glb", g => {
+  const a = g.scene;
+  prep(a, 400);
+  a.position.set(-600, 5, 0);
+  powerZone.add(a);
+  clickable.push({ object: a, type: "antenna", name: "Old Antenna" });
+}, undefined, () => {});
+loader.load("./antena.glb", g => {
+  const a = g.scene;
+  prep(a, 300);
+  a.position.set(-300, 5, -100);
+  powerZone.add(a);
+  clickable.push({ object: a, type: "antenna", name: "Antenna 1" });
+}, undefined, () => {});
+loader.load("./antena.glb", g => {
+  const a = g.scene;
+  prep(a, 260);
+  a.position.set(-800, 5, 100);
+  powerZone.add(a);
+  clickable.push({ object: a, type: "antenna", name: "Antenna 2" });
+}, undefined, () => {});
 
-loader.load(
-  "./old_antenna.glb",
-  g=>{
+/* Turbines */
+const turbines = [];
+const turbTowerMat = mat(0xeeeeee, .4, .3);
+const turbTowerGeo = new THREE.CylinderGeometry(.9, 1.5, 75, 6);
+const turbBladeGeo = new THREE.BoxGeometry(2.2, 30, .9);
 
-    const a=g.scene;
-
-    prep(a,400);
-
-    a.position.set(-500,5,0);
-
-    powerZone.add(a);
-
-    clickable.push({
-      object:a,
-      type:"antenna",
-      name:"Old Antenna"
-    });
-
-  },
-  undefined,
-  ()=>{}
-);
-
-loader.load(
-  "./antena.glb",
-  g=>{
-
-    const a=g.scene;
-
-    prep(a,300);
-
-    a.position.set(-250,5,-100);
-
-    powerZone.add(a);
-
-    clickable.push({
-      object:a,
-      type:"antenna",
-      name:"Antenna 1"
-    });
-
-  },
-  undefined,
-  ()=>{}
-);
-
-loader.load(
-  "./antena.glb",
-  g=>{
-
-    const a=g.scene;
-
-    prep(a,260);
-
-    a.position.set(-700,5,100);
-
-    powerZone.add(a);
-
-    clickable.push({
-      object:a,
-      type:"antenna",
-      name:"Antenna 2"
-    });
-
-  },
-  undefined,
-  ()=>{}
-);
-
-/* =========================================================
-   WIND TURBINES
-========================================================= */
-
-const turbines=[];
-
-const turbTowerMat=mat(
-  0xeeeeee,
-  .4,
-  .3
-);
-
-const turbTowerGeo=
-  new THREE.CylinderGeometry(.9,1.5,75,6);
-
-const turbBladeGeo=
-  new THREE.BoxGeometry(2.2,30,.9);
-
-function turbine(x,z,sc=1){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,5,z);
-
+function turbine(x, z, sc=1){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
   g.scale.setScalar(sc);
-
-  const t=new THREE.Mesh(
-    turbTowerGeo,
-    turbTowerMat
-  );
-
-  t.position.y=37.5;
-
-  g.add(t);
-
-  const blades=new THREE.Group();
-
-  blades.position.y=75;
-
-  for(let i=0;i<3;i++){
-
-    const b=new THREE.Mesh(
-      turbBladeGeo,
-      turbTowerMat
-    );
-
-    b.position.y=14;
-
-    b.rotation.z=i*Math.PI*2/3;
-
+  const t = new THREE.Mesh(turbTowerGeo, turbTowerMat);
+  t.position.y = 37.5; g.add(t);
+  const blades = new THREE.Group();
+  blades.position.y = 75;
+  for(let i=0; i<3; i++){
+    const b = new THREE.Mesh(turbBladeGeo, turbTowerMat);
+    b.position.y = 14;
+    b.rotation.z = i * Math.PI * 2/3;
     blades.add(b);
   }
-
   g.add(blades);
-
   powerZone.add(g);
-
   turbines.push(blades);
 }
-
-for(let row=0;row<5;row++){
-
-  for(let col=0;col<4;col++){
-
-    turbine(
-      -620+col*200,
-      -560+row*230,
-      1+(row%3)*.08
-    );
+for(let row=0; row<5; row++){
+  for(let col=0; col<4; col++){
+    turbine(-750 + col*220, -700 + row*250, 1 + (row % 3) * 0.08);
   }
 }
 
-/* =========================================================
-   SOLAR PARK
-========================================================= */
-
-const solarPark=new THREE.Group();
-
-solarPark.position.set(500,0,0);
-
+/* Solar */
+const solarPark = new THREE.Group();
+solarPark.position.set(600, 0, 0);
 powerZone.add(solarPark);
 
-const solarGround=new THREE.Mesh(
-  new THREE.BoxGeometry(650,.8,1200),
-  mat(0x2a4536,.92)
+const solarGround = new THREE.Mesh(
+  new THREE.BoxGeometry(700, .8, 1400),
+  mat(0x2a4536, .92)
 );
-
-solarGround.position.y=5;
-
+solarGround.position.y = 5;
 solarPark.add(solarGround);
 
-const solarMat=new THREE.MeshStandardMaterial({
-  color:0x082c4b,
-  roughness:.18,
-  metalness:.7,
-  emissive:0x063b62,
-  emissiveIntensity:.7
+const solarMat = new THREE.MeshStandardMaterial({
+  color: 0x082c4b, roughness: .18, metalness: .7,
+  emissive: 0x063b62, emissiveIntensity: 0.7
 });
+const solarPanelGeo = new THREE.BoxGeometry(1, 1, 1);
 
-const solarPanelGeo=
-  new THREE.BoxGeometry(1,1,1);
-
-function solarArray(
-  x,z,w,d,rows,cols
-){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,8,z);
-
-  g.rotation.x=-.22;
-
-  const pw=w/cols-3;
-  const pd=d/rows-3;
-
-  for(let r=0;r<rows;r++){
-
-    for(let c=0;c<cols;c++){
-
-      const p=new THREE.Mesh(
-        solarPanelGeo,
-        solarMat
-      );
-
-      p.scale.set(
-        pw,
-        .5,
-        pd
-      );
-
+function solarArray(x, z, w, d, rows, cols){
+  const g = new THREE.Group();
+  g.position.set(x, 8, z);
+  g.rotation.x = -0.22;
+  const pw = w / cols - 3;
+  const pd = d / rows - 3;
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const p = new THREE.Mesh(solarPanelGeo, solarMat);
+      p.scale.set(pw, .5, pd);
       p.position.set(
-        (c-(cols-1)/2)*(w/cols),
+        (c - (cols-1)/2) * (w/cols),
         0,
-        (r-(rows-1)/2)*(d/rows)
+        (r - (rows-1)/2) * (d/rows)
       );
-
       g.add(p);
     }
   }
-
   solarPark.add(g);
 }
-
-for(let i=0;i<6;i++){
-
-  solarArray(
-    -180,
-    -500+i*200,
-    300,
-    165,
-    2,
-    4
-  );
-
-  solarArray(
-    180,
-    -500+i*200,
-    300,
-    165,
-    2,
-    4
-  );
+for(let i=0; i<6; i++){
+  solarArray(-180, -550 + i * 220, 320, 180, 2, 4);
+  solarArray(180, -550 + i * 220, 320, 180, 2, 4);
 }
 
-const solarControl=new THREE.Mesh(
-  new THREE.BoxGeometry(40,65,32),
-  mat(0x15536a,.25,.35)
+const solarControl = new THREE.Mesh(
+  new THREE.BoxGeometry(40, 65, 32),
+  mat(0x15536a, .25, .35)
 );
-
-solarControl.position.set(0,42,0);
-
+solarControl.position.set(0, 42, 0);
 solarPark.add(solarControl);
 
-const solarScreen=new THREE.Mesh(
-  new THREE.BoxGeometry(26,15,.6),
+const solarScreen = new THREE.Mesh(
+  new THREE.BoxGeometry(26, 15, .6),
   new THREE.MeshStandardMaterial({
-    color:0x04151d,
-    emissive:0x20d9ff,
-    emissiveIntensity:2.6
+    color: 0x04151d, emissive: 0x20d9ff, emissiveIntensity: 2.6
   })
 );
-
-solarScreen.position.set(0,48,-16.2);
-
+solarScreen.position.set(0, 48, -16.2);
 solarPark.add(solarScreen);
 
-/* =========================================================
-   BATTERIES
-========================================================= */
-
-const batteryRings=[];
-
-const batteryPositions=[
-  [-520,800],[-380,800],[-240,800],[-100,800],[40,800],
-  [-520,940],[-380,940],[-240,940],[-100,940],[40,940]
+/* Batteries */
+const batteryRings = [];
+const batteryPositions = [
+  [-550, 950], [-400, 950], [-250, 950], [-100, 950], [50, 950],
+  [-550, 1100], [-400, 1100], [-250, 1100], [-100, 1100], [50, 1100]
 ];
 
-batteryPositions.forEach((pos,i)=>{
-
-  loader.load(
-    "./battery.glb",
-    g=>{
-
-      const b=g.scene;
-
-      prep(b,65);
-
-      b.position.set(
-        pos[0],
-        6,
-        pos[1]
-      );
-
-      b.rotation.y=Math.PI/2;
-
-      powerZone.add(b);
-
-      const rMat=new THREE.MeshStandardMaterial({
-        color:0x22ff9d,
-        emissive:0x22ff9d,
-        emissiveIntensity:1.5
-      });
-
-      const r=new THREE.Mesh(
-        new THREE.TorusGeometry(32,.9,6,16),
-        rMat
-      );
-
-      r.rotation.x=Math.PI/2;
-
-      r.position.set(
-        pos[0],
-        7,
-        pos[1]
-      );
-
-      powerZone.add(r);
-
-      batteryRings.push(rMat);
-
-      clickable.push({
-        object:b,
-        type:"battery",
-        name:"Battery "+(i+1)
-      });
-
-    },
-    undefined,
-    ()=>{}
-  );
+batteryPositions.forEach((pos, i) => {
+  loader.load("./battery.glb", g => {
+    const b = g.scene;
+    prep(b, 65);
+    b.position.set(pos[0], 6, pos[1]);
+    b.rotation.y = Math.PI/2;
+    powerZone.add(b);
+    const rMat = new THREE.MeshStandardMaterial({
+      color: 0x22ff9d, emissive: 0x22ff9d, emissiveIntensity: 1.5
+    });
+    const r = new THREE.Mesh(new THREE.TorusGeometry(32, .9, 6, 16), rMat);
+    r.rotation.x = Math.PI/2;
+    r.position.set(pos[0], 7, pos[1]);
+    powerZone.add(r);
+    batteryRings.push(rMat);
+    clickable.push({ object: b, type: "battery", name: "Battery " + (i+1) });
+  }, undefined, () => {});
 });
 
-/* =========================================================
-   FILTRATION ZONE
-========================================================= */
-
-const filtZone=new THREE.Group();
-
-filtZone.position.set(3600,0,-2800);
-
+/* ═══════════════════════════════════════════
+   FILTRATION ZONE — GLB directly (NO BOX!)
+   ═══════════════════════════════════════════ */
+const filtZone = new THREE.Group();
+filtZone.position.set(4000, 0, -3000);
 scene.add(filtZone);
 
-board(
-  "FILTRATION SYSTEM",
-  3600,5,-2000,
-  400,20,
-  0x22cfff
+board("FILTRATION SYSTEM", 4000, 5, -2100, 400, 20, 0x22cfff);
+
+const filtPad = new THREE.Mesh(
+  new THREE.BoxGeometry(1100, 1, 1100),
+  mat(0x1a2836, .95)
 );
-
-const filtPad=new THREE.Mesh(
-  new THREE.BoxGeometry(1000,1,1000),
-  mat(0x1a2836,.95)
-);
-
-filtPad.position.y=4.2;
-
+filtPad.position.y = 4.2;
 filtZone.add(filtPad);
 
-const filtBorderMat=new THREE.MeshStandardMaterial({
-  color:0x22cfff,
-  emissive:0x22cfff,
-  emissiveIntensity:2.5,
-  metalness:.6,
-  roughness:.2
+const filtBorderMat = new THREE.MeshStandardMaterial({
+  color: 0x22cfff, emissive: 0x22cfff, emissiveIntensity: 2.5,
+  metalness: .6, roughness: .2
 });
+const fbF = new THREE.Mesh(new THREE.BoxGeometry(1100, 1.5, 5), filtBorderMat);
+fbF.position.set(0, 6.5, -550); filtZone.add(fbF);
+const fbB = fbF.clone(); fbB.position.z = 550; filtZone.add(fbB);
+const fbL = new THREE.Mesh(new THREE.BoxGeometry(5, 1.5, 1100), filtBorderMat);
+fbL.position.set(-550, 6.5, 0); filtZone.add(fbL);
+const fbR = fbL.clone(); fbR.position.x = 550; filtZone.add(fbR);
 
-const fbF=new THREE.Mesh(
-  new THREE.BoxGeometry(1000,1.5,5),
-  filtBorderMat
+/* Filtration Machine — GLB directly, BIG (200 units), NO box shell */
+const filtMachineGroup = new THREE.Group();
+filtMachineGroup.position.set(0, 5, 0);
+filtZone.add(filtMachineGroup);
+
+loader.load("./skid_filtration_system.glb", g => {
+  const m = g.scene;
+  prep(m, 200);
+  m.position.set(0, 0, 0);
+  filtMachineGroup.add(m);
+  clickable.push({ object: m, type: "filtrationMachine", name: "Filtration Machine" });
+}, undefined, () => console.log("skid_filtration_system.glb missing"));
+
+/* LOCKED label above the machine */
+const lockLabel = document.createElement("canvas");
+lockLabel.width = 512;
+lockLabel.height = 128;
+const lockCtx = lockLabel.getContext("2d");
+lockCtx.fillStyle = "rgba(3,13,22,0.95)";
+lockCtx.fillRect(0, 0, 512, 128);
+lockCtx.strokeStyle = "#c22b1a";
+lockCtx.lineWidth = 8;
+lockCtx.strokeRect(8, 8, 496, 112);
+lockCtx.fillStyle = "#c22b1a";
+lockCtx.font = "bold 52px Arial";
+lockCtx.textAlign = "center";
+lockCtx.textBaseline = "middle";
+lockCtx.fillText("🔒 LOCKED", 256, 64);
+const lockTex = new THREE.CanvasTexture(lockLabel);
+lockTex.colorSpace = THREE.SRGBColorSpace;
+const lockMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(40, 10),
+  new THREE.MeshBasicMaterial({ map: lockTex, transparent: true, side: THREE.DoubleSide })
 );
+lockMesh.position.set(0, 80, 0);
+filtMachineGroup.add(lockMesh);
 
-fbF.position.set(0,6.5,-500);
-
-filtZone.add(fbF);
-
-const fbB=fbF.clone();
-
-fbB.position.z=500;
-
-filtZone.add(fbB);
-
-const fbL=new THREE.Mesh(
-  new THREE.BoxGeometry(5,1.5,1000),
-  filtBorderMat
-);
-
-fbL.position.set(-500,6.5,0);
-
-filtZone.add(fbL);
-
-const fbR=fbL.clone();
-
-fbR.position.x=500;
-
-filtZone.add(fbR);
-
-/* =========================================================
-   FILTRATION BOX
-========================================================= */
-
-const filtBox=new THREE.Group();
-
-filtBox.position.set(0,5,0);
-
-filtZone.add(filtBox);
-
-const boxShell=new THREE.Mesh(
-  new THREE.BoxGeometry(170,90,170),
-  mat(0x2c3e50,.6,.35)
-);
-
-boxShell.position.y=45;
-
-filtBox.add(boxShell);
-
-const boxFloor=new THREE.Mesh(
-  new THREE.BoxGeometry(155,4,155),
-  mat(0x1a252f,.85)
-);
-
-boxFloor.position.y=4;
-
-filtBox.add(boxFloor);
-
-const topHatch=new THREE.Mesh(
-  new THREE.BoxGeometry(110,2.5,110),
-  new THREE.MeshStandardMaterial({
-    color:0x22cfff,
-    emissive:0x22cfff,
-    emissiveIntensity:2.5,
-    transparent:true,
-    opacity:.5
-  })
-);
-
-topHatch.position.y=91;
-
-filtBox.add(topHatch);
-
-/* filtration GLB */
-
-loader.load(
-  "./skid_filtration_system.glb",
-  g=>{
-
-    const m=g.scene;
-
-    prep(m,120);
-
-    m.position.set(0,6,0);
-
-    filtBox.add(m);
-
-    clickable.push({
-      object:m,
-      type:"filtrationMachine",
-      name:"Filtration Machine"
-    });
-
-  },
-  undefined,
-  ()=>console.log(
-    "skid_filtration_system.glb missing"
-  )
-);
-
-/* =========================================================
-   WATER PARTICLES
-========================================================= */
-
-const waterParticles=[];
-
-for(let i=0;i<25;i++){
-
-  const p=new THREE.Mesh(
-    new THREE.SphereGeometry(1,6,6),
+/* Water particles AROUND the machine */
+const waterParticles = [];
+for(let i=0; i<25; i++){
+  const p = new THREE.Mesh(
+    new THREE.SphereGeometry(1.2, 6, 6),
     new THREE.MeshStandardMaterial({
-      color:0x22cfff,
-      emissive:0x22cfff,
-      emissiveIntensity:2.5
+      color: 0x22cfff, emissive: 0x22cfff, emissiveIntensity: 2.5
     })
   );
-
   p.position.set(
-    (Math.random()-.5)*130,
-    20+Math.random()*60,
-    (Math.random()-.5)*130
+    (Math.random() - .5) * 220,
+    20 + Math.random() * 80,
+    (Math.random() - .5) * 220
   );
-
-  filtBox.add(p);
-
-  waterParticles.push({
-    mesh:p,
-    speed:.4+Math.random()*.6
-  });
+  filtMachineGroup.add(p);
+  waterParticles.push({ mesh: p, speed: .4 + Math.random() * .6 });
 }
 
-clickable.push({
-  object:filtBox,
-  type:"filtrationBox",
-  name:"Filtration System Box"
-});
+clickable.push({ object: filtMachineGroup, type: "filtrationBox", name: "Filtration System" });
 
-/* =========================================================
-   CAMERAS
-========================================================= */
+/* 5 side cameras */
+const cameras = [];
 
-const cameras=[];
+function createSideCamera(x, y, z, ry){
+  const g = new THREE.Group();
+  g.position.set(x, y, z);
+  g.rotation.y = ry;
+  filtMachineGroup.add(g);
 
-function createSideCamera(x,y,z,ry){
-
-  const g=new THREE.Group();
-
-  g.position.set(x,y,z);
-
-  g.rotation.y=ry;
-
-  filtBox.add(g);
-
-  const body=new THREE.Mesh(
-    new THREE.BoxGeometry(6,5,8),
-    mat(0x111111,.4,.6)
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 6, 10),
+    mat(0x111111, .4, .6)
   );
-
   g.add(body);
 
-  const lens=new THREE.Mesh(
-    new THREE.CylinderGeometry(1.4,1.4,1,12),
+  const lens = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.8, 1.8, 1.2, 12),
     new THREE.MeshStandardMaterial({
-      color:0,
-      emissive:0x22cfff,
-      emissiveIntensity:1.8,
-      metalness:.9,
-      roughness:.1
+      color: 0x000000, emissive: 0x22cfff,
+      emissiveIntensity: 1.8, metalness: .9, roughness: .1
     })
   );
-
-  lens.rotation.x=Math.PI/2;
-
-  lens.position.set(0,0,4.5);
-
+  lens.rotation.x = Math.PI/2;
+  lens.position.set(0, 0, 5.5);
   g.add(lens);
 
-  const led=new THREE.Mesh(
-    new THREE.SphereGeometry(.7,8,8),
+  const led = new THREE.Mesh(
+    new THREE.SphereGeometry(.9, 8, 8),
     new THREE.MeshStandardMaterial({
-      color:0xff0000,
-      emissive:0xff0000,
-      emissiveIntensity:2.5
+      color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 2.5
     })
   );
-
-  led.position.set(2,2,3.2);
-
+  led.position.set(2.8, 2.8, 4);
   g.add(led);
 
-  cameras.push({
-    group:g,
-    led
-  });
+  cameras.push({ group: g, led });
 }
 
-createSideCamera(0,80,-100,0);
-createSideCamera(0,80,100,Math.PI);
-createSideCamera(100,80,0,-Math.PI/2);
-createSideCamera(-100,80,0,Math.PI/2);
+createSideCamera(0, 130, -150, 0);
+createSideCamera(0, 130, 150, Math.PI);
+createSideCamera(150, 130, 0, -Math.PI/2);
+createSideCamera(-150, 130, 0, Math.PI/2);
 
-/* TOP CAMERA */
-
-const topCamGroup=new THREE.Group();
-
-topCamGroup.position.set(0,130,0);
-
-topCamGroup.rotation.x=Math.PI/2;
-
-filtBox.add(topCamGroup);
-
-const topBody=new THREE.Mesh(
-  new THREE.BoxGeometry(8,6,10),
-  mat(0x111111,.4,.6)
-);
-
+/* TOP camera */
+const topCamGroup = new THREE.Group();
+topCamGroup.position.set(0, 200, 0);
+topCamGroup.rotation.x = Math.PI/2;
+filtMachineGroup.add(topCamGroup);
+const topBody = new THREE.Mesh(new THREE.BoxGeometry(10, 8, 12), mat(0x111111, .4, .6));
 topCamGroup.add(topBody);
-
-const topLens=new THREE.Mesh(
-  new THREE.CylinderGeometry(2,2,1.2,12),
+const topLens = new THREE.Mesh(
+  new THREE.CylinderGeometry(2.4, 2.4, 1.5, 12),
   new THREE.MeshStandardMaterial({
-    color:0,
-    emissive:0x22cfff,
-    emissiveIntensity:1.8,
-    metalness:.9,
-    roughness:.1
+    color: 0x000000, emissive: 0x22cfff, emissiveIntensity: 1.8,
+    metalness: .9, roughness: .1
   })
 );
-
-topLens.position.set(0,0,5.5);
-
+topLens.position.set(0, 0, 6.5);
 topCamGroup.add(topLens);
+cameras.push({ group: topCamGroup, led: null });
 
-cameras.push({
-  group:topCamGroup,
-  led:null
-});
+/* INSIDE MACHINE camera */
+const insideCamGroup = new THREE.Group();
+insideCamGroup.position.set(-90, 60, -90);
+filtMachineGroup.add(insideCamGroup);
 
-/* INSIDE CAMERA */
-
-const insideCamGroup=new THREE.Group();
-
-insideCamGroup.position.set(
-  -65,
-  45,
-  -65
+const insideBody = new THREE.Mesh(
+  new THREE.BoxGeometry(20, 14, 24),
+  mat(0x1a1a1a, .5, .5)
 );
-
-filtBox.add(insideCamGroup);
-
-const insideBody=new THREE.Mesh(
-  new THREE.BoxGeometry(16,11,19),
-  mat(0x1a1a1a,.5,.5)
-);
-
 insideCamGroup.add(insideBody);
 
-const insideLens=new THREE.Mesh(
-  new THREE.CylinderGeometry(4,4,2.5,14),
+const insideLens = new THREE.Mesh(
+  new THREE.CylinderGeometry(5, 5, 3, 14),
   new THREE.MeshStandardMaterial({
-    color:0,
-    emissive:0x22ff9d,
-    emissiveIntensity:2.5,
-    metalness:.9,
-    roughness:.1
+    color: 0x000000, emissive: 0x22ff9d, emissiveIntensity: 2.5,
+    metalness: .9, roughness: .1
   })
 );
-
-insideLens.rotation.z=Math.PI/2;
-insideLens.rotation.y=Math.PI/2;
-
-insideLens.position.set(11,0,0);
-
+insideLens.rotation.z = Math.PI/2;
+insideLens.rotation.y = Math.PI/2;
+insideLens.position.set(14, 0, 0);
 insideCamGroup.add(insideLens);
 
-const insideRing=new THREE.Mesh(
-  new THREE.TorusGeometry(6,.8,8,24),
+const insideRing = new THREE.Mesh(
+  new THREE.TorusGeometry(7, .9, 8, 24),
   new THREE.MeshStandardMaterial({
-    color:0x22ff9d,
-    emissive:0x22ff9d,
-    emissiveIntensity:3
+    color: 0x22ff9d, emissive: 0x22ff9d, emissiveIntensity: 3
   })
 );
-
-insideRing.position.set(13,0,0);
-
-insideRing.rotation.y=Math.PI/2;
-
+insideRing.position.set(16, 0, 0);
+insideRing.rotation.y = Math.PI/2;
 insideCamGroup.add(insideRing);
 
-cameras.push({
-  group:insideCamGroup,
-  led:null,
-  inside:true
-});
+cameras.push({ group: insideCamGroup, led: null, inside: true });
 
-/* =========================================================
-   WASTE MANAGEMENT
-========================================================= */
-
-const wasteZone=new THREE.Group();
-
-wasteZone.position.set(
-  -3600,
-  0,
-  -2800
-);
-
+/* ═══════════════════════════════════════════
+   WASTE MANAGEMENT ZONE
+   ═══════════════════════════════════════════ */
+const wasteZone = new THREE.Group();
+wasteZone.position.set(-4000, 0, -3000);
 scene.add(wasteZone);
 
-board(
-  "WASTE MANAGEMENT",
-  -3600,5,-2000,
-  400,20,
-  0x2ecc71
+board("WASTE MANAGEMENT", -4000, 5, -2100, 400, 20, 0x2ecc71);
+
+const wastePad = new THREE.Mesh(
+  new THREE.BoxGeometry(1100, 1, 1100),
+  mat(0x2a3a2e, .95)
 );
-
-const wastePad=new THREE.Mesh(
-  new THREE.BoxGeometry(1000,1,1000),
-  mat(0x2a3a2e,.95)
-);
-
-wastePad.position.y=4.2;
-
+wastePad.position.y = 4.2;
 wasteZone.add(wastePad);
 
-const wasteBorderMat=new THREE.MeshStandardMaterial({
-  color:0x2ecc71,
-  emissive:0x2ecc71,
-  emissiveIntensity:2.2,
-  metalness:.6,
-  roughness:.2
+const wasteBorderMat = new THREE.MeshStandardMaterial({
+  color: 0x2ecc71, emissive: 0x2ecc71, emissiveIntensity: 2.2,
+  metalness: .6, roughness: .2
 });
+const wbF = new THREE.Mesh(new THREE.BoxGeometry(1100, 1.5, 5), wasteBorderMat);
+wbF.position.set(0, 6.5, -550); wasteZone.add(wbF);
+const wbB = wbF.clone(); wbB.position.z = 550; wasteZone.add(wbB);
+const wbL = new THREE.Mesh(new THREE.BoxGeometry(5, 1.5, 1100), wasteBorderMat);
+wbL.position.set(-550, 6.5, 0); wasteZone.add(wbL);
+const wbR = wbL.clone(); wbR.position.x = 550; wasteZone.add(wbR);
 
-const wbF=new THREE.Mesh(
-  new THREE.BoxGeometry(1000,1.5,5),
-  wasteBorderMat
-);
-
-wbF.position.set(0,6.5,-500);
-
-wasteZone.add(wbF);
-
-const wbB=wbF.clone();
-
-wbB.position.z=500;
-
-wasteZone.add(wbB);
-
-const wbL=new THREE.Mesh(
-  new THREE.BoxGeometry(5,1.5,1000),
-  wasteBorderMat
-);
-
-wbL.position.set(-500,6.5,0);
-
-wasteZone.add(wbL);
-
-const wbR=wbL.clone();
-
-wbR.position.x=500;
-
-wasteZone.add(wbR);
-
-/* =========================================================
-   WASTE TRUCK
-========================================================= */
-
-const wasteTruck=new THREE.Group();
-
-wasteTruck.position.set(0,5,0);
-
+/* Waste Truck */
+const wasteTruck = new THREE.Group();
+wasteTruck.position.set(0, 5, 0);
 wasteZone.add(wasteTruck);
 
-const wtBox=new THREE.Mesh(
-  new THREE.BoxGeometry(110,75,48),
-  mat(0x2ecc71,.4,.3)
-);
+const wtBox = new THREE.Mesh(new THREE.BoxGeometry(110, 75, 48), mat(0x2ecc71, .4, .3));
+wtBox.position.y = 50; wasteTruck.add(wtBox);
 
-wtBox.position.y=50;
+const wtCabin = new THREE.Mesh(new THREE.BoxGeometry(42, 48, 48), mat(0x16a085, .4, .4));
+wtCabin.position.set(72, 38, 0); wasteTruck.add(wtCabin);
 
-wasteTruck.add(wtBox);
-
-const wtCabin=new THREE.Mesh(
-  new THREE.BoxGeometry(42,48,48),
-  mat(0x16a085,.4,.4)
-);
-
-wtCabin.position.set(72,38,0);
-
-wasteTruck.add(wtCabin);
-
-const wtWin=new THREE.Mesh(
-  new THREE.BoxGeometry(2,22,36),
+const wtWin = new THREE.Mesh(
+  new THREE.BoxGeometry(2, 22, 36),
   new THREE.MeshStandardMaterial({
-    color:0x8be8ff,
-    transparent:true,
-    opacity:.7,
-    roughness:.1,
-    metalness:.3
+    color: 0x8be8ff, transparent: true, opacity: .7,
+    roughness: .1, metalness: .3
   })
 );
+wtWin.position.set(93, 45, 0); wasteTruck.add(wtWin);
 
-wtWin.position.set(93,45,0);
-
-wasteTruck.add(wtWin);
-
-const wtWheelMat=mat(0x0c1012,.6,.1);
-
-const wtWheelGeo=
-  new THREE.CylinderGeometry(13,13,9,12);
-
-for(const wx of [-40,40,65]){
-
-  for(const wz of [-22,22]){
-
-    const w=new THREE.Mesh(
-      wtWheelGeo,
-      wtWheelMat
-    );
-
-    w.rotation.x=Math.PI/2;
-
-    w.position.set(wx,13,wz);
-
+const wtWheelMat = mat(0x0c1012, .6, .1);
+const wtWheelGeo = new THREE.CylinderGeometry(13, 13, 9, 12);
+for(const wx of [-40, 40, 65]){
+  for(const wz of [-22, 22]){
+    const w = new THREE.Mesh(wtWheelGeo, wtWheelMat);
+    w.rotation.x = Math.PI/2;
+    w.position.set(wx, 13, wz);
     wasteTruck.add(w);
   }
 }
 
-const wtChassis=new THREE.Mesh(
-  new THREE.BoxGeometry(150,9,45),
-  darkMaterial
-);
-
-wtChassis.position.set(18,20,0);
-
-wasteTruck.add(wtChassis);
+const wtChassis = new THREE.Mesh(new THREE.BoxGeometry(150, 9, 45), darkMaterial);
+wtChassis.position.set(18, 20, 0); wasteTruck.add(wtChassis);
 
 function truckTextPanel(){
-
-  const canvas=document.createElement("canvas");
-
-  canvas.width=1400;
-  canvas.height=280;
-
-  const ctx=canvas.getContext("2d");
-
-  ctx.fillStyle="#2ecc71";
-
-  ctx.fillRect(0,0,1400,280);
-
-  ctx.fillStyle="#fff";
-
-  ctx.font="bold 115px Arial";
-
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-
-  ctx.fillText("WASTE",700,80);
-  ctx.fillText("MANAGEMENT",700,200);
-
-  const tex=new THREE.CanvasTexture(canvas);
-
-  tex.colorSpace=THREE.SRGBColorSpace;
-
-  return new THREE.MeshBasicMaterial({
-    map:tex,
-    side:THREE.DoubleSide
-  });
+  const canvas = document.createElement("canvas");
+  canvas.width = 1400; canvas.height = 280;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(0, 0, 1400, 280);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 115px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("WASTE", 700, 80);
+  ctx.fillText("MANAGEMENT", 700, 200);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
 }
+const wtTextMat = truckTextPanel();
+const wtText1 = new THREE.Mesh(new THREE.PlaneGeometry(105, 52), wtTextMat);
+wtText1.position.set(0, 50, 24.5); wasteTruck.add(wtText1);
+const wtText2 = new THREE.Mesh(new THREE.PlaneGeometry(105, 52), wtTextMat);
+wtText2.position.set(0, 50, -24.5);
+wtText2.rotation.y = Math.PI; wasteTruck.add(wtText2);
 
-const wtTextMat=truckTextPanel();
+clickable.push({ object: wasteTruck, type: "wasteTruck", name: "Waste Management Truck" });
 
-const wtText1=new THREE.Mesh(
-  new THREE.PlaneGeometry(105,52),
-  wtTextMat
-);
-
-wtText1.position.set(0,50,24.5);
-
-wasteTruck.add(wtText1);
-
-const wtText2=new THREE.Mesh(
-  new THREE.PlaneGeometry(105,52),
-  wtTextMat
-);
-
-wtText2.position.set(0,50,-24.5);
-
-wtText2.rotation.y=Math.PI;
-
-wasteTruck.add(wtText2);
-
-clickable.push({
-  object:wasteTruck,
-  type:"wasteTruck",
-  name:"Waste Management Truck"
-});
-
-/* =========================================================
-   GARBAGE CONTAINERS
-========================================================= */
-
-for(let row=0;row<3;row++){
-
-  for(let col=0;col<4;col++){
-
-    const px=-320+col*210;
-    const pz=-270+row*250;
-
-    const sc=1+Math.random()*.3;
-
-    loader.load(
-      "./trash_pack.glb",
-      g=>{
-
-        const t=g.scene.clone();
-
-        prep(t,40*sc);
-
-        t.position.set(
-          px,
-          5,
-          pz
-        );
-
-        t.rotation.y=Math.random()*Math.PI*2;
-
-        wasteZone.add(t);
-
-        clickable.push({
-          object:t,
-          type:"trash",
-          name:"Garbage Container"
-        });
-
-      },
-      undefined,
-      ()=>{}
-    );
+/* Garbage Containers */
+for(let row=0; row<3; row++){
+  for(let col=0; col<4; col++){
+    const px = -350 + col * 240;
+    const pz = -300 + row * 280;
+    const sc = 1 + Math.random() * 0.3;
+    loader.load("./trash_pack.glb", g => {
+      const t = g.scene.clone();
+      prep(t, 40 * sc);
+      t.position.set(px, 5, pz);
+      t.rotation.y = Math.random() * Math.PI * 2;
+      wasteZone.add(t);
+      clickable.push({ object: t, type: "trash", name: "Garbage Container" });
+    }, undefined, () => {});
   }
 }
 
-/* =========================================================
-   MARRIAGE HALL
-========================================================= */
-
-const marriageZone=new THREE.Group();
-
-marriageZone.position.set(
-  0,
-  0,
-  1850
-);
-
+/* ═══════════════════════════════════════════
+   MARRIAGE HALL DECORATION
+   ═══════════════════════════════════════════ */
+const marriageZone = new THREE.Group();
+marriageZone.position.set(0, 0, 2000);
 scene.add(marriageZone);
 
-const marriagePad=new THREE.Mesh(
-  new THREE.BoxGeometry(720,1,650),
-  mat(0x5a4a3a,.9)
+const marriagePad = new THREE.Mesh(
+  new THREE.BoxGeometry(800, 1, 700),
+  mat(0x5a4a3a, .9)
 );
-
-marriagePad.position.y=4.2;
-
+marriagePad.position.y = 4.2;
 marriageZone.add(marriagePad);
 
-for(const x of [-240,240]){
-
-  const pillar=new THREE.Mesh(
-    new THREE.CylinderGeometry(10,13,50,12),
-    mat(0xd4a017,.35,.5)
+for(const x of [-260, 260]){
+  const pillar = new THREE.Mesh(
+    new THREE.CylinderGeometry(10, 13, 50, 12),
+    mat(0xd4a017, .35, .5)
   );
-
-  pillar.position.set(x,28,280);
-
+  pillar.position.set(x, 28, 300);
   marriageZone.add(pillar);
-
-  const cap=new THREE.Mesh(
-    new THREE.SphereGeometry(10,12,8),
+  const cap = new THREE.Mesh(
+    new THREE.SphereGeometry(10, 12, 8),
     new THREE.MeshStandardMaterial({
-      color:0xffe066,
-      emissive:0xffd700,
-      emissiveIntensity:2
+      color: 0xffe066, emissive: 0xffd700, emissiveIntensity: 2
     })
   );
-
-  cap.position.set(x,55,280);
-
+  cap.position.set(x, 55, 300);
   marriageZone.add(cap);
 }
 
-for(let x=-240;x<=240;x+=60){
-
-  const bulb=new THREE.Mesh(
-    new THREE.SphereGeometry(2.5,8,8),
+for(let x=-260; x<=260; x+=65){
+  const bulb = new THREE.Mesh(
+    new THREE.SphereGeometry(2.5, 8, 8),
     new THREE.MeshStandardMaterial({
-      color:0xffe066,
-      emissive:0xffe066,
-      emissiveIntensity:2.5
+      color: 0xffe066, emissive: 0xffe066, emissiveIntensity: 2.5
     })
   );
-
-  bulb.position.set(
-    x,
-    48+Math.sin(x*.05)*4,
-    290
-  );
-
+  bulb.position.set(x, 48 + Math.sin(x * 0.05) * 4, 310);
   marriageZone.add(bulb);
 }
 
-/* =========================================================
-   CAR WASH
-========================================================= */
-
-const washBay=new THREE.Group();
-
-washBay.position.set(
-  1900,
-  5,
-  -1050
-);
-
+/* ═══════════════════════════════════════════
+   CAR WASH BAY
+   ═══════════════════════════════════════════ */
+const washBay = new THREE.Group();
+washBay.position.set(2000, 5, -1100);
 scene.add(washBay);
 
-const bayRoof=new THREE.Mesh(
-  new THREE.BoxGeometry(110,5,80),
-  mat(0x8b0000,.5,.3)
+const bayRoof = new THREE.Mesh(
+  new THREE.BoxGeometry(110, 5, 80),
+  mat(0x8b0000, .5, .3)
 );
+bayRoof.position.y = 65; washBay.add(bayRoof);
 
-bayRoof.position.y=65;
-
-washBay.add(bayRoof);
-
-for(const x of [-45,45]){
-
-  for(const z of [-35,35]){
-
-    const pillar=new THREE.Mesh(
-      new THREE.BoxGeometry(6,65,6),
-      mat(0x4a4a4a,.6,.3)
+for(const x of [-45, 45]){
+  for(const z of [-35, 35]){
+    const pillar = new THREE.Mesh(
+      new THREE.BoxGeometry(6, 65, 6),
+      mat(0x4a4a4a, .6, .3)
     );
-
-    pillar.position.set(
-      x,
-      32.5,
-      z
-    );
-
+    pillar.position.set(x, 32.5, z);
     washBay.add(pillar);
   }
 }
 
-const sprayParticles=[];
-
-for(let i=0;i<20;i++){
-
-  const drop=new THREE.Mesh(
-    new THREE.SphereGeometry(1,6,6),
+const sprayParticles = [];
+for(let i=0; i<20; i++){
+  const drop = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 6, 6),
     new THREE.MeshStandardMaterial({
-      color:0x22cfff,
-      emissive:0x22cfff,
-      emissiveIntensity:2,
-      transparent:true,
-      opacity:.8
+      color: 0x22cfff, emissive: 0x22cfff,
+      emissiveIntensity: 2, transparent: true, opacity: .8
     })
   );
-
   drop.position.set(
-    (Math.random()-.5)*85,
-    25+Math.random()*35,
-    (Math.random()-.5)*60
+    (Math.random() - .5) * 85,
+    25 + Math.random() * 35,
+    (Math.random() - .5) * 60
   );
-
   washBay.add(drop);
-
   sprayParticles.push({
-    mesh:drop,
-    speed:.5+Math.random()*.8
+    mesh: drop,
+    speed: .5 + Math.random() * .8
   });
 }
 
-/* =========================================================
+/* ═══════════════════════════════════════════
    PEOPLE
-========================================================= */
-
-const people=[];
-
-const skinColors=[
-  0xf2c9a0,
-  0xd9a373,
-  0xa06a3c,
-  0x6b4a2f,
-  0xffd8b8
+   ═══════════════════════════════════════════ */
+const people = [];
+const skinColors = [0xf2c9a0, 0xd9a373, 0xa06a3c, 0x6b4a2f, 0xffd8b8];
+const shirtColors = [
+  0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6,
+  0x1abc9c, 0xe67e22, 0x34495e, 0xc0392b, 0x16a085,
+  0xd35400, 0x8e44ad, 0x27ae60, 0x2980b9, 0xd81b60
 ];
-
-const shirtColors=[
-  0xe74c3c,
-  0x3498db,
-  0x2ecc71,
-  0xf1c40f,
-  0x9b59b6,
-  0x1abc9c,
-  0xe67e22,
-  0x34495e,
-  0xc0392b,
-  0x16a085,
-  0xd35400,
-  0x8e44ad,
-  0x27ae60,
-  0x2980b9,
-  0xd81b60
-];
-
-const pantsColors=[
-  0x2c3e50,
-  0x34495e,
-  0x1a252f,
-  0x4a4a4a,
-  0x3d3d3d
-];
+const pantsColors = [0x2c3e50, 0x34495e, 0x1a252f, 0x4a4a4a, 0x3d3d3d];
 
 function makePerson(){
+  const g = new THREE.Group();
+  const skin = skinColors[Math.floor(Math.random()*skinColors.length)];
+  const shirt = shirtColors[Math.floor(Math.random()*shirtColors.length)];
+  const pants = pantsColors[Math.floor(Math.random()*pantsColors.length)];
 
-  const g=new THREE.Group();
+  const skinMat = mat(skin, .9);
+  const shirtMat = mat(shirt, .85);
+  const pantsMat = mat(pants, .85);
 
-  const skin=
-    skinColors[
-      Math.floor(Math.random()*skinColors.length)
-    ];
+  const head = new THREE.Mesh(new THREE.SphereGeometry(2, 6, 5), skinMat);
+  head.position.y = 10; g.add(head);
 
-  const shirt=
-    shirtColors[
-      Math.floor(Math.random()*shirtColors.length)
-    ];
+  const body = new THREE.Mesh(new THREE.BoxGeometry(3, 5.5, 2), shirtMat);
+  body.position.y = 6; g.add(body);
 
-  const pants=
-    pantsColors[
-      Math.floor(Math.random()*pantsColors.length)
-    ];
+  const legL = new THREE.Mesh(new THREE.BoxGeometry(1.1, 4.5, 1.1), pantsMat);
+  legL.position.set(-.75, 2.25, 0); g.add(legL);
+  const legR = new THREE.Mesh(new THREE.BoxGeometry(1.1, 4.5, 1.1), pantsMat);
+  legR.position.set(.75, 2.25, 0); g.add(legR);
 
-  const skinMat=mat(skin,.9);
-  const shirtMat=mat(shirt,.85);
-  const pantsMat=mat(pants,.85);
+  const armL = new THREE.Mesh(new THREE.BoxGeometry(.85, 4.2, .85), shirtMat);
+  armL.position.set(-2.3, 6, 0); g.add(armL);
+  const armR = new THREE.Mesh(new THREE.BoxGeometry(.85, 4.2, .85), shirtMat);
+  armR.position.set(2.3, 6, 0); g.add(armR);
 
-  const head=new THREE.Mesh(
-    new THREE.SphereGeometry(2,6,5),
-    skinMat
-  );
-
-  head.position.y=10;
-
-  g.add(head);
-
-  const body=new THREE.Mesh(
-    new THREE.BoxGeometry(3,5.5,2),
-    shirtMat
-  );
-
-  body.position.y=6;
-
-  g.add(body);
-
-  const legL=new THREE.Mesh(
-    new THREE.BoxGeometry(1.1,4.5,1.1),
-    pantsMat
-  );
-
-  legL.position.set(-.75,2.25,0);
-
-  g.add(legL);
-
-  const legR=new THREE.Mesh(
-    new THREE.BoxGeometry(1.1,4.5,1.1),
-    pantsMat
-  );
-
-  legR.position.set(.75,2.25,0);
-
-  g.add(legR);
-
-  const armL=new THREE.Mesh(
-    new THREE.BoxGeometry(.85,4.2,.85),
-    shirtMat
-  );
-
-  armL.position.set(-2.3,6,0);
-
-  g.add(armL);
-
-  const armR=new THREE.Mesh(
-    new THREE.BoxGeometry(.85,4.2,.85),
-    shirtMat
-  );
-
-  armR.position.set(2.3,6,0);
-
-  g.add(armR);
-
-  return{
-    g,
-    legL,
-    legR,
-    armL,
-    armR
-  };
+  return { g, legL, legR, armL, armR };
 }
 
-function spawnPeople(
-  cx,
-  cz,
-  count,
-  radius
-){
-
-  for(let i=0;i<count;i++){
-
-    const p=makePerson();
-
-    const angle=
-      Math.random()*Math.PI*2;
-
-    const r=
-      radius*(.5+Math.random()*.5);
-
-    p.g.position.set(
-      cx+Math.cos(angle)*r,
-      5,
-      cz+Math.sin(angle)*r
-    );
-
-    p.g.rotation.y=angle;
-
+function spawnPeople(cx, cz, count, radius){
+  for(let i=0; i<count; i++){
+    const p = makePerson();
+    const angle = Math.random() * Math.PI * 2;
+    const r = radius * (0.5 + Math.random() * 0.5);
+    p.g.position.set(cx + Math.cos(angle) * r, 5, cz + Math.sin(angle) * r);
+    p.g.rotation.y = angle;
     scene.add(p.g);
-
     people.push({
-      obj:p.g,
-      legL:p.legL,
-      legR:p.legR,
-      armL:p.armL,
-      armR:p.armR,
-      cx,
-      cz,
-      r,
-      angle,
-      dir:Math.random()>.5?1:-1,
-      speed:.005+Math.random()*.008,
-      phase:Math.random()*Math.PI*2
+      obj: p.g, legL: p.legL, legR: p.legR, armL: p.armL, armR: p.armR,
+      cx, cz, r, angle,
+      dir: Math.random() > 0.5 ? 1 : -1,
+      speed: 0.005 + Math.random() * 0.008,
+      phase: Math.random() * Math.PI * 2
     });
   }
 }
 
-/* COMPACTED PEOPLE AREAS */
+spawnPeople(-700, -700, 12, 200);
+spawnPeople(700, -700, 12, 200);
+spawnPeople(-700, 700, 15, 220);
+spawnPeople(700, 700, 10, 200);
+spawnPeople(2000, 0, 8, 260);
+spawnPeople(0, 2000, 12, 230);
+spawnPeople(2000, -1100, 6, 180);
+spawnPeople(0, 0, 6, 150);
 
-spawnPeople(-650,-650,12,190);
-spawnPeople(650,-650,12,190);
-spawnPeople(-650,650,15,210);
-spawnPeople(650,650,10,190);
-spawnPeople(1900,0,8,240);
-spawnPeople(0,1850,12,220);
-spawnPeople(1900,-1050,6,180);
-spawnPeople(0,0,6,140);
-
-/* =========================================================
+/* ═══════════════════════════════════════════
    CARS
-========================================================= */
-
-const cityCars=[];
-
-const carColors=[
-  0x287ca3,
-  0xc83f49,
-  0xe1a72e,
-  0x5b72c9,
-  0x2f9d65,
-  0xd8d8d8,
-  0xd97b2a,
-  0x8b3ad9,
-  0x16a085,
-  0x8e44ad
+   ═══════════════════════════════════════════ */
+const cityCars = [];
+const carColors = [
+  0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65,
+  0xd8d8d8, 0xd97b2a, 0x8b3ad9, 0x16a085, 0x8e44ad
 ];
 
-const V_LEN=28;
-const V_WID=11;
-const V_HGT=6;
+const V_LEN = 28, V_WID = 11, V_HGT = 6;
 
-const carBodyGeo=
-  new THREE.BoxGeometry(
-    V_LEN,
-    V_HGT,
-    V_WID
-  );
+const carBodyGeo = new THREE.BoxGeometry(V_LEN, V_HGT, V_WID);
+const carHoodGeo = new THREE.BoxGeometry(V_LEN * 0.25, V_HGT * 0.55, V_WID * 0.95);
+const carCabinGeo = new THREE.BoxGeometry(V_LEN * 0.42, V_HGT * 0.85, V_WID * 0.88);
+const carWindshieldGeo = new THREE.BoxGeometry(2, V_HGT * 0.75, V_WID * 0.82);
+const carWheelGeo = new THREE.CylinderGeometry(2.6, 2.6, 1.8, 12);
+const carWheelHubGeo = new THREE.CylinderGeometry(1, 1, 1.9, 10);
+const carLightGeo = new THREE.BoxGeometry(1.6, 1.7, 2);
 
-const carHoodGeo=
-  new THREE.BoxGeometry(
-    V_LEN*.25,
-    V_HGT*.55,
-    V_WID*.95
-  );
-
-const carCabinGeo=
-  new THREE.BoxGeometry(
-    V_LEN*.42,
-    V_HGT*.85,
-    V_WID*.88
-  );
-
-const carWindshieldGeo=
-  new THREE.BoxGeometry(
-    2,
-    V_HGT*.75,
-    V_WID*.82
-  );
-
-const carWheelGeo=
-  new THREE.CylinderGeometry(
-    2.6,
-    2.6,
-    1.8,
-    12
-  );
-
-const carWheelHubGeo=
-  new THREE.CylinderGeometry(
-    1,
-    1,
-    1.9,
-    10
-  );
-
-const carLightGeo=
-  new THREE.BoxGeometry(
-    1.6,
-    1.7,
-    2
-  );
-
-const carGlassMat=
-  new THREE.MeshStandardMaterial({
-    color:0x1a3a4a,
-    emissive:0x0a2535,
-    emissiveIntensity:.4,
-    roughness:.12,
-    metalness:.5
-  });
-
-const wheelMat=mat(
-  0x0c1012,
-  .6,
-  .1
-);
-
-const hubMat=mat(
-  0xa0a8ac,
-  .3,
-  .7
-);
-
-const sharedHeadlightMat=
-  new THREE.MeshStandardMaterial({
-    color:0xffffff,
-    emissive:0xfff8e0,
-    emissiveIntensity:2.5
-  });
-
-const sharedTaillightMat=
-  new THREE.MeshStandardMaterial({
-    color:0xff1e1e,
-    emissive:0xff1010,
-    emissiveIntensity:2.5
-  });
+const carGlassMat = new THREE.MeshStandardMaterial({
+  color: 0x1a3a4a, emissive: 0x0a2535, emissiveIntensity: 0.4,
+  roughness: .12, metalness: .5
+});
+const wheelMat = mat(0x0c1012, .6, .1);
+const hubMat = mat(0xa0a8ac, .3, .7);
+const sharedHeadlightMat = new THREE.MeshStandardMaterial({
+  color: 0xffffff, emissive: 0xfff8e0, emissiveIntensity: 2.5
+});
+const sharedTaillightMat = new THREE.MeshStandardMaterial({
+  color: 0xff1e1e, emissive: 0xff1010, emissiveIntensity: 2.5
+});
 
 function makeCar(colorHex){
+  const g = new THREE.Group();
+  const bodyMat = mat(colorHex, .35, .5);
 
-  const g=new THREE.Group();
+  const body = new THREE.Mesh(carBodyGeo, bodyMat);
+  body.position.y = 4.5; g.add(body);
 
-  const bodyMat=mat(
-    colorHex,
-    .35,
-    .5
+  const hood = new THREE.Mesh(carHoodGeo, bodyMat);
+  hood.position.set(V_LEN * 0.36, 4.2, 0); g.add(hood);
+
+  const trunk = new THREE.Mesh(carHoodGeo, bodyMat);
+  trunk.position.set(-V_LEN * 0.36, 4.2, 0); g.add(trunk);
+
+  const cabin = new THREE.Mesh(carCabinGeo, carGlassMat);
+  cabin.position.set(-1, 9.5, 0); g.add(cabin);
+
+  const windshield = new THREE.Mesh(carWindshieldGeo, carGlassMat);
+  windshield.position.set(V_LEN * 0.18, 9, 0); g.add(windshield);
+
+  const rearWindow = new THREE.Mesh(carWindshieldGeo, carGlassMat);
+  rearWindow.position.set(-V_LEN * 0.22, 9, 0); g.add(rearWindow);
+
+  const roof = new THREE.Mesh(
+    new THREE.BoxGeometry(V_LEN * 0.35, 0.5, V_WID * 0.6),
+    mat(0x222222, .5, .3)
   );
-
-  const body=new THREE.Mesh(
-    carBodyGeo,
-    bodyMat
-  );
-
-  body.position.y=4.5;
-
-  g.add(body);
-
-  const hood=new THREE.Mesh(
-    carHoodGeo,
-    bodyMat
-  );
-
-  hood.position.set(
-    V_LEN*.36,
-    4.2,
-    0
-  );
-
-  g.add(hood);
-
-  const trunk=new THREE.Mesh(
-    carHoodGeo,
-    bodyMat
-  );
-
-  trunk.position.set(
-    -V_LEN*.36,
-    4.2,
-    0
-  );
-
-  g.add(trunk);
-
-  const cabin=new THREE.Mesh(
-    carCabinGeo,
-    carGlassMat
-  );
-
-  cabin.position.set(
-    -1,
-    9.5,
-    0
-  );
-
-  g.add(cabin);
-
-  const windshield=new THREE.Mesh(
-    carWindshieldGeo,
-    carGlassMat
-  );
-
-  windshield.position.set(
-    V_LEN*.18,
-    9,
-    0
-  );
-
-  g.add(windshield);
-
-  const rearWindow=new THREE.Mesh(
-    carWindshieldGeo,
-    carGlassMat
-  );
-
-  rearWindow.position.set(
-    -V_LEN*.22,
-    9,
-    0
-  );
-
-  g.add(rearWindow);
-
-  const roof=new THREE.Mesh(
-    new THREE.BoxGeometry(
-      V_LEN*.35,
-      .5,
-      V_WID*.6
-    ),
-    mat(0x222222,.5,.3)
-  );
-
-  roof.position.set(-1,13,0);
-
-  g.add(roof);
+  roof.position.set(-1, 13, 0); g.add(roof);
 
   for(const wp of [
-    [V_LEN*.32,V_WID*.48],
-    [V_LEN*.32,-V_WID*.48],
-    [-V_LEN*.32,V_WID*.48],
-    [-V_LEN*.32,-V_WID*.48]
+    [V_LEN * 0.32, V_WID * 0.48],
+    [V_LEN * 0.32, -V_WID * 0.48],
+    [-V_LEN * 0.32, V_WID * 0.48],
+    [-V_LEN * 0.32, -V_WID * 0.48]
   ]){
-
-    const w=new THREE.Mesh(
-      carWheelGeo,
-      wheelMat
-    );
-
-    w.rotation.x=Math.PI/2;
-
-    w.position.set(
-      wp[0],
-      3,
-      wp[1]
-    );
-
-    g.add(w);
-
-    const h=new THREE.Mesh(
-      carWheelHubGeo,
-      hubMat
-    );
-
-    h.rotation.x=Math.PI/2;
-
-    h.position.set(
-      wp[0],
-      3,
-      wp[1]
-    );
-
-    g.add(h);
+    const w = new THREE.Mesh(carWheelGeo, wheelMat);
+    w.rotation.x = Math.PI/2;
+    w.position.set(wp[0], 3, wp[1]); g.add(w);
+    const h = new THREE.Mesh(carWheelHubGeo, hubMat);
+    h.rotation.x = Math.PI/2;
+    h.position.set(wp[0], 3, wp[1]); g.add(h);
   }
 
-  for(const z of [-3.5,3.5]){
-
-    const l=new THREE.Mesh(
-      carLightGeo,
-      sharedHeadlightMat
-    );
-
-    l.position.set(
-      V_LEN*.49,
-      5,
-      z
-    );
-
-    g.add(l);
-
-    const t=new THREE.Mesh(
-      carLightGeo,
-      sharedTaillightMat
-    );
-
-    t.position.set(
-      -V_LEN*.49,
-      5,
-      z
-    );
-
-    g.add(t);
+  for(const z of [-3.5, 3.5]){
+    const l = new THREE.Mesh(carLightGeo, sharedHeadlightMat);
+    l.position.set(V_LEN * 0.49, 5, z); g.add(l);
+    const t = new THREE.Mesh(carLightGeo, sharedTaillightMat);
+    t.position.set(-V_LEN * 0.49, 5, z); g.add(t);
   }
 
   return g;
 }
 
-/* COMPACT ROUTES */
+const outerRoute = [[-2400, -1400], [2400, -1400], [2400, 1400], [-2400, 1400]];
+const innerRoute = [[-1400, -1400], [1400, -1400], [1400, 1400], [-1400, 1400]];
 
-const outerRoute=[
-  [-2100,-1250],
-  [2100,-1250],
-  [2100,1250],
-  [-2100,1250]
-];
-
-const innerRoute=[
-  [-1250,-1250],
-  [1250,-1250],
-  [1250,1250],
-  [-1250,1250]
-];
-
-function routePoint(route,progress){
-
-  const scaled=
-    progress*route.length;
-
-  const i=
-    Math.floor(scaled)%route.length;
-
-  const n=
-    (i+1)%route.length;
-
-  const t=
-    scaled-Math.floor(scaled);
-
-  const a=route[i];
-  const b=route[n];
-
-  return{
-    x:THREE.MathUtils.lerp(a[0],b[0],t),
-    z:THREE.MathUtils.lerp(a[1],b[1],t),
-    ax:a[0],
-    az:a[1],
-    bx:b[0],
-    bz:b[1]
+function routePoint(route, progress){
+  const scaled = progress * route.length;
+  const i = Math.floor(scaled) % route.length;
+  const n = (i + 1) % route.length;
+  const t = scaled - Math.floor(scaled);
+  const a = route[i], b = route[n];
+  return {
+    x: THREE.MathUtils.lerp(a[0], b[0], t),
+    z: THREE.MathUtils.lerp(a[1], b[1], t),
+    ax: a[0], az: a[1], bx: b[0], bz: b[1]
   };
 }
 
-function spawnCityCar(
-  route,
-  progress,
-  dir,
-  speed,
-  laneOffset
-){
-
-  const c=makeCar(
-    carColors[
-      Math.floor(
-        Math.random()*carColors.length
-      )
-    ]
-  );
-
+function spawnCityCar(route, progress, dir, speed, laneOffset){
+  const c = makeCar(carColors[Math.floor(Math.random() * carColors.length)]);
   scene.add(c);
-
-  const p=routePoint(
-    route,
-    progress
-  );
-
-  const dx=p.bx-p.ax;
-  const dz=p.bz-p.az;
-
-  const len=Math.sqrt(
-    dx*dx+dz*dz
-  );
-
-  const nx=dx/len;
-  const nz=dz/len;
-
-  const perpX=-nz;
-  const perpZ=nx;
-
-  c.position.set(
-    p.x+perpX*laneOffset,
-    5.2,
-    p.z+perpZ*laneOffset
-  );
-
-  let angle=-Math.atan2(dz,dx);
-
-  if(dir<0)angle+=Math.PI;
-
-  c.rotation.y=angle;
-
+  const p = routePoint(route, progress);
+  const dx = p.bx - p.ax;
+  const dz = p.bz - p.az;
+  const len = Math.sqrt(dx*dx + dz*dz);
+  const nx = dx / len, nz = dz / len;
+  const perpX = -nz, perpZ = nx;
+  c.position.set(p.x + perpX * laneOffset, 5.2, p.z + perpZ * laneOffset);
+  let angle = -Math.atan2(dz, dx);
+  if(dir < 0) angle += Math.PI;
+  c.rotation.y = angle;
   cityCars.push({
-    car:c,
-    route,
-    progress,
-    direction:dir,
-    speed,
-    baseSpeed:speed,
-    laneOffset
+    car: c, route, progress, direction: dir,
+    speed, baseSpeed: speed, laneOffset
   });
 }
 
-for(let i=0;i<6;i++)
-  spawnCityCar(
-    outerRoute,
-    i/6,
-    1,
-    .35,
-    17
-  );
+for(let i=0; i<6; i++) spawnCityCar(outerRoute, i/6, 1, .35, 17);
+for(let i=0; i<6; i++) spawnCityCar(outerRoute, i/6 + 0.5, -1, .35, -17);
+for(let i=0; i<4; i++) spawnCityCar(innerRoute, i/4, 1, .3, 14);
+for(let i=0; i<4; i++) spawnCityCar(innerRoute, i/4 + 0.5, -1, .3, -14);
 
-for(let i=0;i<6;i++)
-  spawnCityCar(
-    outerRoute,
-    i/6+.5,
-    -1,
-    .35,
-    -17
-  );
-
-for(let i=0;i<4;i++)
-  spawnCityCar(
-    innerRoute,
-    i/4,
-    1,
-    .3,
-    14
-  );
-
-for(let i=0;i<4;i++)
-  spawnCityCar(
-    innerRoute,
-    i/4+.5,
-    -1,
-    .3,
-    -14
-  );
-
-/* =========================================================
-   LOCATION DATABASE
-========================================================= */
-
-const LOCATIONS={
-
-  school:{
-    label:"American High School",
-    icon:"🏫",
-    type:"EDUCATION",
-    position:[-650,5,-650],
-    camHeight:450,
-    camDistance:380,
-    info:"Modern high school with smart learning.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+/* ═══════════════════════════════════════════
+   CAMERA LOCATIONS
+   ═══════════════════════════════════════════ */
+const LOCATIONS = {
+  school: {
+    label: "American High School", icon: "🏫", type: "EDUCATION",
+    position: [-700, 5, -700], camHeight: 400, camDistance: 350,
+    info: "Modern high school with smart learning.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  hospital:{
-    label:"Smart Hospital",
-    icon:"🏥",
-    type:"HEALTHCARE",
-    position:[650,5,-650],
-    camHeight:450,
-    camDistance:380,
-    info:"Smart healthcare facility.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  hospital: {
+    label: "Smart Hospital", icon: "🏥", type: "HEALTHCARE",
+    position: [700, 5, -700], camHeight: 400, camDistance: 350,
+    info: "Smart healthcare facility.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  society:{
-    label:"BSS Smart Society",
-    icon:"🏘",
-    type:"RESIDENTIAL",
-    position:[-650,5,650],
-    camHeight:450,
-    camDistance:380,
-    info:"Connected residential community.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  society: {
+    label: "BSS Smart Society", icon: "🏘", type: "RESIDENTIAL",
+    position: [-700, 5, 700], camHeight: 400, camDistance: 350,
+    info: "Connected residential community.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  bank:{
-    label:"Smart City State Bank",
-    icon:"🏦",
-    type:"FINANCIAL",
-    position:[650,5,650],
-    camHeight:450,
-    camDistance:380,
-    info:"Smart banking facility.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  bank: {
+    label: "Smart City State Bank", icon: "🏦", type: "FINANCIAL",
+    position: [700, 5, 700], camHeight: 400, camDistance: 350,
+    info: "Smart banking facility.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  farm:{
-    label:"Smart Eco Farm",
-    icon:"🌾",
-    type:"AGRICULTURE",
-    position:[1900,5,0],
-    camHeight:500,
-    camDistance:450,
-    info:"Sustainable smart farming.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  farm: {
+    label: "Smart Eco Farm", icon: "🌾", type: "AGRICULTURE",
+    position: [2000, 5, 0], camHeight: 450, camDistance: 450,
+    info: "Sustainable smart farming.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  marriageHall:{
-    label:"Marriage Hall",
-    icon:"💒",
-    type:"EVENT VENUE",
-    position:[0,5,1850],
-    camHeight:400,
-    camDistance:400,
-    info:"Grand marriage hall with guests walking.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  marriageHall: {
+    label: "Marriage Hall", icon: "💒", type: "EVENT VENUE",
+    position: [0, 5, 2000], camHeight: 400, camDistance: 400,
+    info: "Grand marriage hall.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  carWash:{
-    label:"Car Wash · Gas Station",
-    icon:"🚗",
-    type:"AUTOMOTIVE",
-    position:[1900,5,-1050],
-    camHeight:400,
-    camDistance:380,
-    info:"Full-service gas station with car wash.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  carWash: {
+    label: "Car Wash · Gas Station", icon: "🚗", type: "AUTOMOTIVE",
+    position: [2000, 5, -1100], camHeight: 400, camDistance: 400,
+    info: "Full-service gas station with car wash.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  powerSupply:{
-    label:"Power Supply Zone",
-    icon:"⚡",
-    type:"RENEWABLE",
-    position:[-3600,5,2800],
-    camHeight:850,
-    camDistance:900,
-    info:"20 turbines, 12 solar arrays, 10 batteries.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  powerSupply: {
+    label: "Power Supply Zone", icon: "⚡", type: "RENEWABLE",
+    position: [-4000, 5, 3000], camHeight: 900, camDistance: 1000,
+    info: "20 turbines, 12 solar arrays, 10 batteries.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  filtration:{
-    label:"Filtration System",
-    icon:"💧",
-    type:"WATER TREATMENT",
-    position:[3600,5,-2800],
-    camHeight:450,
-    camDistance:400,
-    info:"Locked filtration box with 6 cameras.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true},
-      {name:"Inside Machine",inside:true}
+  filtration: {
+    label: "Filtration System", icon: "💧", type: "WATER TREATMENT",
+    position: [4000, 5, -3000], camHeight: 450, camDistance: 400,
+    info: "Filtration machine with 6 cameras.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true },
+      { name: "Inside Machine", inside: true }
     ]
   },
-
-  wasteManagement:{
-    label:"Waste Management",
-    icon:"♻",
-    type:"MUNICIPAL",
-    position:[-3600,5,-2800],
-    camHeight:500,
-    camDistance:500,
-    info:"Waste management facility.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  wasteManagement: {
+    label: "Waste Management", icon: "♻", type: "MUNICIPAL",
+    position: [-4000, 5, -3000], camHeight: 500, camDistance: 550,
+    info: "Waste management facility.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  sewageCompany:{
-    label:"Sewage & Filtration Co.",
-    icon:"🏭",
-    type:"INDUSTRIAL",
-    position:[1900,5,1050],
-    camHeight:500,
-    camDistance:450,
-    info:"Industrial water treatment plant.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  sewageCompany: {
+    label: "Sewage & Filtration Co.", icon: "🏭", type: "INDUSTRIAL",
+    position: [2000, 5, 1100], camHeight: 450, camDistance: 450,
+    info: "Industrial water treatment.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   },
-
-  trafficController:{
-    label:"AI Traffic Controller",
-    icon:"🤖",
-    type:"TRANSPORTATION",
-    position:[0,5,0],
-    camHeight:400,
-    camDistance:330,
-    info:"Monitors 4 city entry routes.",
-    cameras:[
-      {name:"Camera 1",angle:0},
-      {name:"Camera 2",angle:Math.PI},
-      {name:"Camera 3",angle:Math.PI/2},
-      {name:"Camera 4",angle:-Math.PI/2},
-      {name:"Top View",top:true}
+  trafficController: {
+    label: "AI Traffic Controller", icon: "🤖", type: "TRANSPORTATION",
+    position: [0, 5, 0], camHeight: 350, camDistance: 300,
+    info: "Monitors 4 city entry routes.",
+    cameras: [
+      { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
+      { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
+      { name: "Top View", top: true }
     ]
   }
 };
 
-/* =========================================================
-   MENU
-========================================================= */
+const menuLocationsEl = document.getElementById("menuLocations");
 
-const menuLocationsEl=
-  document.getElementById("menuLocations");
-
-Object.keys(LOCATIONS).forEach(key=>{
-
-  const loc=LOCATIONS[key];
-
-  const item=document.createElement("div");
-
-  item.className="menuItem";
-
-  item.innerHTML=`
+Object.keys(LOCATIONS).forEach(key => {
+  const loc = LOCATIONS[key];
+  const item = document.createElement("div");
+  item.className = "menuItem";
+  item.innerHTML = `
     <span class="mIcon">${loc.icon}</span>
     <span class="mLabel">${loc.label}</span>
     <span class="arrow">▼</span>
   `;
 
-  const camOpts=document.createElement("div");
+  const camOpts = document.createElement("div");
+  camOpts.className = "cameraOptions";
 
-  camOpts.className="cameraOptions";
-
-  loc.cameras.forEach(cam=>{
-
-    const camOpt=document.createElement("div");
-
-    camOpt.className="camOption";
-
-    camOpt.innerHTML=`
-      <span class="camIcon">
-        ${cam.inside?"🎯":cam.top?"🔭":"📹"}
-      </span>
-      ${cam.name}
-    `;
-
-    camOpt.onclick=e=>{
-
+  loc.cameras.forEach(cam => {
+    const camOpt = document.createElement("div");
+    camOpt.className = "camOption";
+    camOpt.innerHTML = `<span class="camIcon">${cam.inside ? "🎯" : (cam.top ? "🔭" : "📹")}</span> ${cam.name}`;
+    camOpt.onclick = (e) => {
       e.stopPropagation();
-
-      goToLocationCamera(
-        key,
-        cam.name
-      );
+      goToLocationCamera(key, cam.name);
     };
-
     camOpts.appendChild(camOpt);
   });
 
-  item.onclick=()=>{
-
-    const isOpen=
-      camOpts.classList.contains("show");
-
-    document
-      .querySelectorAll(".cameraOptions")
-      .forEach(el=>el.classList.remove("show"));
-
-    document
-      .querySelectorAll(".menuItem")
-      .forEach(el=>el.classList.remove("active"));
+  item.onclick = () => {
+    const isOpen = camOpts.classList.contains("show");
+    document.querySelectorAll(".cameraOptions").forEach(el => el.classList.remove("show"));
+    document.querySelectorAll(".menuItem").forEach(el => el.classList.remove("active"));
 
     if(!isOpen){
-
       camOpts.classList.add("show");
-
       item.classList.add("active");
-
-    }else{
-
+    } else {
       camOpts.classList.remove("show");
-
       goToLocation(key);
     }
   };
@@ -3614,1376 +1511,483 @@ Object.keys(LOCATIONS).forEach(key=>{
   menuLocationsEl.appendChild(camOpts);
 });
 
-/* VEHICLES */
-
-const menuVehiclesEl=
-  document.getElementById("menuVehicles");
-
+const menuVehiclesEl = document.getElementById("menuVehicles");
 [
-  {
-    key:"cityCars",
-    label:"City Cars Traffic",
-    icon:"🚗"
-  }
-].forEach(v=>{
-
-  const item=document.createElement("div");
-
-  item.className="menuItem";
-
-  item.innerHTML=`
-    <span class="mIcon">${v.icon}</span>
-    <span class="mLabel">${v.label}</span>
-  `;
-
-  item.onclick=()=>followVehicle(v.key);
-
+  { key: "cityCars", label: "City Cars Traffic", icon: "🚗" }
+].forEach(v => {
+  const item = document.createElement("div");
+  item.className = "menuItem";
+  item.innerHTML = `<span class="mIcon">${v.icon}</span><span class="mLabel">${v.label}</span>`;
+  item.onclick = () => followVehicle(v.key);
   menuVehiclesEl.appendChild(item);
 });
 
-/* =========================================================
-   MENU TOGGLE
-========================================================= */
-
-const mainMenu=
-  document.getElementById("mainMenu");
-
+const mainMenu = document.getElementById("mainMenu");
 function toggleMenu(){
-
   mainMenu.classList.toggle("open");
 }
+window.toggleMenu = toggleMenu;
 
-window.toggleMenu=toggleMenu;
+let isLocked = false;
+let lockedLocation = null;
+let lockedCamera = null;
+let savedCamPos = null;
+let savedCamTarget = null;
+let camTransition = null;
 
-/* =========================================================
-   CAMERA NAVIGATION
-========================================================= */
-
-let isLocked=false;
-let lockedLocation=null;
-let lockedCamera=null;
-
-let savedCamPos=null;
-let savedCamTarget=null;
-
-let camTransition=null;
-
-function smoothCameraTo(
-  targetPos,
-  targetLook,
-  duration
-){
-
-  duration=duration||1400;
-
-  const startPos=
-    camera.position.clone();
-
-  const startLook=
-    controls.target.clone();
-
-  const startTime=
-    performance.now();
-
-  camTransition={
-    startPos,
-    targetPos,
-    startLook,
-    targetLook,
-    startTime,
-    duration
-  };
+function smoothCameraTo(targetPos, targetLook, duration){
+  duration = duration || 1400;
+  const startPos = camera.position.clone();
+  const startLook = controls.target.clone();
+  const startTime = performance.now();
+  camTransition = { startPos, targetPos, startLook, targetLook, startTime, duration };
 }
 
 function goToLocation(key){
-
-  const loc=LOCATIONS[key];
-
-  if(!loc)return;
-
-  isLocked=true;
-
-  lockedLocation=key;
-  lockedCamera=null;
-
-  savedCamPos=
-    camera.position.clone();
-
-  savedCamTarget=
-    controls.target.clone();
-
-  const x=loc.position[0];
-  const y=loc.position[1];
-  const z=loc.position[2];
-
-  const camPos=new THREE.Vector3(
-    x+loc.camDistance*.7,
+  const loc = LOCATIONS[key];
+  if(!loc) return;
+  isLocked = true;
+  lockedLocation = key;
+  lockedCamera = null;
+  savedCamPos = camera.position.clone();
+  savedCamTarget = controls.target.clone();
+  const x = loc.position[0], y = loc.position[1], z = loc.position[2];
+  const camPos = new THREE.Vector3(
+    x + loc.camDistance * 0.7,
     loc.camHeight,
-    z+loc.camDistance*.7
+    z + loc.camDistance * 0.7
   );
-
-  smoothCameraTo(
-    camPos,
-    new THREE.Vector3(x,y,z)
-  );
-
-  document.getElementById(
-    "camIndicatorText"
-  ).textContent=
-    loc.label.toUpperCase();
-
-  document
-    .getElementById("camIndicator")
-    .classList.add("show");
-
-  controls.enableRotate=false;
-
+  smoothCameraTo(camPos, new THREE.Vector3(x, y, z));
+  document.getElementById("camIndicatorText").textContent = "🔒 " + loc.label.toUpperCase();
+  document.getElementById("camIndicator").classList.add("show");
+  controls.enableRotate = false;
   mainMenu.classList.remove("open");
 }
+window.goToLocation = goToLocation;
 
-window.goToLocation=goToLocation;
-
-function goToLocationCamera(
-  key,
-  camName
-){
-
-  const loc=LOCATIONS[key];
-
-  if(!loc)return;
-
-  const cam=
-    loc.cameras.find(
-      c=>c.name===camName
-    );
-
-  if(!cam)return;
-
-  isLocked=true;
-
-  lockedLocation=key;
-  lockedCamera=camName;
-
-  savedCamPos=
-    camera.position.clone();
-
-  savedCamTarget=
-    controls.target.clone();
-
-  const x=loc.position[0];
-  const y=loc.position[1];
-  const z=loc.position[2];
-
-  let camPos;
-  let lookAt;
+function goToLocationCamera(key, camName){
+  const loc = LOCATIONS[key];
+  if(!loc) return;
+  const cam = loc.cameras.find(c => c.name === camName);
+  if(!cam) return;
+  isLocked = true;
+  lockedLocation = key;
+  lockedCamera = camName;
+  savedCamPos = camera.position.clone();
+  savedCamTarget = controls.target.clone();
+  const x = loc.position[0], y = loc.position[1], z = loc.position[2];
+  let camPos, lookAt;
 
   if(cam.inside){
-
-    camPos=new THREE.Vector3(
-      x-65,
-      y+45,
-      z-65
+    camPos = new THREE.Vector3(x - 90, y + 60, z - 90);
+    lookAt = new THREE.Vector3(x, y + 30, z);
+  } else if(cam.top){
+    camPos = new THREE.Vector3(x, y + loc.camHeight * 1.8, z + 10);
+    lookAt = new THREE.Vector3(x, y, z);
+  } else {
+    const angle = cam.angle;
+    camPos = new THREE.Vector3(
+      x + Math.sin(angle) * loc.camDistance,
+      y + loc.camHeight * 0.5,
+      z + Math.cos(angle) * loc.camDistance
     );
-
-    lookAt=new THREE.Vector3(
-      x,
-      y+25,
-      z
-    );
-
-  }else if(cam.top){
-
-    camPos=new THREE.Vector3(
-      x,
-      y+loc.camHeight*1.8,
-      z+10
-    );
-
-    lookAt=new THREE.Vector3(
-      x,
-      y,
-      z
-    );
-
-  }else{
-
-    const angle=cam.angle;
-
-    camPos=new THREE.Vector3(
-      x+Math.sin(angle)*loc.camDistance,
-      y+loc.camHeight*.5,
-      z+Math.cos(angle)*loc.camDistance
-    );
-
-    lookAt=new THREE.Vector3(
-      x,
-      y,
-      z
-    );
+    lookAt = new THREE.Vector3(x, y, z);
   }
 
-  smoothCameraTo(
-    camPos,
-    lookAt
-  );
-
-  document.getElementById(
-    "camIndicatorText"
-  ).textContent=
-    loc.label.toUpperCase()+
-    " — "+
-    camName;
-
-  document
-    .getElementById("camIndicator")
-    .classList.add("show");
-
-  controls.enableRotate=false;
-
+  smoothCameraTo(camPos, lookAt);
+  document.getElementById("camIndicatorText").textContent =
+    "🔒 " + loc.label.toUpperCase() + " — " + camName;
+  document.getElementById("camIndicator").classList.add("show");
+  controls.enableRotate = false;
   mainMenu.classList.remove("open");
 }
-
-window.goToLocationCamera=
-  goToLocationCamera;
+window.goToLocationCamera = goToLocationCamera;
 
 function exitCameraView(){
-
-  isLocked=false;
-
-  lockedLocation=null;
-  lockedCamera=null;
-
-  if(savedCamPos&&savedCamTarget){
-
-    smoothCameraTo(
-      savedCamPos,
-      savedCamTarget
-    );
+  isLocked = false;
+  lockedLocation = null;
+  lockedCamera = null;
+  if(savedCamPos && savedCamTarget){
+    smoothCameraTo(savedCamPos, savedCamTarget);
   }
-
-  document
-    .getElementById("camIndicator")
-    .classList.remove("show");
-
-  controls.enableRotate=true;
+  document.getElementById("camIndicator").classList.remove("show");
+  controls.enableRotate = true;
 }
-
-window.exitCameraView=
-  exitCameraView;
+window.exitCameraView = exitCameraView;
 
 function followVehicle(key){
-
-  isLocked=false;
-
-  lockedLocation=null;
-
-  smoothCameraTo(
-    new THREE.Vector3(
-      0,
-      2200,
-      2200
-    ),
-    new THREE.Vector3(
-      0,
-      0,
-      0
-    ),
-    1500
-  );
-
-  document
-    .getElementById("camIndicator")
-    .classList.add("show");
-
-  document.getElementById(
-    "camIndicatorText"
-  ).textContent=
-    "WATCHING CITY CARS";
-
-  controls.enableRotate=true;
-
+  isLocked = false;
+  lockedLocation = null;
+  smoothCameraTo(new THREE.Vector3(0, 2200, 2200), new THREE.Vector3(0, 0, 0), 1500);
+  document.getElementById("camIndicator").classList.add("show");
+  document.getElementById("camIndicatorText").textContent = "🌐 WATCHING CITY CARS";
+  controls.enableRotate = true;
   mainMenu.classList.remove("open");
 }
-
-window.followVehicle=
-  followVehicle;
-
-/* =========================================================
-   CITY OVERVIEW
-========================================================= */
+window.followVehicle = followVehicle;
 
 function goToOverview(){
-
-  isLocked=false;
-
-  lockedLocation=null;
-
-  controls.enableRotate=true;
-
-  smoothCameraTo(
-    new THREE.Vector3(
-      1500,
-      1050,
-      1500
-    ),
-    new THREE.Vector3(
-      0,
-      5,
-      0
-    ),
-    1500
-  );
-
-  document
-    .getElementById("camIndicator")
-    .classList.remove("show");
-
+  isLocked = false;
+  lockedLocation = null;
+  controls.enableRotate = true;
+  smoothCameraTo(new THREE.Vector3(1500, 1000, 1500), new THREE.Vector3(0, 5, 0), 1500);
+  document.getElementById("camIndicator").classList.remove("show");
   mainMenu.classList.remove("open");
 }
-
-window.goToOverview=
-  goToOverview;
+window.goToOverview = goToOverview;
 
 function goToTopDown(){
-
-  isLocked=false;
-
-  lockedLocation=null;
-
-  controls.enableRotate=true;
-
-  smoothCameraTo(
-    new THREE.Vector3(
-      0,
-      3000,
-      450
-    ),
-    new THREE.Vector3(
-      0,
-      0,
-      0
-    ),
-    1500
-  );
-
-  document
-    .getElementById("camIndicator")
-    .classList.remove("show");
-
+  isLocked = false;
+  lockedLocation = null;
+  controls.enableRotate = true;
+  smoothCameraTo(new THREE.Vector3(0, 3000, 500), new THREE.Vector3(0, 0, 0), 1500);
+  document.getElementById("camIndicator").classList.remove("show");
   mainMenu.classList.remove("open");
 }
+window.goToTopDown = goToTopDown;
 
-window.goToTopDown=
-  goToTopDown;
-
-/* =========================================================
-   INFO PANEL
-========================================================= */
-
-function showPanel(
-  title,
-  type,
-  text
-){
-
-  document.getElementById(
-    "panelContent"
-  ).innerHTML=`
+function showPanel(title, type, text){
+  document.getElementById("panelContent").innerHTML = `
     <h2>${title}</h2>
     <div class="type">${type}</div>
     <p>${text}</p>
   `;
-
-  document.getElementById(
-    "panel"
-  ).style.display="block";
+  document.getElementById("panel").style.display = "block";
 }
-
-window.closePanel=function(){
-
-  document.getElementById(
-    "panel"
-  ).style.display="none";
+window.closePanel = function(){
+  document.getElementById("panel").style.display = "none";
 };
 
-/* =========================================================
-   CLICK DETECTION
-========================================================= */
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 
-const raycaster=
-  new THREE.Raycaster();
+renderer.domElement.addEventListener("click", (e) => {
+  if(isLocked) return;
+  if(e.target !== renderer.domElement) return;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
 
-const mouse=
-  new THREE.Vector2();
-
-renderer.domElement.addEventListener(
-  "click",
-  e=>{
-
-    if(isLocked)return;
-
-    if(e.target!==renderer.domElement)
-      return;
-
-    mouse.x=
-      (e.clientX/window.innerWidth)*2-1;
-
-    mouse.y=
-      -(e.clientY/window.innerHeight)*2+1;
-
-    raycaster.setFromCamera(
-      mouse,
-      camera
-    );
-
-    for(const item of clickable){
-
-      const hit=
-        raycaster.intersectObject(
-          item.object,
-          true
-        );
-
-      if(hit.length){
-
-        let title=
-          item.name||"Location";
-
-        let type="INFO";
-        let text="Details available.";
-
-        switch(item.type){
-
-          case"school":
-            type="EDUCATION";
-            text="Modern high school.";
-            break;
-
-          case"hospital":
-            type="HEALTHCARE";
-            text="Smart hospital.";
-            break;
-
-          case"society":
-            type="RESIDENTIAL";
-            text="Residential community.";
-            break;
-
-          case"bank":
-            type="FINANCIAL";
-            text="Smart banking.";
-            break;
-
-          case"farm":
-            type="AGRICULTURE";
-            text="Sustainable farming.";
-            break;
-
-          case"antenna":
-            type="ANTENNA";
-            text="Communication antenna.";
-            break;
-
-          case"battery":
-            type="BATTERY";
-            text="Energy storage.";
-            break;
-
-          case"shop":
-            type="SHOP";
-            text="Dagashiya snack shop.";
-            break;
-
-          case"marriageHall":
-            type="EVENT VENUE";
-            text="Marriage hall.";
-            break;
-
-          case"gasStation":
-            type="AUTOMOTIVE";
-            text="Gas station and car wash.";
-            break;
-
-          case"sewageCompany":
-            type="INDUSTRIAL";
-            text="Water treatment.";
-            break;
-
-          case"wasteTruck":
-            type="MUNICIPAL";
-            text="Waste management truck.";
-            break;
-
-          case"trash":
-            type="GARBAGE CONTAINER";
-            text="Smart waste bin.";
-            break;
-
-          case"filtrationBox":
-            type="LOCKED FACILITY";
-            text="Locked filtration box with 6 cameras.";
-            break;
-
-          case"filtrationMachine":
-            type="FILTRATION MACHINE";
-            text="Skid filtration system.";
-            break;
-        }
-
-        showPanel(
-          title,
-          type,
-          text
-        );
-
-        return;
+  for(const item of clickable){
+    const hit = raycaster.intersectObject(item.object, true);
+    if(hit.length){
+      let title = item.name || "Location";
+      let type = "INFO";
+      let text = "Details available.";
+      switch(item.type){
+        case "school": type = "EDUCATION"; text = "Modern high school."; break;
+        case "hospital": type = "HEALTHCARE"; text = "Smart hospital."; break;
+        case "society": type = "RESIDENTIAL"; text = "Residential community."; break;
+        case "bank": type = "FINANCIAL"; text = "Smart banking."; break;
+        case "farm": type = "AGRICULTURE"; text = "Sustainable farming."; break;
+        case "antenna": type = "ANTENNA"; text = "Communication antenna."; break;
+        case "battery": type = "BATTERY"; text = "Energy storage."; break;
+        case "shop": type = "SHOP"; text = "Dagashiya snack shop."; break;
+        case "marriageHall": type = "EVENT VENUE"; text = "Marriage hall."; break;
+        case "gasStation": type = "AUTOMOTIVE"; text = "Gas station."; break;
+        case "sewageCompany": type = "INDUSTRIAL"; text = "Water treatment."; break;
+        case "wasteTruck": type = "MUNICIPAL"; text = "Waste truck."; break;
+        case "trash": type = "GARBAGE CONTAINER"; text = "Smart waste bin."; break;
+        case "filtrationBox": type = "FILTRATION"; text = "Filtration machine with 6 cameras."; break;
+        case "filtrationMachine": type = "FILTRATION MACHINE"; text = "Skid filtration system."; break;
       }
-    }
-
-    const ctrlHit=
-      raycaster.intersectObject(
-        controller,
-        true
-      );
-
-    if(ctrlHit.length){
-
-      showPanel(
-        "AI Traffic Management Center",
-        "INTELLIGENT TRANSPORTATION",
-        "Monitors all 4 city entry routes."
-      );
+      showPanel(title, type, text);
+      return;
     }
   }
-);
 
-/* =========================================================
-   DAY / NIGHT
-========================================================= */
+  const ctrlHit = raycaster.intersectObject(controller, true);
+  if(ctrlHit.length){
+    showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION",
+      "Monitors all 4 city entry routes.");
+  }
+});
 
-let isNight=false;
-
-const dayNightBtn=
-  document.getElementById(
-    "dayNightBtn"
-  );
+let isNight = false;
+const dayNightBtn = document.getElementById("dayNightBtn");
 
 function setDN(night){
-
-  isNight=night;
-
+  isNight = night;
   if(night){
-
-    scene.background=
-      NIGHT_BG.clone();
-
-    ambient.intensity=.35;
-
-    sun.intensity=.1;
-
-    dayNightBtn.textContent=
-      "🌙 NIGHT";
-
-    dayNightBtn.classList.add(
-      "night"
-    );
-
-  }else{
-
-    scene.background=
-      DAY_BG.clone();
-
-    ambient.intensity=3.9;
-
-    sun.intensity=3.7;
-
-    dayNightBtn.textContent=
-      "☀ DAY";
-
-    dayNightBtn.classList.remove(
-      "night"
-    );
+    scene.background = NIGHT_BG.clone();
+    ambient.intensity = 0.35;
+    sun.intensity = 0.1;
+    dayNightBtn.textContent = "🌙 NIGHT";
+    dayNightBtn.classList.add("night");
+  } else {
+    scene.background = DAY_BG.clone();
+    ambient.intensity = 3.7;
+    sun.intensity = 3.5;
+    dayNightBtn.textContent = "☀ DAY";
+    dayNightBtn.classList.remove("night");
   }
-
-  grassMaterial.color.setHex(
-    night
-      ? 0x14241a
-      : 0x3f8248
-  );
-
-  roadMaterial.color.setHex(
-    night
-      ? 0x080a0c
-      : 0x171f23
-  );
-
-  curbMaterial.color.setHex(
-    night
-      ? 0x1e262a
-      : 0x65747a
-  );
-
-  streetBulbMats.forEach(m=>{
-    m.emissiveIntensity=
-      night?6:.9;
-  });
-
-  batteryRings.forEach(m=>{
-    m.emissiveIntensity=
-      night?5:1.5;
-  });
+  grassMaterial.color.setHex(night ? 0x14241a : 0x4d8f50);
+  roadMaterial.color.setHex(night ? 0x080a0c : 0x20272a);
+  curbMaterial.color.setHex(night ? 0x1e262a : 0x697578);
+  streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 6.0 : 0.9; });
+  batteryRings.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.5; });
 }
+dayNightBtn.addEventListener("click", () => setDN(!isNight));
 
-dayNightBtn.addEventListener(
-  "click",
-  ()=>setDN(!isNight)
-);
-
-/* =========================================================
-   AI REASON
-========================================================= */
-
-const aiReasonEl=
-  document.getElementById(
-    "aiReason"
-  );
-
-const showAiBtn=
-  document.getElementById(
-    "showAiBtn"
-  );
-
-window.hideAiReason=function(){
-
-  aiReasonEl.classList.add(
-    "hidden"
-  );
-
-  showAiBtn.style.display="flex";
+const aiReasonEl = document.getElementById("aiReason");
+const showAiBtn = document.getElementById("showAiBtn");
+window.hideAiReason = function(){
+  aiReasonEl.classList.add("hidden");
+  showAiBtn.style.display = "flex";
+};
+window.showAiReason = function(){
+  aiReasonEl.classList.remove("hidden");
+  showAiBtn.style.display = "none";
 };
 
-window.showAiReason=function(){
-
-  aiReasonEl.classList.remove(
-    "hidden"
-  );
-
-  showAiBtn.style.display="none";
-};
-
-/* =========================================================
-   TRAFFIC SYSTEM
-========================================================= */
-
-const clock=
-  new THREE.Clock();
-
-let simSec=0;
-let tState=0;
-
-const CYCLE_TIME=60;
-const NORMAL_DURATION=25;
-const JAM_DURATION=20;
-const REROUTE_DURATION=15;
-
-let cycleStart=0;
-let jamStart=0;
-let rerouteStart=0;
+const clock = new THREE.Clock();
+let simSec = 0;
+let tState = 0;
+const CYCLE_TIME = 60;
+const NORMAL_DURATION = 25;
+const JAM_DURATION = 20;
+const REROUTE_DURATION = 15;
+let cycleStart = 0;
+let jamStart = 0;
+let rerouteStart = 0;
 
 function showMsg(msg){
-
-  const el=
-    document.getElementById(
-      "aiMessage"
-    );
-
-  el.textContent=msg;
-
+  const el = document.getElementById("aiMessage");
+  el.textContent = msg;
   el.classList.add("show");
-
-  setTimeout(
-    ()=>el.classList.remove("show"),
-    4000
-  );
+  setTimeout(() => el.classList.remove("show"), 4000);
 }
 
 function setState(s){
+  tState = s;
+  const tStateEl = document.getElementById("trafficState");
+  const iReasonEl = document.getElementById("incidentReason");
+  const tLevelEl = document.getElementById("trafficLevel");
+  const tFlowEl = document.getElementById("trafficFlow");
+  const aModeEl = document.getElementById("aiMode");
+  const incEl = document.getElementById("incident");
 
-  tState=s;
-
-  const tStateEl=
-    document.getElementById(
-      "trafficState"
-    );
-
-  const iReasonEl=
-    document.getElementById(
-      "incidentReason"
-    );
-
-  const tLevelEl=
-    document.getElementById(
-      "trafficLevel"
-    );
-
-  const tFlowEl=
-    document.getElementById(
-      "trafficFlow"
-    );
-
-  const aModeEl=
-    document.getElementById(
-      "aiMode"
-    );
-
-  const incEl=
-    document.getElementById(
-      "incident"
-    );
-
-  if(s===0){
-
-    tStateEl.textContent=
-      "TRAFFIC NORMAL";
-
-    tStateEl.style.color=
-      "#63ddff";
-
-    iReasonEl.textContent=
-      "4-SITE NETWORK OPERATING NORMALLY";
-
-    tLevelEl.textContent=
-      "NORMAL";
-
-    tFlowEl.textContent=
-      "92%";
-
-    aModeEl.textContent=
-      "MONITORING";
-
-    incEl.innerHTML=
-      "<span>LIVE:</span> Traffic flowing normally";
-
-    aiReasonEl.style.display=
-      "none";
+  if(s === 0){
+    tStateEl.textContent = "TRAFFIC NORMAL";
+    tStateEl.style.color = "#63ddff";
+    iReasonEl.textContent = "4-SITE NETWORK OPERATING NORMALLY";
+    tLevelEl.textContent = "NORMAL";
+    tFlowEl.textContent = "92%";
+    aModeEl.textContent = "MONITORING";
+    incEl.innerHTML = "<span>LIVE:</span> Traffic flowing normally";
+    aiReasonEl.style.display = "none";
   }
-
-  if(s===1){
-
-    tStateEl.textContent=
-      "TRAFFIC JAM";
-
-    tStateEl.style.color=
-      "#ffd15a";
-
-    iReasonEl.textContent=
-      "QUEUE BUILDING AT CENTRAL INTERSECTION";
-
-    tLevelEl.textContent=
-      "HEAVY";
-
-    tFlowEl.textContent=
-      "28%";
-
-    aModeEl.textContent=
-      "ANALYZING";
-
-    incEl.innerHTML=
-      "<span>INCIDENT:</span> Cars queuing at intersection";
-
-    aiReasonEl.style.display=
-      "block";
-
-    aiReasonEl.classList.remove(
-      "hidden"
-    );
-
-    document.getElementById(
-      "aiReasonTitle"
-    ).textContent=
-      "🔴 PROBLEM DETECTED";
-
-    document.getElementById(
-      "aiReasonText"
-    ).innerHTML=
-      "<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads.";
-
-    document.getElementById(
-      "aiResultText"
-    ).innerHTML=
-      "AI is <strong>reading the queue</strong> to figure out the best fix.";
+  if(s === 1){
+    tStateEl.textContent = "TRAFFIC JAM";
+    tStateEl.style.color = "#ffd15a";
+    iReasonEl.textContent = "QUEUE BUILDING AT CENTRAL INTERSECTION";
+    tLevelEl.textContent = "HEAVY";
+    tFlowEl.textContent = "28%";
+    aModeEl.textContent = "ANALYZING";
+    incEl.innerHTML = "<span>INCIDENT:</span> Cars queuing";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    document.getElementById("aiReasonTitle").textContent = "🔴 PROBLEM DETECTED";
+    document.getElementById("aiReasonText").innerHTML = "<strong>REASON:</strong> Too many cars at the central intersection from all 4 roads.";
+    document.getElementById("aiResultText").innerHTML = "AI is <strong>reading the queue</strong> to figure out the best fix.";
   }
-
-  if(s===2){
-
-    tStateEl.textContent=
-      "AI REROUTING";
-
-    tStateEl.style.color=
-      "#67e4ff";
-
-    iReasonEl.textContent=
-      "AI SPLITTING TRAFFIC TO INNER ROADS";
-
-    tLevelEl.textContent=
-      "RECOVERING";
-
-    tFlowEl.textContent=
-      "68%";
-
-    aModeEl.textContent=
-      "OPTIMIZING";
-
-    incEl.innerHTML=
-      "<span>AI ACTION:</span> Rerouting cars via inner roads";
-
-    aiReasonEl.style.display=
-      "block";
-
-    aiReasonEl.classList.remove(
-      "hidden"
-    );
-
-    document.getElementById(
-      "aiReasonTitle"
-    ).textContent=
-      "🔵 AI IS ACTING";
-
-    document.getElementById(
-      "aiReasonText"
-    ).innerHTML=
-      "<strong>AI DID THIS:</strong> Flipped signals to green on inner roads and redirected half the cars.";
-
-    document.getElementById(
-      "aiResultText"
-    ).innerHTML=
-      "Result: <strong>less cars at intersection → jam clearing.</strong>";
+  if(s === 2){
+    tStateEl.textContent = "AI REROUTING";
+    tStateEl.style.color = "#67e4ff";
+    iReasonEl.textContent = "AI SPLITTING TRAFFIC TO INNER ROADS";
+    tLevelEl.textContent = "RECOVERING";
+    tFlowEl.textContent = "68%";
+    aModeEl.textContent = "OPTIMIZING";
+    incEl.innerHTML = "<span>AI ACTION:</span> Rerouting cars via inner roads";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    document.getElementById("aiReasonTitle").textContent = "🔵 AI IS ACTING";
+    document.getElementById("aiReasonText").innerHTML = "<strong>AI DID THIS:</strong> Flipped signals to green on inner roads and redirected half the cars.";
+    document.getElementById("aiResultText").innerHTML = "Result: <strong>less cars at intersection → jam clearing.</strong>";
   }
-
-  if(s===3){
-
-    tStateEl.textContent=
-      "TRAFFIC CLEAR";
-
-    tStateEl.style.color=
-      "#6aff9d";
-
-    iReasonEl.textContent=
-      "ALL ROUTES FLOWING NORMALLY";
-
-    tLevelEl.textContent=
-      "CLEAR";
-
-    tFlowEl.textContent=
-      "96%";
-
-    aModeEl.textContent=
-      "OPTIMAL";
-
-    incEl.innerHTML=
-      "<span>SYSTEM:</span> All routes flowing normally";
-
-    aiReasonEl.style.display=
-      "block";
-
-    aiReasonEl.classList.remove(
-      "hidden"
-    );
-
-    document.getElementById(
-      "aiReasonTitle"
-    ).textContent=
-      "🟢 RESOLVED BY AI";
-
-    document.getElementById(
-      "aiReasonText"
-    ).innerHTML=
-      "<strong>AI RESOLVED IT</strong> by splitting traffic between outer and inner roads.";
-
-    document.getElementById(
-      "aiResultText"
-    ).innerHTML=
-      "Jam cleared in <strong>15 seconds</strong>.";
+  if(s === 3){
+    tStateEl.textContent = "TRAFFIC CLEAR";
+    tStateEl.style.color = "#6aff9d";
+    iReasonEl.textContent = "ALL ROUTES FLOWING NORMALLY";
+    tLevelEl.textContent = "CLEAR";
+    tFlowEl.textContent = "96%";
+    aModeEl.textContent = "OPTIMAL";
+    incEl.innerHTML = "<span>SYSTEM:</span> All routes flowing normally";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    document.getElementById("aiReasonTitle").textContent = "🟢 RESOLVED BY AI";
+    document.getElementById("aiReasonText").innerHTML = "<strong>AI RESOLVED IT</strong> by splitting traffic between outer and inner roads.";
+    document.getElementById("aiResultText").innerHTML = "Jam cleared in <strong>15 seconds</strong>.";
   }
 }
 
-/* =========================================================
-   TRAFFIC CYCLE
-========================================================= */
-
 function updateCycle(){
-
-  const now=
-    simSec-cycleStart;
-
-  if(tState===0){
-
-    if(now>=CYCLE_TIME){
-
-      jamStart=simSec;
-
+  const now = simSec - cycleStart;
+  if(tState === 0){
+    if(now >= CYCLE_TIME){
+      jamStart = simSec;
       setState(1);
-
-      showMsg(
-        "⚠ CARS QUEUING AT INTERSECTION"
-      );
+      showMsg("⚠ CARS QUEUING AT INTERSECTION");
     }
-
-  }else if(tState===1){
-
-    if(simSec-jamStart>=JAM_DURATION){
-
-      rerouteStart=simSec;
-
+  } else if(tState === 1){
+    if(simSec - jamStart >= JAM_DURATION){
+      rerouteStart = simSec;
       setState(2);
-
-      showMsg(
-        "🤖 AI SPLITS TRAFFIC TO INNER ROADS"
-      );
+      showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
     }
-
-  }else if(tState===2){
-
-    if(
-      simSec-rerouteStart>=REROUTE_DURATION
-    ){
-
+  } else if(tState === 2){
+    if(simSec - rerouteStart >= REROUTE_DURATION){
       setState(3);
-
-      showMsg(
-        "✅ JAM CLEARED BY AI"
-      );
+      showMsg("✅ JAM CLEARED BY AI");
     }
-
-  }else if(tState===3){
-
-    if(
-      simSec-rerouteStart>=
-      REROUTE_DURATION+10
-    ){
-
-      cycleStart=simSec;
-
+  } else if(tState === 3){
+    if(simSec - rerouteStart >= REROUTE_DURATION + 10){
+      cycleStart = simSec;
       setState(0);
     }
   }
 }
 
-/* =========================================================
-   CYCLE TIMER
-========================================================= */
-
 function updateCycleTimer(){
-
-  const now=
-    simSec-cycleStart;
-
-  const pct=
-    Math.min(
-      (now/CYCLE_TIME)*100,
-      100
-    );
-
-  document.getElementById(
-    "cycleFill"
-  ).style.width=
-    pct+"%";
-
-  const labelEl=
-    document.getElementById(
-      "cycleLabel"
-    );
-
-  const barEl=
-    document.getElementById(
-      "cycleBar"
-    );
-
-  if(tState===0){
-
-    labelEl.textContent=
-      "🚦 TRAFFIC EVENT IN "+
-      Math.max(
-        0,
-        Math.ceil(
-          CYCLE_TIME-now
-        )
-      )+
-      "s";
-
-    barEl.style.display=
-      "block";
-
-  }else if(tState===1){
-
-    labelEl.textContent=
-      "🔴 JAM ACTIVE — "+
-      Math.max(
-        0,
-        Math.ceil(
-          NORMAL_DURATION+
-          JAM_DURATION-
-          now
-        )
-      )+
-      "s";
-
-  }else if(tState===2){
-
-    labelEl.textContent=
-      "🔵 AI REROUTING — "+
-      Math.max(
-        0,
-        Math.ceil(
-          NORMAL_DURATION+
-          JAM_DURATION+
-          REROUTE_DURATION-
-          now
-        )
-      )+
-      "s";
-
-  }else{
-
-    labelEl.textContent=
-      "🟢 RESOLVED";
+  const now = simSec - cycleStart;
+  const pct = Math.min((now / CYCLE_TIME) * 100, 100);
+  document.getElementById("cycleFill").style.width = pct + "%";
+  const labelEl = document.getElementById("cycleLabel");
+  const barEl = document.getElementById("cycleBar");
+  if(tState === 0){
+    labelEl.textContent = "🚦 TRAFFIC EVENT IN " + Math.max(0, Math.ceil(CYCLE_TIME - now)) + "s";
+    barEl.style.display = "block";
+  } else if(tState === 1){
+    labelEl.textContent = "🔴 JAM ACTIVE — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION - now)) + "s";
+  } else if(tState === 2){
+    labelEl.textContent = "🔵 AI REROUTING — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION + REROUTE_DURATION - now)) + "s";
+  } else {
+    labelEl.textContent = "🟢 RESOLVED";
   }
 }
-
-/* =========================================================
-   CITY CARS UPDATE
-========================================================= */
 
 function updateCityCars(){
-
   for(const d of cityCars){
-
-    let speed=d.baseSpeed;
-
-    if(
-      tState===1 &&
-      d.route===outerRoute
-    ){
-
-      const p=
-        routePoint(
-          d.route,
-          d.progress
-        );
-
-      const distToCenter=
-        Math.sqrt(
-          p.x*p.x+
-          p.z*p.z
-        );
-
-      if(distToCenter<1000)
-        speed*=.3;
-      else
-        speed*=.6;
+    let speed = d.baseSpeed;
+    if(tState === 1 && d.route === outerRoute){
+      const p = routePoint(d.route, d.progress);
+      const distToCenter = Math.sqrt(p.x*p.x + p.z*p.z);
+      if(distToCenter < 1200) speed *= 0.3;
+      else speed *= 0.6;
     }
+    d.progress += speed / 3500;
+    if(d.progress > 1) d.progress -= 1;
+    if(d.progress < 0) d.progress += 1;
 
-    d.progress+=
-      speed/3500;
-
-    if(d.progress>1)
-      d.progress-=1;
-
-    if(d.progress<0)
-      d.progress+=1;
-
-    const p=
-      routePoint(
-        d.route,
-        d.progress
-      );
-
-    const dx=
-      p.bx-p.ax;
-
-    const dz=
-      p.bz-p.az;
-
-    const len=
-      Math.sqrt(
-        dx*dx+
-        dz*dz
-      );
-
-    const nx=dx/len;
-    const nz=dz/len;
-
-    const perpX=-nz;
-    const perpZ=nx;
+    const p = routePoint(d.route, d.progress);
+    const dx = p.bx - p.ax;
+    const dz = p.bz - p.az;
+    const len = Math.sqrt(dx*dx + dz*dz);
+    const nx = dx / len, nz = dz / len;
+    const perpX = -nz, perpZ = nx;
 
     d.car.position.set(
-      p.x+perpX*d.laneOffset,
+      p.x + perpX * d.laneOffset,
       5.2,
-      p.z+perpZ*d.laneOffset
+      p.z + perpZ * d.laneOffset
     );
 
-    let angle=
-      -Math.atan2(dz,dx);
-
-    if(d.direction<0)
-      angle+=Math.PI;
-
-    d.car.rotation.y=angle;
+    let angle = -Math.atan2(dz, dx);
+    if(d.direction < 0) angle += Math.PI;
+    d.car.rotation.y = angle;
   }
 }
-
-/* =========================================================
-   PEOPLE UPDATE
-========================================================= */
 
 function updatePeople(t){
-
   for(const p of people){
+    p.angle += p.speed * p.dir;
+    if(p.angle > Math.PI * 2) p.angle -= Math.PI * 2;
+    if(p.angle < 0) p.angle += Math.PI * 2;
 
-    p.angle+=
-      p.speed*p.dir;
+    const nx = p.cx + Math.cos(p.angle) * p.r;
+    const nz = p.cz + Math.sin(p.angle) * p.r;
 
-    if(p.angle>Math.PI*2)
-      p.angle-=Math.PI*2;
+    p.obj.position.x = nx;
+    p.obj.position.z = nz;
+    p.obj.rotation.y = p.angle + (p.dir > 0 ? Math.PI/2 : -Math.PI/2);
 
-    if(p.angle<0)
-      p.angle+=Math.PI*2;
-
-    const nx=
-      p.cx+
-      Math.cos(p.angle)*p.r;
-
-    const nz=
-      p.cz+
-      Math.sin(p.angle)*p.r;
-
-    p.obj.position.x=nx;
-    p.obj.position.z=nz;
-
-    p.obj.rotation.y=
-      p.angle+
-      (p.dir>0?Math.PI/2:-Math.PI/2);
-
-    const swing=
-      Math.sin(
-        t*6+
-        p.phase
-      )*.4;
-
-    p.legL.rotation.x=swing;
-    p.legR.rotation.x=-swing;
-
-    p.armL.rotation.x=
-      -swing*.7;
-
-    p.armR.rotation.x=
-      swing*.7;
+    const swing = Math.sin(t * 6 + p.phase) * 0.4;
+    p.legL.rotation.x = swing;
+    p.legR.rotation.x = -swing;
+    p.armL.rotation.x = -swing * 0.7;
+    p.armR.rotation.x = swing * 0.7;
   }
 }
-
-/* =========================================================
-   WATER
-========================================================= */
 
 function updateWaterParticles(t){
-
   for(const wp of waterParticles){
-
-    wp.mesh.position.y+=
-      wp.speed*.4;
-
-    if(wp.mesh.position.y>80){
-
-      wp.mesh.position.y=20;
-
-      wp.mesh.position.x=
-        (Math.random()-.5)*130;
-
-      wp.mesh.position.z=
-        (Math.random()-.5)*130;
+    wp.mesh.position.y += wp.speed * 0.4;
+    if(wp.mesh.position.y > 100){
+      wp.mesh.position.y = 20;
+      wp.mesh.position.x = (Math.random() - .5) * 220;
+      wp.mesh.position.z = (Math.random() - .5) * 220;
     }
-
-    wp.mesh.material.emissiveIntensity=
-      1.5+
-      Math.sin(t*4)*.6;
+    wp.mesh.material.emissiveIntensity = 1.5 + Math.sin(t * 4) * 0.6;
   }
 }
-
-/* =========================================================
-   CAMERAS
-========================================================= */
 
 function updateCameras(t){
-
-  for(let i=0;i<cameras.length;i++){
-
+  for(let i = 0; i < cameras.length; i++){
     if(cameras[i].led){
-
-      cameras[i]
-        .led
-        .material
-        .emissiveIntensity=
-        Math.floor(t*3)%2===0
-          ?2.5
-          :.3;
+      cameras[i].led.material.emissiveIntensity = (Math.floor(t * 3) % 2 === 0) ? 2.5 : 0.3;
     }
   }
 }
-
-/* =========================================================
-   TRAFFIC LIGHTS
-========================================================= */
 
 function updateTL(t){
-
   for(const l of trafficLights){
-
-    const cycle=
-      (t+l.phase)%12;
-
-    l.r.material.emissiveIntensity=0;
-    l.y.material.emissiveIntensity=0;
-    l.gr.material.emissiveIntensity=0;
-
-    if(tState===1){
-
-      if(cycle<7)
-        l.r.material.emissiveIntensity=4;
-
-      else if(cycle<8.5)
-        l.y.material.emissiveIntensity=4;
-
-      else
-        l.gr.material.emissiveIntensity=4;
-
-    }else{
-
-      if(cycle<5)
-        l.r.material.emissiveIntensity=4;
-
-      else if(cycle<7)
-        l.y.material.emissiveIntensity=4;
-
-      else
-        l.gr.material.emissiveIntensity=4;
+    const cycle = (t + l.phase) % 12;
+    l.r.material.emissiveIntensity = 0;
+    l.y.material.emissiveIntensity = 0;
+    l.gr.material.emissiveIntensity = 0;
+    if(tState === 1){
+      if(cycle < 7) l.r.material.emissiveIntensity = 4;
+      else if(cycle < 8.5) l.y.material.emissiveIntensity = 4;
+      else l.gr.material.emissiveIntensity = 4;
+    } else {
+      if(cycle < 5) l.r.material.emissiveIntensity = 4;
+      else if(cycle < 7) l.y.material.emissiveIntensity = 4;
+      else l.gr.material.emissiveIntensity = 4;
     }
   }
 }
 
-/* =========================================================
-   CAMERA FOLLOW
-========================================================= */
-
 function updateCameraFollow(delta){
-
-  if(!isLocked)
-    return;
-
-  if(
-    lockedLocation &&
-    LOCATIONS[lockedLocation]
-  ){
-
-    const loc=
-      LOCATIONS[lockedLocation];
-
-    const target=
-      new THREE.Vector3(
-        loc.position[0],
-        loc.position[1],
-        loc.position[2]
-      );
-
-    controls.target.lerp(
-      target,
-      .08
-    );
+  if(!isLocked) return;
+  if(lockedLocation && LOCATIONS[lockedLocation]){
+    const loc = LOCATIONS[lockedLocation];
+    const target = new THREE.Vector3(loc.position[0], loc.position[1], loc.position[2]);
+    controls.target.lerp(target, 0.08);
   }
 }
 
-/* =========================================================
-   CAMERA TRANSITION
-========================================================= */
-
 function updateCameraTransition(){
-
-  if(!camTransition)
-    return;
-
-  const now=
-    performance.now();
-
-  const elapsed=
-    now-
-    camTransition.startTime;
-
-  const t=
-    Math.min(
-      elapsed/
-      camTransition.duration,
-      1
-    );
-
-  const ease=
-    t<.5
-      ?2*t*t
-      :1-
-       Math.pow(
-         -2*t+2,
-         2
-       )/2;
-
-  camera.position.lerpVectors(
-    camTransition.startPos,
-    camTransition.targetPos,
-    ease
-  );
-
-  controls.target.lerpVectors(
-    camTransition.startLook,
-    camTransition.targetLook,
-    ease
-  );
-
-  if(t>=1)
-    camTransition=null;
+  if(!camTransition) return;
+  const now = performance.now();
+  const elapsed = now - camTransition.startTime;
+  const t = Math.min(elapsed / camTransition.duration, 1);
+  const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  camera.position.lerpVectors(camTransition.startPos, camTransition.targetPos, ease);
+  controls.target.lerpVectors(camTransition.startLook, camTransition.targetLook, ease);
+  if(t >= 1) camTransition = null;
 }
 
-/* =========================================================
-   ANIMATION
-========================================================= */
-
-let fc=0;
-
+let fc = 0;
 function animate(){
-
-  requestAnimationFrame(
-    animate
-  );
-
-  const delta=
-    clock.getDelta();
-
-  const t=
-    clock.elapsedTime;
-
-  simSec+=delta;
-
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  const t = clock.elapsedTime;
+  simSec += delta;
   fc++;
 
-  const tt=
-    Math.floor(simSec);
-
-  document.getElementById(
-    "simulationTime"
-  ).textContent=
-    String(
-      Math.floor(tt/60)
-    ).padStart(2,"0")+
-    ":"+
-    String(
-      tt%60
-    ).padStart(2,"0");
+  const tt = Math.floor(simSec);
+  document.getElementById("simulationTime").textContent =
+    String(Math.floor(tt/60)).padStart(2,"0") + ":" + String(tt%60).padStart(2,"0");
 
   updateCycle();
   updateCycleTimer();
@@ -4993,102 +1997,42 @@ function animate(){
   updateCameras(t);
   updateTL(t);
 
-  if(fc%2===0){
-
-    for(let i=0;i<turbines.length;i++){
-
-      turbines[i].rotation.z=
-        t*2.4;
+  if(fc % 2 === 0){
+    for(let i = 0; i < turbines.length; i++){
+      turbines[i].rotation.z = t * 2.4;
     }
   }
 
-  radar.rotation.z=
-    t*1.7;
-
-  controllerRing.rotation.z=
-    t*.5;
-
-  controllerRing2.rotation.z=
-    -t*.4;
-
-  controllerSig.scale.setScalar(
-    1+
-    Math.sin(t*4)*.15
-  );
+  radar.rotation.z = t * 1.7;
+  controllerRing.rotation.z = t * 0.5;
+  controllerRing2.rotation.z = -t * 0.4;
+  controllerSig.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
 
   updateCameraTransition();
-
   updateCameraFollow(delta);
 
   controls.update();
-
-  renderer.render(
-    scene,
-    camera
-  );
+  renderer.render(scene, camera);
 }
 
-/* =========================================================
-   RESIZE
-========================================================= */
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-window.addEventListener(
-  "resize",
-  ()=>{
-
-    camera.aspect=
-      window.innerWidth/
-      window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
-    );
+window.addEventListener("keydown", (e) => {
+  if(e.key === "Escape"){
+    if(isLocked) exitCameraView();
+    else mainMenu.classList.remove("open");
   }
-);
+  if(e.key === "m" || e.key === "M") toggleMenu();
+});
 
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-window.addEventListener(
-  "keydown",
-  e=>{
-
-    if(e.key==="Escape"){
-
-      if(isLocked)
-        exitCameraView();
-
-      else
-        mainMenu.classList.remove(
-          "open"
-        );
-    }
-
-    if(
-      e.key==="m"||
-      e.key==="M"
-    ){
-
-      toggleMenu();
-    }
-  }
-);
-
-/* =========================================================
-   START
-========================================================= */
-
-cycleStart=0;
-
+cycleStart = 0;
 setState(0);
-
 animate();
 
 </script>
-
 </body>
 </html>
