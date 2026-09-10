@@ -111,7 +111,7 @@ const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerH
 camera.position.set(1250, 850, 1350);
 
 /* =========================================================
-   RENDERER — optimized
+   RENDERER
 ========================================================= */
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -141,7 +141,7 @@ sun.position.set(-700, 1200, 450);
 scene.add(sun);
 
 /* =========================================================
-   MATERIALS — Standard (proper colors)
+   MATERIALS
 ========================================================= */
 function mat(color, rough=.8, metal=0){
   return new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal });
@@ -151,12 +151,10 @@ const grassMaterial = mat(0x4d8f50, .98);
 const grassDarkMaterial = mat(0x28633a, .95);
 const zoneMaterial = mat(0x72ad58, .96);
 const roadMaterial = mat(0x20272a, .96);
-const roadShoulderMaterial = mat(0x30383a, .92);
 const yellowLineMaterial = mat(0xf5c84b, .65);
 const curbMaterial = mat(0x697578, .88);
 const darkMaterial = mat(0x182327, .65, .15);
 const blueMaterial = mat(0x087fa8, .35, .25);
-const whiteMaterial = mat(0xe8eeee, .7);
 
 /* =========================================================
    GROUND + CITY
@@ -274,7 +272,7 @@ board("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 board("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
 
 /* =========================================================
-   STREET LIGHTS — with proper glow materials
+   STREET LIGHTS
 ========================================================= */
 const streetBulbMats = [];
 function sl(x, z){
@@ -368,7 +366,6 @@ const upper = new THREE.Mesh(
 upper.position.y = 34;
 controller.add(upper);
 
-/* 4 screens */
 const screenPositions = [
   { x: 0, y: 15, z: 10.5, ry: 0 },
   { x: 0, y: 15, z: -10.5, ry: Math.PI },
@@ -415,12 +412,12 @@ for(let x=-100; x<=100; x+=40){
   constGroup.add(t);
 }
 const constLights = [];
-const cLightMat = new THREE.MeshStandardMaterial({ color: 0xffa21c, emissive: 0xff8a00, emissiveIntensity: 3 });
 for(const x of [-100, 0, 100]){
-  const l = new THREE.Mesh(new THREE.SphereGeometry(2, 8, 8), cLightMat.clone());
+  const m = new THREE.MeshStandardMaterial({ color: 0xffa21c, emissive: 0xff8a00, emissiveIntensity: 3 });
+  const l = new THREE.Mesh(new THREE.SphereGeometry(2, 8, 8), m);
   l.position.set(x, 10, 3);
   constGroup.add(l);
-  constLights.push(l.material);
+  constLights.push(m);
 }
 constGroup.visible = false;
 
@@ -465,7 +462,7 @@ function tree(x, z, s=1){
 }
 
 /* =========================================================
-   DAGASHIYA
+   DAGASHIYA SHOP
 ========================================================= */
 function shop(x, z, scale=1, name){
   loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", g => {
@@ -516,7 +513,9 @@ for(const cx of [-700, 700]){
   }
 }
 
-/* Antennas */
+/* =========================================================
+   ANTENNAS
+========================================================= */
 loader.load("./old_antenna.glb", g => {
   const a = g.scene;
   prep(a, 300);
@@ -539,21 +538,25 @@ loader.load("./antena.glb", g => {
   clickable.push({ object: a, type: "antenna", name: "Antenna 2" });
 }, undefined, () => {});
 
-/* Wind turbines */
+/* =========================================================
+   ██████  WIND TURBINES — MANY MORE (24 total) ██████
+========================================================= */
 const turbines = [];
 const turbTowerMat = mat(0xeeeeee, .4, .3);
-const turbGeo1 = new THREE.CylinderGeometry(.9, 1.4, 55, 6);
-const turbGeo2 = new THREE.BoxGeometry(1.8, 20, .6);
-function turbine(x, z){
+const turbTowerGeo = new THREE.CylinderGeometry(.9, 1.4, 55, 6);
+const turbBladeGeo = new THREE.BoxGeometry(1.8, 20, .6);
+
+function turbine(x, z, sc=1){
   const g = new THREE.Group();
   g.position.set(x, 5, z);
-  const t = new THREE.Mesh(turbGeo1, turbTowerMat);
+  g.scale.setScalar(sc);
+  const t = new THREE.Mesh(turbTowerGeo, turbTowerMat);
   t.position.y = 27.5;
   g.add(t);
   const blades = new THREE.Group();
   blades.position.y = 55;
   for(let i=0; i<3; i++){
-    const b = new THREE.Mesh(turbGeo2, turbTowerMat);
+    const b = new THREE.Mesh(turbBladeGeo, turbTowerMat);
     b.position.y = 9.5;
     b.rotation.z = i * Math.PI * 2/3;
     blades.add(b);
@@ -562,12 +565,18 @@ function turbine(x, z){
   powerZone.add(g);
   turbines.push(blades);
 }
-turbine(-460, -110);
-turbine(-240, -110);
-turbine(-460, 110);
-turbine(-240, 110);
 
-/* Solar park */
+/* Turbine grid — 4 rows × 6 columns around antenna area */
+for(let x=-620; x<=-80; x+=90){
+  turbine(x, -450, 0.9);
+  turbine(x, -350, 1.0);
+  turbine(x, 350, 1.0);
+  turbine(x, 450, 0.9);
+}
+
+/* =========================================================
+   SOLAR PARK — MORE ARRAYS (16 total)
+========================================================= */
 const solarPark = new THREE.Group();
 solarPark.position.set(400, 0, 0);
 powerZone.add(solarPark);
@@ -580,25 +589,63 @@ const solarMat = new THREE.MeshStandardMaterial({
   color: 0x082c4b, roughness: .18, metalness: .7,
   emissive: 0x063b62, emissiveIntensity: 0.7
 });
-function solarArray(x, z, w, d){
+const solarFrameMat = mat(0xb7c4c8, .28, .8);
+const solarPanelGeo = new THREE.BoxGeometry(1, 1, 1);
+const solarFrameGeo = new THREE.BoxGeometry(1, 1, 1);
+
+function solarArray(x, z, w, d, rows, cols){
   const g = new THREE.Group();
   g.position.set(x, 8, z);
   g.rotation.x = -0.22;
-  const pw = w / 5 - 4;
-  const pd = d / 3 - 4;
-  for(let r=0; r<3; r++){
-    for(let c=0; c<5; c++){
-      const p = new THREE.Mesh(new THREE.BoxGeometry(pw, .45, pd), solarMat);
-      p.position.set((c-2)*(w/5), 0, (r-1)*(d/3));
+  const pw = w / cols - 3;
+  const pd = d / rows - 3;
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const px = (c-(cols-1)/2) * (w/cols);
+      const pz = (r-(rows-1)/2) * (d/rows);
+      /* Panel */
+      const p = new THREE.Mesh(solarPanelGeo, solarMat);
+      p.scale.set(pw, .45, pd);
+      p.position.set(px, 0, pz);
       g.add(p);
+      /* Frame border (thin lines on top) */
+      const f = new THREE.Mesh(solarFrameGeo, solarFrameMat);
+      f.scale.set(pw + 0.5, .15, 0.4);
+      f.position.set(px, .35, pz - pd/2);
+      g.add(f);
+      const f2 = new THREE.Mesh(solarFrameGeo, solarFrameMat);
+      f2.scale.set(pw + 0.5, .15, 0.4);
+      f2.position.set(px, .35, pz + pd/2);
+      g.add(f2);
+    }
+  }
+  /* Support legs */
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const px = (c-(cols-1)/2) * (w/cols);
+      const pz = (r-(rows-1)/2) * (d/rows);
+      for(const sx of [-1, 1]){
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(.3, .4, 4, 5), solarFrameMat);
+        leg.position.set(px + sx*(pw*.4), -2, pz);
+        g.add(leg);
+      }
     }
   }
   solarPark.add(g);
 }
-solarArray(-155, -380, 280, 180);
-solarArray(160, -380, 280, 180);
-solarArray(-155, 380, 280, 180);
-solarArray(160, 380, 280, 180);
+/* 16 solar arrays filling the solar park */
+solarArray(-155, -420, 280, 140, 2, 4);
+solarArray(160, -420, 280, 140, 2, 4);
+solarArray(-155, -260, 280, 140, 2, 4);
+solarArray(160, -260, 280, 140, 2, 4);
+solarArray(-155, -100, 280, 140, 2, 4);
+solarArray(160, -100, 280, 140, 2, 4);
+solarArray(-155, 100, 280, 140, 2, 4);
+solarArray(160, 100, 280, 140, 2, 4);
+solarArray(-155, 260, 280, 140, 2, 4);
+solarArray(160, 260, 280, 140, 2, 4);
+solarArray(-155, 420, 280, 140, 2, 4);
+solarArray(160, 420, 280, 140, 2, 4);
 
 /* Control station */
 const control = new THREE.Mesh(new THREE.BoxGeometry(28, 48, 22), mat(0x15536a, .25, .35));
@@ -617,8 +664,8 @@ solarPark.add(controlScreen);
 ========================================================= */
 const batteries = [];
 const batteryPositions = [
-  [-500, 450], [-350, 450], [-200, 450], [-50, 450], [100, 450],
-  [-500, 520], [-350, 520], [-200, 520], [-50, 520], [100, 520]
+  [-500, 620], [-350, 620], [-200, 620], [-50, 620], [100, 620],
+  [-500, 700], [-350, 700], [-200, 700], [-50, 700], [100, 700]
 ];
 const ringGeo = new THREE.TorusGeometry(22, .6, 6, 16);
 const ringMat = new THREE.MeshStandardMaterial({
@@ -651,16 +698,13 @@ arenaPad.position.y = 5;
 arena.add(arenaPad);
 board("SMART BUILDINGS ARENA", 1550, 5, -980, 240, 16);
 
-/* =========================================================
-   SMART BUILDINGS — with rooftop solar
-========================================================= */
-const smartBeacons = [];
 const winMat = new THREE.MeshStandardMaterial({
   color: 0x9cefff, emissive: 0x26cfff, emissiveIntensity: 1.2
 });
 const roofSolarMat = new THREE.MeshStandardMaterial({
   color: 0x092f4e, emissive: 0x075c85, emissiveIntensity: 1.0
 });
+const smartBeacons = [];
 
 function smartBld(name, x, z, w, d, h, color){
   const g = new THREE.Group();
@@ -669,34 +713,31 @@ function smartBld(name, x, z, w, d, h, color){
   m.position.y = h/2;
   g.add(m);
 
-  /* Window rows */
   for(let y=12; y<h-8; y+=14){
     const win = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 3, .2), winMat);
     win.position.set(0, y, d/2+.11);
     g.add(win);
   }
 
-  /* Rooftop solar panels */
+  /* Rooftop solar panels — MORE (4x3 = 12 per roof) */
   const solarG = new THREE.Group();
   solarG.position.y = h + 1.5;
   solarG.rotation.x = -0.22;
-  const pw = w * 0.22;
-  const pd = d * 0.28;
-  for(let r=0; r<2; r++){
-    for(let c=0; c<3; c++){
+  const pw = w * 0.18;
+  const pd = d * 0.22;
+  for(let r=0; r<3; r++){
+    for(let c=0; c<4; c++){
       const p = new THREE.Mesh(new THREE.BoxGeometry(pw, .5, pd), roofSolarMat);
-      p.position.set((c-1)*(pw+4), 0, (r-0.5)*(pd+4));
+      p.position.set((c-1.5)*(pw+3), 0, (r-1)*(pd+3));
       solarG.add(p);
     }
   }
   g.add(solarG);
 
-  /* Roof frame */
   const frame = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 1, d*.85), mat(0x65777b, .3, .7));
   frame.position.y = h + 0.4;
   g.add(frame);
 
-  /* Beacon */
   const bc = new THREE.Mesh(
     new THREE.SphereGeometry(2, 8, 8),
     new THREE.MeshStandardMaterial({ color: 0x61eaff, emissive: 0x16dfff, emissiveIntensity: 3.2 })
@@ -713,7 +754,6 @@ smartBld("Green Technology Tower", 230, -150, 90, 75, 155, 0x356b57);
 smartBld("Digital Innovation Center", -230, 150, 105, 82, 195, 0x31547c);
 smartBld("Smart Research Center", 230, 150, 98, 78, 165, 0x674d68);
 
-/* Small buildings */
 const smallBeacons = [];
 function smallBld(name, x, z, w, d, h, color){
   const g = new THREE.Group();
@@ -742,6 +782,10 @@ smallBld("Mini Data Center", -80, -80, 28, 24, 40, 0x3a7385);
 smallBld("Sensor Hub", 0, -90, 32, 26, 48, 0x4a8a9c);
 smallBld("Control Node", 80, -80, 26, 22, 36, 0x5aa0b4);
 smallBld("Green Block A", 95, 0, 30, 24, 44, 0x356b57);
+smallBld("Green Block B", -95, 0, 30, 24, 46, 0x3a7a6e);
+smallBld("Tech Pod", -45, 80, 22, 18, 30, 0x4a6b8a);
+smallBld("Comms Tower", 45, 80, 22, 18, 32, 0x5b7c9e);
+smallBld("Sub Station", 0, 90, 24, 20, 34, 0x2e6b78);
 
 /* =========================================================
    FARM
@@ -772,29 +816,51 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 ].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   CARS
+   ██████  CARS — BIGGER + SLOWER ██████
 ========================================================= */
 const cars = [];
-const carBodyMat = mat(0x287ca3, .3, .35);
-const carCabinMat = mat(0x164457, .12, .4);
-const carGeoBody = new THREE.BoxGeometry(10, 2.5, 4.2);
-const carGeoCab = new THREE.BoxGeometry(4.8, 2, 3.3);
+const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8];
+
+/* MUCH BIGGER car: 22 wide × 8 deep (was 10 × 4.2) */
+const carBodyGeo = new THREE.BoxGeometry(22, 6, 8);
+const carCabinGeo = new THREE.BoxGeometry(11, 4.5, 6.5);
+const carLightGeo = new THREE.BoxGeometry(1.2, 1, 1.4);
+const headlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.5 });
+const taillightMat = new THREE.MeshStandardMaterial({ color: 0xff1e1e, emissive: 0xff1010, emissiveIntensity: 1.5 });
+
 function car(route, progress, dir, spd){
   const g = new THREE.Group();
-  const b = new THREE.Mesh(carGeoBody, carBodyMat);
-  b.position.y = 2.7;
-  g.add(b);
-  const c = new THREE.Mesh(carGeoCab, carCabinMat);
-  c.position.set(-.5, 4.3, 0);
-  g.add(c);
+  const bodyMat = mat(carColors[Math.floor(Math.random()*carColors.length)], .3, .4);
+  const body = new THREE.Mesh(carBodyGeo, bodyMat);
+  body.position.y = 6;
+  g.add(body);
+  const cabin = new THREE.Mesh(carCabinGeo, mat(0x164457, .12, .4));
+  cabin.position.set(-1, 9.5, 0);
+  g.add(cabin);
+  /* Headlights (front = +x) */
+  for(const z of [-2.8, 2.8]){
+    const l = new THREE.Mesh(carLightGeo, headlightMat);
+    l.position.set(11, 6.5, z);
+    g.add(l);
+  }
+  /* Taillights (back = -x) */
+  for(const z of [-2.8, 2.8]){
+    const l = new THREE.Mesh(carLightGeo, taillightMat);
+    l.position.set(-11, 6.5, z);
+    g.add(l);
+  }
   scene.add(g);
   cars.push({ car: g, route, progress, direction: dir, speed: spd, baseSpeed: spd, rerouted: false });
 }
+
 const outerRoute = [[-855,-635],[855,-635],[855,635],[-855,635]];
 const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
-for(let i=0; i<3; i++) car("outer", .05+i*.2, 1, .72);
-for(let i=0; i<3; i++) car("outer", .4+i*.2, 1, .70);
-for(let i=0; i<2; i++) car("inner", i/2, 1, .65);
+
+/* Slower speeds: 0.35 instead of 0.72 */
+for(let i=0; i<4; i++) car("outer", .05+i*.15, 1, .35 + Math.random()*.08);
+for(let i=0; i<4; i++) car("outer", .4+i*.15, 1, .35 + Math.random()*.08);
+for(let i=0; i<3; i++) car("inner", i/3, 1, .30 + Math.random()*.08);
+for(let i=0; i<2; i++) car("inner", .5 + i/2, -1, .30 + Math.random()*.08);
 
 function routeP(route, progress){
   const points = route==="outer" ? outerRoute : innerRoute;
@@ -819,7 +885,7 @@ cars.forEach(d => {
 });
 
 /* =========================================================
-   LOAD BIG BUILDINGS
+   BUILDING MODELS
 ========================================================= */
 function bld(file, size, pos, type){
   loader.load(file, g => {
@@ -835,7 +901,6 @@ bld("./low_poly_hospital.glb", 180, [250,-210], "hospital");
 bld("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 bld("./us_bank_tower.glb", 260, [350,210], "bank");
 
-/* Society gate */
 const gate = new THREE.Group();
 gate.position.set(-260, 5, 390);
 const gL = new THREE.Mesh(new THREE.BoxGeometry(8, 18, 8), mat(0x315d70, .4, .2));
@@ -872,7 +937,7 @@ renderer.domElement.addEventListener("click", e => {
   const p = ray.intersectObject(powerZone, true);
   if(p.length){
     showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE",
-      "Contains the Solar Park, Wind Farm, Antennas, and 10 Smart Batteries. Batteries charge in the day and power city lights at night.");
+      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Batteries charge in the day and power city lights at night.");
     return;
   }
   for(const it of clickable){
@@ -882,7 +947,7 @@ renderer.domElement.addEventListener("click", e => {
     else if(it.type === "society") showPanel("BSS Smart Society", "RESIDENTIAL", "Connected residential community.");
     else if(it.type === "bank") showPanel("Smart City State Bank", "FINANCIAL", "Smart banking facility.");
     else if(it.type === "farm") showPanel("Smart Eco Farm", "AGRICULTURE", "Sustainable smart farming.");
-    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with rooftop solar panels.");
+    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with 12 rooftop solar panels.");
     else if(it.type === "smallBuilding") showPanel(it.name, "SMART SUPPORT", "Compact smart support building with rooftop solar.");
     else if(it.type === "antenna") showPanel(it.name, "ANTENNA", "Communication antenna.");
     else if(it.type === "battery") showPanel(it.name, "BATTERY", "Stores energy and powers city lights at night.");
@@ -932,9 +997,7 @@ function setDN(night){
   roadMaterial.color.copy(night ? NIGHT_ROAD : DAY_ROAD);
   curbMaterial.color.copy(night ? NIGHT_CURB : DAY_CURB);
 
-  streetBulbMats.forEach(m => {
-    m.emissiveIntensity = night ? 5.0 : 0.9;
-  });
+  streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 0.9; });
   ringMat.emissiveIntensity = night ? 4.0 : 1.5;
   winMat.emissiveIntensity = night ? 3.5 : 1.2;
 }
@@ -1009,7 +1072,6 @@ let jamLastFrame = 0;
 function drawJam(){
   jamCtx.fillStyle = "#1a1a1a";
   jamCtx.fillRect(0, 0, 400, 180);
-
   jamCtx.strokeStyle = "#ffcc00";
   jamCtx.lineWidth = 2;
   jamCtx.setLineDash([12, 8]);
@@ -1018,17 +1080,14 @@ function drawJam(){
   jamCtx.lineTo(400, 90);
   jamCtx.stroke();
   jamCtx.setLineDash([]);
-
   jamCtx.fillStyle = "#e0751a";
   for(let x=0; x<400; x+=45) jamCtx.fillRect(x, 25, 35, 8);
-
   const colors = ['#e04a3a','#3a9de0','#e0a83a','#3ae06b','#e0e0e0'];
   for(let i=0; i<10; i++){
     jamCtx.fillStyle = colors[i%5];
     jamCtx.fillRect(20 + i*38, 60, 32, 16);
     jamCtx.fillRect(20 + i*38, 110, 32, 16);
   }
-
   jamCtx.fillStyle = "#ff0000";
   jamCtx.beginPath();
   jamCtx.arc(15, 15, 5, 0, Math.PI * 2);
@@ -1089,7 +1148,7 @@ function updateCars(){
       const p = routeP(d.route, d.progress);
       const dist = Math.sqrt(p.x*p.x + (p.z+635)*(p.z+635));
       if(dist < 300) s *= Math.max(.05, dist/300);
-      if(Math.abs(p.z+635) < 18 && Math.abs(p.x) < 135) s = .025;
+      if(Math.abs(p.z+635) < 18 && Math.abs(p.x) < 135) s = .015;
     }
     if(tState === 2){
       const prog = Math.min((simSec - rStart)/RESOLVE, 1);
