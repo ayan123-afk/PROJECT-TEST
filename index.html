@@ -184,10 +184,12 @@ body{
 
 <div id="ui">
     <div class="title">BSS WORLD</div>
+
     <div class="sub">
         3D SMART CITY • BEACONHOUSE SCHOOL SYSTEM
     </div>
 </div>
+
 
 <div id="trafficStatus">
 
@@ -224,20 +226,29 @@ body{
     </div>
 </div>
 
+
 <div id="aiMessage">
     AI Traffic Controller
 </div>
 
+
 <div id="panel">
+
     <button class="close" onclick="closePanel()">×</button>
+
     <div id="panelContent"></div>
+
 </div>
 
+
 <div id="hint">
+
     Drag = Rotate &nbsp; | &nbsp;
     Wheel = Zoom &nbsp; | &nbsp;
-    Click School / Hospital / Society / Bank
+    Click School / Hospital / Society / Bank / Farm
+
 </div>
+
 
 <script type="importmap">
 {
@@ -247,6 +258,7 @@ body{
     }
 }
 </script>
+
 
 <script type="module">
 
@@ -267,13 +279,15 @@ import {
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0xa9dcf4);
+scene.background =
+    new THREE.Color(0xa9dcf4);
 
-scene.fog = new THREE.Fog(
-    0xa9dcf4,
-    900,
-    2700
-);
+scene.fog =
+    new THREE.Fog(
+        0xa9dcf4,
+        900,
+        2700
+    );
 
 
 /* =========================================================
@@ -387,11 +401,15 @@ sun.position.set(
 sun.castShadow = true;
 
 sun.shadow.mapSize.width = 2048;
+
 sun.shadow.mapSize.height = 2048;
 
 sun.shadow.camera.left = -1300;
+
 sun.shadow.camera.right = 1300;
+
 sun.shadow.camera.top = 1300;
+
 sun.shadow.camera.bottom = -1300;
 
 scene.add(sun);
@@ -525,11 +543,12 @@ scene.add(ground);
 
 /* =========================================================
    LARGE CITY BASE
-   NO WHITE PLATFORM
 ========================================================= */
 
 const CITY_W = 1700;
+
 const CITY_D = 1250;
+
 
 const cityBase =
     new THREE.Mesh(
@@ -541,8 +560,7 @@ const cityBase =
         grassDarkMaterial
     );
 
-cityBase.position.y =
-    0;
+cityBase.position.y = 0;
 
 cityBase.receiveShadow = true;
 
@@ -558,6 +576,7 @@ function createBoundary(){
     const y = 4.3;
 
     const thickness = 9;
+
 
     const front =
         new THREE.Mesh(
@@ -621,7 +640,6 @@ createBoundary();
 
 /* =========================================================
    ZONE AREA
-   GREEN ONLY — NO WHITE BORDER
 ========================================================= */
 
 function createZone(
@@ -652,8 +670,6 @@ function createZone(
     scene.add(zone);
 
 
-    /* subtle dark green inner trim */
-
     const trim =
         new THREE.LineSegments(
             new THREE.EdgesGeometry(
@@ -682,7 +698,7 @@ function createZone(
 
 
 /* =========================================================
-   LARGE BUILDING DISTRICTS
+   BUILDING DISTRICTS
 ========================================================= */
 
 createZone(
@@ -692,12 +708,14 @@ createZone(
     320
 );
 
+
 createZone(
     250,
     -210,
     440,
     320
 );
+
 
 createZone(
     -260,
@@ -706,10 +724,23 @@ createZone(
     330
 );
 
+
 createZone(
     350,
     210,
     390,
+    330
+);
+
+
+/* =========================================================
+   ECO FARM DISTRICT
+========================================================= */
+
+createZone(
+    -690,
+    210,
+    440,
     330
 );
 
@@ -767,8 +798,6 @@ function createRoad(
 
     if(width > depth){
 
-        /* center yellow line */
-
         const center =
             new THREE.Mesh(
                 new THREE.BoxGeometry(
@@ -787,8 +816,6 @@ function createRoad(
 
         scene.add(center);
 
-
-        /* white lane markings */
 
         for(
             let i=-width/2+18;
@@ -971,13 +998,18 @@ function createCrosswalk(
         let w,d;
 
         if(horizontal){
+
             w=3;
             d=32;
+
         }
         else{
+
             w=32;
             d=3;
+
         }
+
 
         const stripe =
             new THREE.Mesh(
@@ -989,20 +1021,26 @@ function createCrosswalk(
                 roadLineMaterial
             );
 
+
         if(horizontal){
+
             stripe.position.set(
                 x+i,
                 5.1,
                 z
             );
+
         }
         else{
+
             stripe.position.set(
                 x,
                 5.1,
                 z+i
             );
+
         }
+
 
         scene.add(stripe);
 
@@ -1068,14 +1106,13 @@ function createSidewalk(
 }
 
 
-/* selected sidewalks */
-
 createSidewalk(
     -690,
     -380,
     430,
     7
 );
+
 
 createSidewalk(
     250,
@@ -1084,12 +1121,14 @@ createSidewalk(
     7
 );
 
+
 createSidewalk(
     -260,
     390,
     470,
     7
 );
+
 
 createSidewalk(
     350,
@@ -1177,10 +1216,13 @@ function createBoard(
         );
 
     canvas.width = 2200;
+
     canvas.height = 600;
+
 
     const ctx =
         canvas.getContext("2d");
+
 
     ctx.fillStyle =
         "#075c7b";
@@ -1191,6 +1233,7 @@ function createBoard(
         2200,
         600
     );
+
 
     ctx.strokeStyle =
         "#78e9ff";
@@ -1203,6 +1246,7 @@ function createBoard(
         2176,
         576
     );
+
 
     ctx.fillStyle =
         "#ffffff";
@@ -1222,6 +1266,7 @@ function createBoard(
         300
     );
 
+
     const texture =
         new THREE.CanvasTexture(
             canvas
@@ -1229,6 +1274,7 @@ function createBoard(
 
     texture.colorSpace =
         THREE.SRGBColorSpace;
+
 
     const sign =
         new THREE.Mesh(
@@ -1250,9 +1296,11 @@ function createBoard(
 
     group.add(sign);
 
+
     scene.add(group);
 
     return group;
+
 }
 
 
@@ -1269,6 +1317,7 @@ createBoard(
     11
 );
 
+
 createBoard(
     "BSS SMART HOSPITAL",
     250,
@@ -1277,6 +1326,7 @@ createBoard(
     105,
     11
 );
+
 
 createBoard(
     "BSS SMART SOCIETY",
@@ -1287,6 +1337,7 @@ createBoard(
     11
 );
 
+
 createBoard(
     "SMART CITY STATE BANK",
     350,
@@ -1295,6 +1346,17 @@ createBoard(
     115,
     11
 );
+
+
+createBoard(
+    "ECO SUSTAINABLE FARM",
+    -690,
+    5,
+    390,
+    115,
+    11
+);
+
 
 createBoard(
     "AI TRAFFIC CONTROLLER",
@@ -1388,7 +1450,9 @@ function createStreetLight(
 }
 
 
-/* outer lights */
+/* =========================================================
+   OUTER LIGHTS
+========================================================= */
 
 for(
     let x=-800;
@@ -1409,7 +1473,9 @@ for(
 }
 
 
-/* side lights */
+/* =========================================================
+   SIDE LIGHTS
+========================================================= */
 
 for(
     let z=-560;
@@ -1430,7 +1496,9 @@ for(
 }
 
 
-/* internal lights */
+/* =========================================================
+   INTERNAL LIGHTS
+========================================================= */
 
 for(
     let x=-780;
@@ -1551,11 +1619,13 @@ function createTrafficLight(
             8.8
         );
 
+
     const yellow =
         light(
             0xffcc22,
             7.4
         );
+
 
     const green =
         light(
@@ -1730,7 +1800,9 @@ windFarm.position.set(
 scene.add(windFarm);
 
 
-/* large outside-city green pad */
+/* =========================================================
+   WIND PAD
+========================================================= */
 
 const windPad =
     new THREE.Mesh(
@@ -1753,7 +1825,9 @@ windPad.receiveShadow = true;
 scene.add(windPad);
 
 
-/* wind farm road */
+/* =========================================================
+   WIND FARM ROAD
+========================================================= */
 
 const windRoad =
     new THREE.Mesh(
@@ -1846,6 +1920,7 @@ function createTurbine(
     const blades =
         new THREE.Group();
 
+
     for(
         let i=0;
         i<3;
@@ -1886,7 +1961,9 @@ function createTurbine(
 }
 
 
-/* outside city positions */
+/* =========================================================
+   TURBINE POSITIONS
+========================================================= */
 
 createTurbine(
     -1160,
@@ -1919,7 +1996,9 @@ createTurbine(
 );
 
 
-/* wind farm sign */
+/* =========================================================
+   WIND FARM SIGN
+========================================================= */
 
 createBoard(
     "WIND ENERGY FARM",
@@ -2499,6 +2578,70 @@ loader.load(
 
 
 /* =========================================================
+   ECO SUSTAINABLE FARM GLB
+========================================================= */
+
+loader.load(
+
+    "./eco_sustainable_farm_concept.glb",
+
+    gltf => {
+
+        const farm =
+            gltf.scene;
+
+
+        prepareModel(
+            farm,
+            260
+        );
+
+
+        /*
+           Separate farm location.
+           This keeps the farm away from
+           the main Society and Bank buildings.
+        */
+
+        farm.position.set(
+            -690,
+            5,
+            210
+        );
+
+
+        scene.add(
+            farm
+        );
+
+
+        clickable.push({
+            object:farm,
+            type:"farm"
+        });
+
+
+        console.log(
+            "Eco Sustainable Farm loaded."
+        );
+
+    },
+
+    undefined,
+
+    error => {
+
+        console.error(
+            "Eco Sustainable Farm GLB Error:",
+            error
+        );
+
+    }
+
+);
+
+
+/* =========================================================
    INFO PANEL
 ========================================================= */
 
@@ -2655,6 +2798,19 @@ renderer.domElement
             }
 
 
+            if(
+                item.type === "farm"
+            ){
+
+                showPanel(
+                    "Eco Sustainable Farm",
+                    "SUSTAINABILITY ZONE",
+                    "A sustainable smart farming facility using modern agricultural technology, efficient resource management and environmentally friendly farming practices to support food production."
+                );
+
+            }
+
+
             return;
 
         }
@@ -2694,25 +2850,30 @@ const simulationTime =
         "simulationTime"
     );
 
+
 const trafficLevel =
     document.getElementById(
         "trafficLevel"
     );
+
 
 const trafficFlow =
     document.getElementById(
         "trafficFlow"
     );
 
+
 const aiMode =
     document.getElementById(
         "aiMode"
     );
 
+
 const trafficStateElement =
     document.getElementById(
         "trafficState"
     );
+
 
 const aiMessage =
     document.getElementById(
@@ -2730,6 +2891,7 @@ function showAIMessage(
 
     aiMessage.textContent =
         message;
+
 
     aiMessage.classList.add(
         "show"
@@ -3057,6 +3219,7 @@ function updateTrafficLights(
 
             let cycleLength = 12;
 
+
             if(
                 trafficState === 2
             ){
@@ -3077,9 +3240,11 @@ function updateTrafficLights(
             .material
             .emissiveIntensity = 0;
 
+
             light.yellow
             .material
             .emissiveIntensity = 0;
+
 
             light.green
             .material
@@ -3215,6 +3380,7 @@ function animate(){
     const delta =
         clock.getDelta();
 
+
     const elapsed =
         clock.elapsedTime;
 
@@ -3233,8 +3399,6 @@ function animate(){
         elapsed
     );
 
-
-    /* turbine blades only */
 
     turbines.forEach(
         blades => {
@@ -3255,6 +3419,7 @@ function animate(){
 
 
     controls.update();
+
 
     renderer.render(
         scene,
@@ -3285,7 +3450,9 @@ window.addEventListener(
             window.innerWidth /
             window.innerHeight;
 
+
         camera.updateProjectionMatrix();
+
 
         renderer.setSize(
             window.innerWidth,
