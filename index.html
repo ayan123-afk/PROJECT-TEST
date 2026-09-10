@@ -528,12 +528,13 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   DAGASHIYA SHOP HELPER — reusable
+   DAGASHIYA SHOP — BIGGER SIZE (was 22, now 60)
 ========================================================= */
 function loadDagashiyaShop(x, z, scale=1, rotationY=0, nearName="Area"){
   loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", gltf => {
     const shop = gltf.scene;
-    prepareModel(shop, 22 * scale);
+    /* Bigger base size: 60 * scale (was 22 * scale) */
+    prepareModel(shop, 60 * scale);
     shop.position.set(x, 5, z);
     shop.rotation.y = rotationY;
     scene.add(shop);
@@ -589,7 +590,7 @@ function createZoneBorder(x, z, width, depth){
 createZoneBorder(0, 0, 1400, 1100);
 
 /* =========================================================
-   ANTENNA AREA (inside Power Supply Zone)
+   ANTENNA AREA
 ========================================================= */
 const antennaArea = new THREE.Group();
 antennaArea.position.set(-350, 0, 0);
@@ -1197,40 +1198,40 @@ loader.load("./simple_farm_free.glb", gltf => {
 createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
 
 /* =========================================================
-   DAGASHIYA SHOPS — 2 at every major location
+   DAGASHIYA SHOPS — MUCH BIGGER (scale increased)
 ========================================================= */
 
 /* --- SCHOOL: 2 shops --- */
-loadDagashiyaShop(-640, -95, 1.0, 0, "School");
-loadDagashiyaShop(-740, -95, 1.0, 0, "School");
+loadDagashiyaShop(-600, -75, 2.5, 0, "School");
+loadDagashiyaShop(-780, -75, 2.5, 0, "School");
 
 /* --- HOSPITAL: 2 shops --- */
-loadDagashiyaShop(200, -95, 1.0, 0, "Hospital");
-loadDagashiyaShop(300, -95, 1.0, 0, "Hospital");
+loadDagashiyaShop(180, -75, 2.5, 0, "Hospital");
+loadDagashiyaShop(320, -75, 2.5, 0, "Hospital");
 
 /* --- SOCIETY: 2 shops --- */
-loadDagashiyaShop(-310, 285, 1.0, 0, "Society");
-loadDagashiyaShop(-210, 285, 1.0, 0, "Society");
+loadDagashiyaShop(-330, 270, 2.5, 0, "Society");
+loadDagashiyaShop(-190, 270, 2.5, 0, "Society");
 
 /* --- BANK: 2 shops --- */
-loadDagashiyaShop(300, 285, 1.0, 0, "Bank");
-loadDagashiyaShop(400, 285, 1.0, 0, "Bank");
+loadDagashiyaShop(280, 270, 2.5, 0, "Bank");
+loadDagashiyaShop(420, 270, 2.5, 0, "Bank");
 
-/* --- FARM: 2 shops (at the farm entrance) --- */
-loadDagashiyaShop(1000, -330, 1.0, 0, "Farm");
-loadDagashiyaShop(1000, -380, 1.0, 0, "Farm");
+/* --- FARM: 2 shops --- */
+loadDagashiyaShop(980, -310, 2.5, 0, "Farm");
+loadDagashiyaShop(980, -400, 2.5, 0, "Farm");
 
-/* --- POWER SUPPLY SMART CITY ZONE: 2 shops --- */
-loadDagashiyaShop(-1900, 1350, 1.2, 0, "Power Supply Zone");
-loadDagashiyaShop(-1100, 1350, 1.2, 0, "Power Supply Zone");
+/* --- POWER SUPPLY ZONE: 2 shops --- */
+loadDagashiyaShop(-1900, 1320, 3.5, 0, "Power Supply Zone");
+loadDagashiyaShop(-1100, 1320, 3.5, 0, "Power Supply Zone");
 
-/* --- SMART BUILDINGS ARENA: 2 shops --- */
-loadDagashiyaShop(1550, -300, 1.2, 0, "Smart Arena");
-loadDagashiyaShop(1550, -1000, 1.2, 0, "Smart Arena");
+/* --- SMART ARENA: 2 shops --- */
+loadDagashiyaShop(1550, -260, 3.5, 0, "Smart Arena");
+loadDagashiyaShop(1550, -1040, 3.5, 0, "Smart Arena");
 
 /* --- TRAFFIC CONTROLLER: 2 shops --- */
-loadDagashiyaShop(-100, 600, 1.0, 0, "Traffic Manager");
-loadDagashiyaShop(100, 600, 1.0, 0, "Traffic Manager");
+loadDagashiyaShop(-120, 600, 2.5, 0, "Traffic Manager");
+loadDagashiyaShop(120, 600, 2.5, 0, "Traffic Manager");
 
 /* =========================================================
    CAR SYSTEM
@@ -1393,7 +1394,6 @@ renderer.domElement.addEventListener("click", event => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
-  /* Power Supply Zone click */
   const powerHits = raycaster.intersectObject(powerSupplyZone, true);
   if(powerHits.length){
     showPanel(
