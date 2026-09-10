@@ -107,7 +107,7 @@ const DAY_BG = new THREE.Color(0xa9dcf4);
 const NIGHT_BG = new THREE.Color(0x050810);
 scene.background = DAY_BG.clone();
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 5, 5000);
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 5, 8000);
 camera.position.set(1250, 850, 1350);
 
 const renderer = new THREE.WebGLRenderer({
@@ -124,7 +124,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
 controls.minDistance = 200;
-controls.maxDistance = 3000;
+controls.maxDistance = 5000;
 controls.target.set(0, 5, 0);
 
 /* =========================================================
@@ -154,9 +154,10 @@ const darkMaterial = mat(0x182327, .65, .15);
 const blueMaterial = mat(0x087fa8, .35, .25);
 
 /* =========================================================
-   GROUND + CITY
+   ██████ GROUND — MUCH BIGGER (12000 × 12000) ██████
 ========================================================= */
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(4200, 4200), grassMaterial);
+const GROUND_SIZE = 12000;
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(GROUND_SIZE, GROUND_SIZE), grassMaterial);
 ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
@@ -472,11 +473,10 @@ function shop(x, z, scale=1, name){
 }
 
 /* =========================================================
-   ██████ POWER SUPPLY ZONE — MOVED FAR FROM CITY ROADS ██████
-   New position: bottom-left of the map, well away from roads
+   POWER SUPPLY SMART CITY ZONE (far from city)
 ========================================================= */
 const powerZone = new THREE.Group();
-powerZone.position.set(-2200, 0, 1900);   /* MOVED FAR AWAY */
+powerZone.position.set(-2200, 0, 1900);
 scene.add(powerZone);
 
 board("POWER SUPPLY (SMART-CITY)", -2200, 5, 2450, 320, 18);
@@ -1306,7 +1306,7 @@ function animate(){
 setState(0);
 animate();
 
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
