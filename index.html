@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BSS WORLD — 3D Smart City · Antenna, Wind & Solar</title>
+  <title>BSS WORLD — 3D Smart City · Power Supply Zone</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;color:white}
@@ -59,7 +59,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Solar Park / Smart Buildings Arena / Traffic Manager / Antenna + Wind Farm
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Supply Zone / Smart Buildings Arena / Traffic Manager
 </div>
 
 <script type="importmap">
@@ -81,12 +81,12 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 ========================================================= */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa9dcf4);
-scene.fog = new THREE.Fog(0xa9dcf4, 950, 3200);
+scene.fog = new THREE.Fog(0xa9dcf4, 950, 3500);
 
 /* =========================================================
    CAMERA
 ========================================================= */
-const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, .1, 3500);
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, .1, 3800);
 camera.position.set(1250, 820, 1350);
 
 /* =========================================================
@@ -109,7 +109,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = .055;
 controls.minDistance = 100;
-controls.maxDistance = 2800;
+controls.maxDistance = 3000;
 controls.target.set(0, 5, 0);
 
 /* =========================================================
@@ -123,10 +123,10 @@ sun.position.set(-700, 1200, 450);
 sun.castShadow = true;
 sun.shadow.mapSize.width = 2048;
 sun.shadow.mapSize.height = 2048;
-sun.shadow.camera.left = -1700;
-sun.shadow.camera.right = 1700;
-sun.shadow.camera.top = 1700;
-sun.shadow.camera.bottom = -1700;
+sun.shadow.camera.left = -2000;
+sun.shadow.camera.right = 2000;
+sun.shadow.camera.top = 2000;
+sun.shadow.camera.bottom = -2000;
 scene.add(sun);
 
 const solarLight = new THREE.PointLight(0xffd96a, 4, 900);
@@ -155,7 +155,7 @@ const whiteMaterial = material(0xe8eeee, .7);
 /* =========================================================
    WORLD GROUND
 ========================================================= */
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(3800, 3800), grassMaterial);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(4200, 4200), grassMaterial);
 ground.rotation.x = -Math.PI/2;
 ground.receiveShadow = true;
 scene.add(ground);
@@ -326,7 +326,6 @@ createBoard("BSS SMART HOSPITAL", 250, 5, -375, 105, 11);
 createBoard("BSS SMART SOCIETY", -260, 5, 390, 110, 11);
 createBoard("SMART CITY STATE BANK", 350, 5, 390, 115, 11);
 createBoard("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
-createBoard("POWER SUPPLY SMART CITY", -950, 5, 780, 220, 16);
 
 /* =========================================================
    STREET LIGHTS
@@ -529,23 +528,65 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   ANTENNA AREA — ENLARGED WITH WIND FARM
+   ██████  POWER SUPPLY SMART CITY ZONE  ██████
+   (Solar Park + Antennas + Wind Farm — all together)
+========================================================= */
+const powerSupplyZone = new THREE.Group();
+powerSupplyZone.position.set(-1500, 0, 900);
+scene.add(powerSupplyZone);
+
+/* --- Zone sign --- */
+createBoard("POWER SUPPLY SMART CITY", -1500, 5, 1450, 320, 18);
+
+/* --- Large zone ground pad --- */
+const powerZonePad = new THREE.Mesh(
+  new THREE.BoxGeometry(1400, .8, 1100),
+  material(0x1d3a2e, .92)
+);
+powerZonePad.position.set(0, 4.2, 0);
+powerZonePad.receiveShadow = true;
+powerSupplyZone.add(powerZonePad);
+
+/* --- Glowing zone border --- */
+const powerZoneBorderMat = new THREE.MeshStandardMaterial({
+  color:0x63e7ff,
+  emissive:0x16cfff,
+  emissiveIntensity:1.6,
+  metalness:.6,
+  roughness:.25
+});
+function createZoneBorder(x, z, width, depth){
+  const front = new THREE.Mesh(new THREE.BoxGeometry(width, .7, 3), powerZoneBorderMat);
+  front.position.set(x, 6.5, z - depth/2);
+  powerSupplyZone.add(front);
+  const back = front.clone();
+  back.position.z = z + depth/2;
+  powerSupplyZone.add(back);
+  const left = new THREE.Mesh(new THREE.BoxGeometry(3, .7, depth), powerZoneBorderMat);
+  left.position.set(x - width/2, 6.5, z);
+  powerSupplyZone.add(left);
+  const right = left.clone();
+  right.position.x = x + width/2;
+  powerSupplyZone.add(right);
+}
+createZoneBorder(0, 0, 1400, 1100);
+
+/* =========================================================
+   ANTENNA AREA (inside Power Supply Zone)
 ========================================================= */
 const antennaArea = new THREE.Group();
-antennaArea.position.set(-950, 5, 980);
-scene.add(antennaArea);
+antennaArea.position.set(-350, 0, 0);
+powerSupplyZone.add(antennaArea);
 
-/* --- enlarged base pad for antenna area --- */
 const antAreaPad = new THREE.Mesh(
   new THREE.CylinderGeometry(180, 200, 4, 48),
   material(0x1a3a44, .4, .25)
 );
-antAreaPad.position.y = 2;
+antAreaPad.position.y = 5;
 antAreaPad.receiveShadow = true;
 antAreaPad.castShadow = true;
 antennaArea.add(antAreaPad);
 
-/* --- glowing ring around the entire antenna area --- */
 const antAreaRing = new THREE.Mesh(
   new THREE.TorusGeometry(185, 1.6, 12, 80),
   new THREE.MeshStandardMaterial({
@@ -557,53 +598,47 @@ const antAreaRing = new THREE.Mesh(
   })
 );
 antAreaRing.rotation.x = Math.PI/2;
-antAreaRing.position.y = 4.5;
+antAreaRing.position.y = 7.5;
 antennaArea.add(antAreaRing);
 
-/* --- Antenna 1: old_antenna.glb (big one) --- */
+/* Antenna 1: old_antenna.glb */
 loader.load("./old_antenna.glb", gltf => {
   const oldAnt = gltf.scene;
   prepareModel(oldAnt, 300);
-  oldAnt.position.set(0, 0, 0);
+  oldAnt.position.set(0, 5, 0);
   antennaArea.add(oldAnt);
   clickable.push({ object: oldAnt, type: "antenna", name: "Old Antenna" });
-}, undefined, error => {
-  console.error("old_antenna.glb load error:", error);
-});
+}, undefined, error => { console.error("old_antenna.glb load error:", error); });
 
-/* --- Antenna 2: antena.glb --- */
+/* Antenna 2: antena.glb */
 loader.load("./antena.glb", gltf => {
   const ant = gltf.scene;
   prepareModel(ant, 190);
-  ant.position.set(140, 0, -70);
+  ant.position.set(140, 5, -70);
   antennaArea.add(ant);
   clickable.push({ object: ant, type: "antenna", name: "Antenna" });
-}, undefined, error => {
-  console.error("antena.glb load error:", error);
-});
+}, undefined, error => { console.error("antena.glb load error:", error); });
 
-/* --- Antenna 3: antena.glb (second copy) --- */
+/* Antenna 3: antena.glb (2nd copy) */
 loader.load("./antena.glb", gltf => {
   const ant2 = gltf.scene;
   prepareModel(ant2, 170);
-  ant2.position.set(-150, 0, 50);
+  ant2.position.set(-150, 5, 50);
   antennaArea.add(ant2);
   clickable.push({ object: ant2, type: "antenna", name: "Antenna 2" });
-}, undefined, error => {
-  console.error("antena.glb load error:", error);
-});
+}, undefined, error => { console.error("antena.glb load error:", error); });
 
 /* =========================================================
-   WIND FARM — MOVED NEXT TO ANTENNA AREA
+   WIND FARM (inside Power Supply Zone)
 ========================================================= */
 const windFarmGroup = new THREE.Group();
-windFarmGroup.position.set(-950, 5, 980);
-scene.add(windFarmGroup);
+windFarmGroup.position.set(-350, 0, 0);
+powerSupplyZone.add(windFarmGroup);
 
 const turbines = [];
 function createTurbine(x, z, scale=1){
   const group = new THREE.Group();
-  group.position.set(x, 0, z);
+  group.position.set(x, 5, z);
   group.scale.setScalar(scale);
   const tower = new THREE.Mesh(
     new THREE.CylinderGeometry(.9, 1.4, 55, 16),
@@ -629,7 +664,6 @@ function createTurbine(x, z, scale=1){
   turbines.push(blades);
 }
 
-/* 8 turbines arranged around the antenna area */
 const windPositions = [
   [-110, -110], [110, -110],
   [-110, 110], [110, 110],
@@ -641,43 +675,44 @@ windPositions.forEach((pos, i) => {
 });
 
 /* =========================================================
-   SOLAR ENERGY PARK
+   SOLAR ENERGY PARK (inside Power Supply Zone — big area)
 ========================================================= */
 const solarPark = new THREE.Group();
-solarPark.position.set(-1150, 0, 760);
-scene.add(solarPark);
+solarPark.position.set(400, 0, 0);
+powerSupplyZone.add(solarPark);
 
+/* --- Large solar ground --- */
 const solarGround = new THREE.Mesh(
-  new THREE.BoxGeometry(620, .6, 520),
-  material(0x314b36, .9)
+  new THREE.BoxGeometry(620, .8, 1050),
+  material(0x2a4536, .92)
 );
-solarGround.position.y = 4.4;
+solarGround.position.y = 5;
 solarGround.receiveShadow = true;
 solarPark.add(solarGround);
 
+/* --- Solar border glow --- */
 const solarBorderMaterial = new THREE.MeshStandardMaterial({
   color:0x63e7ff,
   emissive:0x16cfff,
-  emissiveIntensity:1.4,
+  emissiveIntensity:1.8,
   metalness:.55,
   roughness:.3
 });
-
 function createSolarBorder(x, z, width, depth){
-  const top = new THREE.Mesh(new THREE.BoxGeometry(width, .5, 2), solarBorderMaterial);
-  top.position.set(x, 6, z-depth/2);
+  const top = new THREE.Mesh(new THREE.BoxGeometry(width, .6, 2.5), solarBorderMaterial);
+  top.position.set(x, 7, z-depth/2);
   solarPark.add(top);
   const bottom = top.clone();
   bottom.position.z = z+depth/2;
   solarPark.add(bottom);
-  const left = new THREE.Mesh(new THREE.BoxGeometry(2, .5, depth), solarBorderMaterial);
-  left.position.set(x-width/2, 6, z);
+  const left = new THREE.Mesh(new THREE.BoxGeometry(2.5, .6, depth), solarBorderMaterial);
+  left.position.set(x-width/2, 7, z);
   solarPark.add(left);
   const right = left.clone();
   right.position.x = x+width/2;
   solarPark.add(right);
 }
-createSolarBorder(0, 0, 620, 520);
+createSolarBorder(0, 0, 620, 1050);
 
 const solarFieldPanels = [];
 const solarPanelMaterial = new THREE.MeshStandardMaterial({
@@ -691,7 +726,7 @@ const solarFrameMaterial = material(0xb7c4c8, .28, .8);
 
 function createLargeSolarArray(x, z, width, depth, rows=3, cols=5){
   const group = new THREE.Group();
-  group.position.set(x, 7, z);
+  group.position.set(x, 8, z);
   group.rotation.x = -0.22;
   const panelW = width / cols - 4;
   const panelD = depth / rows - 4;
@@ -738,16 +773,21 @@ function createLargeSolarArray(x, z, width, depth, rows=3, cols=5){
   solarFieldPanels.push(group);
   return group;
 }
-createLargeSolarArray(-155, -135, 280, 145, 3, 5);
-createLargeSolarArray(160, -135, 280, 145, 3, 5);
-createLargeSolarArray(-155, 125, 280, 145, 3, 5);
-createLargeSolarArray(160, 125, 280, 145, 3, 5);
+/* More solar arrays filling the larger area */
+createLargeSolarArray(-155, -380, 280, 180, 3, 5);
+createLargeSolarArray(160, -380, 280, 180, 3, 5);
+createLargeSolarArray(-155, -150, 280, 180, 3, 5);
+createLargeSolarArray(160, -150, 280, 180, 3, 5);
+createLargeSolarArray(-155, 120, 280, 180, 3, 5);
+createLargeSolarArray(160, 120, 280, 180, 3, 5);
+createLargeSolarArray(-155, 380, 280, 180, 3, 5);
+createLargeSolarArray(160, 380, 280, 180, 3, 5);
 
 /* =========================================================
-   SOLAR ENERGY CONTROL STATION
+   SOLAR CONTROL STATION
 ========================================================= */
 const solarControl = new THREE.Group();
-solarControl.position.set(0, 6, 235);
+solarControl.position.set(0, 7, 0);
 solarPark.add(solarControl);
 
 const controlBase = new THREE.Mesh(
@@ -758,15 +798,15 @@ controlBase.position.y = 1.5;
 solarControl.add(controlBase);
 
 const controlTower = new THREE.Mesh(
-  new THREE.BoxGeometry(28, 42, 22),
+  new THREE.BoxGeometry(28, 48, 22),
   material(0x15536a, .25, .35)
 );
-controlTower.position.y = 23;
+controlTower.position.y = 26;
 controlTower.castShadow = true;
 solarControl.add(controlTower);
 
 const controlUpper = new THREE.Mesh(
-  new THREE.BoxGeometry(20, 12, 18),
+  new THREE.BoxGeometry(20, 14, 18),
   new THREE.MeshStandardMaterial({
     color:0x0a3345,
     emissive:0x0a6d8a,
@@ -775,7 +815,7 @@ const controlUpper = new THREE.Mesh(
     roughness:.15
   })
 );
-controlUpper.position.y = 50;
+controlUpper.position.y = 57;
 solarControl.add(controlUpper);
 
 const solarScreen = new THREE.Mesh(
@@ -786,7 +826,7 @@ const solarScreen = new THREE.Mesh(
     emissiveIntensity:2.6
   })
 );
-solarScreen.position.set(0, 32, -11.3);
+solarScreen.position.set(0, 36, -11.3);
 solarControl.add(solarScreen);
 
 for(let x=-32; x<=32; x+=16){
@@ -794,81 +834,123 @@ for(let x=-32; x<=32; x+=16){
     new THREE.BoxGeometry(12, 12, 14),
     material(0x24383d, .35, .3)
   );
-  battery.position.set(x, 9, 28);
+  battery.position.set(x, 11, 32);
   solarPark.add(battery);
   const batteryLight = new THREE.Mesh(
     new THREE.BoxGeometry(8, .5, .5),
     new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x1bdcff, emissiveIntensity:2.2 })
   );
-  batteryLight.position.set(x, 12, 20.8);
+  batteryLight.position.set(x, 14, 24.8);
   solarPark.add(batteryLight);
 }
 
-createBoard("SOLAR ENERGY PARK", -1150, 5, 1040, 150, 12);
-
+/* Solar beams */
 const solarBeams = [];
-for(let i=0; i<12; i++){
+for(let i=0; i<16; i++){
   const beam = new THREE.Mesh(
-    new THREE.CylinderGeometry(2, 7, 90, 12, 1, true),
+    new THREE.CylinderGeometry(2, 7, 100, 12, 1, true),
     new THREE.MeshBasicMaterial({ color:0xffe48a, transparent:true, opacity:.055, side:THREE.DoubleSide })
   );
-  beam.position.set(-1150 + (i%6)*100 - 250, 48, 650 + Math.floor(i/6)*230);
+  const col = i % 4;
+  const row = Math.floor(i / 4);
+  beam.position.set(-240 + col * 160, 58, -400 + row * 260);
   solarPark.add(beam);
   solarBeams.push(beam);
 }
 
 /* =========================================================
-   POWER HUB
+   POWER HUB (central distribution point)
 ========================================================= */
 const powerHub = new THREE.Mesh(
-  new THREE.CylinderGeometry(14, 18, 4, 24),
-  new THREE.MeshStandardMaterial({ color:0x07516a, emissive:0x10dfff, emissiveIntensity:2, metalness:.5 })
+  new THREE.CylinderGeometry(20, 26, 6, 32),
+  new THREE.MeshStandardMaterial({ color:0x07516a, emissive:0x10dfff, emissiveIntensity:2.2, metalness:.5 })
 );
-powerHub.position.set(0, 3.5, 520);
-scene.add(powerHub);
+powerHub.position.set(0, 6, 0);
+powerSupplyZone.add(powerHub);
 
 /* =========================================================
-   SMART BUILDINGS ARENA — MOVED OFF ROADS TO DEDICATED ZONE
+   SMART BUILDINGS ARENA — IMPROVED UI
 ========================================================= */
 const smartArena = new THREE.Group();
 smartArena.position.set(1550, 0, -650);
 scene.add(smartArena);
 
-/* --- arena pad --- */
+/* --- Arena floor (raised platform) --- */
 const arenaPad = new THREE.Mesh(
-  new THREE.BoxGeometry(700, .8, 500),
-  material(0x2c4a3a, .92)
+  new THREE.BoxGeometry(800, 2, 600),
+  material(0x2c4a3a, .9)
 );
-arenaPad.position.y = 4.2;
+arenaPad.position.y = 5;
 arenaPad.receiveShadow = true;
 smartArena.add(arenaPad);
 
-/* --- arena border glow --- */
+/* --- Arena inner circular hub --- */
+const arenaHub = new THREE.Mesh(
+  new THREE.CylinderGeometry(70, 80, 1.5, 40),
+  material(0x1a3a44, .4, .3)
+);
+arenaHub.position.y = 6.5;
+smartArena.add(arenaHub);
+
+/* --- Glowing arena border --- */
 const arenaBorderMat = new THREE.MeshStandardMaterial({
   color:0x63e7ff,
   emissive:0x16cfff,
-  emissiveIntensity:1.6,
+  emissiveIntensity:1.8,
   metalness:.6,
   roughness:.25
 });
-const arenaBorderFront = new THREE.Mesh(new THREE.BoxGeometry(700, .6, 3), arenaBorderMat);
-arenaBorderFront.position.set(0, 6.5, -250);
+const arenaBorderFront = new THREE.Mesh(new THREE.BoxGeometry(800, .8, 4), arenaBorderMat);
+arenaBorderFront.position.set(0, 8, -300);
 smartArena.add(arenaBorderFront);
 const arenaBorderBack = arenaBorderFront.clone();
-arenaBorderBack.position.z = 250;
+arenaBorderBack.position.z = 300;
 smartArena.add(arenaBorderBack);
-const arenaBorderLeft = new THREE.Mesh(new THREE.BoxGeometry(3, .6, 500), arenaBorderMat);
-arenaBorderLeft.position.set(-350, 6.5, 0);
+const arenaBorderLeft = new THREE.Mesh(new THREE.BoxGeometry(4, .8, 600), arenaBorderMat);
+arenaBorderLeft.position.set(-400, 8, 0);
 smartArena.add(arenaBorderLeft);
 const arenaBorderRight = arenaBorderLeft.clone();
-arenaBorderRight.position.x = 350;
+arenaBorderRight.position.x = 400;
 smartArena.add(arenaBorderRight);
 
-/* --- arena label sign --- */
-createBoard("SMART BUILDINGS ARENA", 1550, 5, -920, 220, 14);
+/* --- Corner light towers --- */
+for(const cx of [-380, 380]){
+  for(const cz of [-280, 280]){
+    const tower = new THREE.Mesh(
+      new THREE.CylinderGeometry(2, 3, 30, 8),
+      darkMaterial
+    );
+    tower.position.set(cx, 20, cz);
+    smartArena.add(tower);
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(2.5, 14, 14),
+      new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x22dfff, emissiveIntensity:3 })
+    );
+    cap.position.set(cx, 36, cz);
+    smartArena.add(cap);
+  }
+}
+
+/* --- Arena sign --- */
+createBoard("SMART BUILDINGS ARENA", 1550, 5, -980, 240, 16);
+
+/* --- Center holographic display --- */
+const holoDisplay = new THREE.Mesh(
+  new THREE.CylinderGeometry(28, 28, 1, 32),
+  new THREE.MeshStandardMaterial({ color:0x04151d, emissive:0x20d9ff, emissiveIntensity:2 })
+);
+holoDisplay.position.set(0, 8.5, 0);
+smartArena.add(holoDisplay);
+const holoRing = new THREE.Mesh(
+  new THREE.TorusGeometry(30, .8, 12, 48),
+  new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x22dfff, emissiveIntensity:2.5 })
+);
+holoRing.rotation.x = Math.PI/2;
+holoRing.position.set(0, 9.2, 0);
+smartArena.add(holoRing);
 
 /* =========================================================
-   SMART BUILDINGS (inside arena)
+   SMART BUILDINGS (main 4, enhanced UI)
 ========================================================= */
 const smartBuildings = [];
 
@@ -892,7 +974,7 @@ const rooftopSolarMaterial = new THREE.MeshStandardMaterial({
 
 function createCodedSmartBuilding(name, x, z, width, depth, height, color){
   const group = new THREE.Group();
-  group.position.set(x, 5, z);
+  group.position.set(x, 6, z);
   const main = new THREE.Mesh(
     new THREE.BoxGeometry(width, height, depth),
     buildingMaterial(color)
@@ -975,11 +1057,136 @@ function createCodedSmartBuilding(name, x, z, width, depth, height, color){
   return group;
 }
 
-/* All 4 smart buildings placed inside the arena, off the main roads */
-createCodedSmartBuilding("Smart Energy Tower", -180, -100, 100, 80, 185, 0x245d72);
-createCodedSmartBuilding("Green Technology Tower", 0, -100, 90, 75, 155, 0x356b57);
-createCodedSmartBuilding("Digital Innovation Center", 180, -100, 105, 82, 195, 0x31547c);
-createCodedSmartBuilding("Smart Research Center", 0, 120, 98, 78, 165, 0x674d68);
+/* Main 4 smart buildings — placed around the arena perimeter */
+createCodedSmartBuilding("Smart Energy Tower", -230, -150, 100, 80, 185, 0x245d72);
+createCodedSmartBuilding("Green Technology Tower", 230, -150, 90, 75, 155, 0x356b57);
+createCodedSmartBuilding("Digital Innovation Center", -230, 150, 105, 82, 195, 0x31547c);
+createCodedSmartBuilding("Smart Research Center", 230, 150, 98, 78, 165, 0x674d68);
+
+/* =========================================================
+   SMALL BUILDINGS (added inside arena, around the hub)
+========================================================= */
+const smallBuildings = [];
+
+function createSmallBuilding(x, z, width, depth, height, color, name){
+  const group = new THREE.Group();
+  group.position.set(x, 6, z);
+
+  /* main body */
+  const main = new THREE.Mesh(
+    new THREE.BoxGeometry(width, height, depth),
+    buildingMaterial(color)
+  );
+  main.position.y = height/2;
+  main.castShadow = true;
+  main.receiveShadow = true;
+  group.add(main);
+
+  /* window strips */
+  for(let y=6; y<height-3; y+=6){
+    const win = new THREE.Mesh(
+      new THREE.BoxGeometry(width*.75, 2.5, .15),
+      smartWindowMaterial
+    );
+    win.position.set(0, y, depth/2+.1);
+    group.add(win);
+    const win2 = win.clone();
+    win2.position.z = -depth/2-.1;
+    group.add(win2);
+    const win3 = new THREE.Mesh(
+      new THREE.BoxGeometry(.15, 2.5, depth*.75),
+      smartWindowMaterial
+    );
+    win3.position.set(width/2+.1, y, 0);
+    group.add(win3);
+    const win4 = win3.clone();
+    win4.position.x = -width/2-.1;
+    group.add(win4);
+  }
+
+  /* rooftop solar */
+  const roofSolar = new THREE.Mesh(
+    new THREE.BoxGeometry(width*.7, .35, depth*.7),
+    rooftopSolarMaterial
+  );
+  roofSolar.position.y = height + .6;
+  roofSolar.rotation.x = -0.2;
+  group.add(roofSolar);
+
+  /* rooftop cap */
+  const cap = new THREE.Mesh(
+    new THREE.BoxGeometry(width*.5, .8, depth*.5),
+    material(0x4d6b75, .3, .5)
+  );
+  cap.position.y = height + 1.5;
+  group.add(cap);
+
+  /* roof beacon light */
+  const light = new THREE.Mesh(
+    new THREE.SphereGeometry(.9, 10, 10),
+    new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x22dfff, emissiveIntensity:2.5 })
+  );
+  light.position.y = height + 3;
+  group.add(light);
+
+  /* entrance */
+  const door = new THREE.Mesh(
+    new THREE.BoxGeometry(width*.22, height*.15, .6),
+    material(0x0a2732, .25, .4)
+  );
+  door.position.set(0, height*.075, depth/2+.3);
+  group.add(door);
+
+  /* foundation */
+  const foundation = new THREE.Mesh(
+    new THREE.BoxGeometry(width+6, 1, depth+6),
+    material(0x26383c, .7, .2)
+  );
+  foundation.position.y = .5;
+  group.add(foundation);
+
+  smartArena.add(group);
+  smallBuildings.push({ group, light });
+  clickable.push({ object:group, type:"smallBuilding", name });
+
+  return group;
+}
+
+/* 12 small buildings arranged in a ring around the hub */
+const smallPositions = [
+  { x: -80, z: -80, w: 28, d: 24, h: 40 },
+  { x:   0, z: -90, w: 32, d: 26, h: 48 },
+  { x:  80, z: -80, w: 26, d: 22, h: 36 },
+  { x:  95, z:   0, w: 30, d: 24, h: 44 },
+  { x:  80, z:  80, w: 28, d: 22, h: 38 },
+  { x:   0, z:  90, w: 32, d: 26, h: 50 },
+  { x: -80, z:  80, w: 26, d: 22, h: 42 },
+  { x: -95, z:   0, w: 30, d: 24, h: 46 },
+  { x: -45, z: -35, w: 22, d: 18, h: 30 },
+  { x:  45, z: -35, w: 22, d: 18, h: 32 },
+  { x: -45, z:  35, w: 22, d: 18, h: 34 },
+  { x:  45, z:  35, w: 22, d: 18, h: 28 },
+];
+
+const smallColors = [
+  0x3a7385, 0x4a8a9c, 0x5aa0b4, 0x2d5f70,
+  0x356b57, 0x674d68, 0x31547c, 0x3a7a6e,
+  0x4a6b8a, 0x5b7c9e, 0x2e6b78, 0x4d7a8a
+];
+const smallNames = [
+  "Mini Data Center", "Sensor Hub", "Control Node", "Green Block A",
+  "Green Block B", "Smart Kiosk", "Digital Lab", "Energy Cell",
+  "Tech Pod", "Comms Tower", "Sub Station", "Hub Office"
+];
+
+smallPositions.forEach((pos, i) => {
+  createSmallBuilding(
+    pos.x, pos.z,
+    pos.w, pos.d, pos.h,
+    smallColors[i % smallColors.length],
+    smallNames[i % smallNames.length]
+  );
+});
 
 /* =========================================================
    FARM MODEL
@@ -1155,24 +1362,13 @@ renderer.domElement.addEventListener("click", event => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
-  /* Wind farm click */
-  const windHits = raycaster.intersectObject(windFarmGroup, true);
-  if(windHits.length){
+  /* Power Supply Zone click (whole zone) */
+  const powerHits = raycaster.intersectObject(powerSupplyZone, true);
+  if(powerHits.length){
     showPanel(
-      "Wind Farm · Power Supply Smart City",
-      "RENEWABLE WIND ENERGY",
-      "A cluster of 8 wind turbines integrated with the antenna array area. These turbines generate clean renewable electricity that feeds into the smart city's power grid, complementing the Solar Energy Park."
-    );
-    return;
-  }
-
-  /* Antenna area click */
-  const antHits = raycaster.intersectObject(antennaArea, true);
-  if(antHits.length){
-    showPanel(
-      "Antenna Array · Power Supply Smart City",
-      "COMMUNICATION & ENERGY HUB",
-      "A massive multi-band antenna system integrated with solar panels and surrounded by wind turbines. The array receives clean energy from the Solar Park and Wind Farm through invisible underground power lines, supporting city-wide communication and smart-grid telemetry."
+      "Power Supply Smart City",
+      "RENEWABLE ENERGY & COMMUNICATION ZONE",
+      "A massive integrated zone containing the Solar Energy Park, Wind Farm, and Antenna Array. Together they generate and distribute clean renewable electricity to power the entire smart city, while supporting city-wide communication and smart-grid telemetry."
     );
     return;
   }
@@ -1202,11 +1398,15 @@ renderer.domElement.addEventListener("click", event => {
     }
     if(item.type==="smartBuilding"){
       showPanel(item.name, "SMART BUILDING",
-        "A digitally designed high-efficiency building located in the Smart Buildings Arena, off the main roads. Rooftop solar panels generate clean electricity while the underground smart-energy network connects this building to the Solar Energy Park.");
+        "A digitally designed high-efficiency building located in the Smart Buildings Arena. Rooftop solar panels generate clean electricity while the underground smart-energy network connects this building to the Power Supply Smart City zone.");
+    }
+    if(item.type==="smallBuilding"){
+      showPanel(item.name, "SMART SUPPORT BUILDING",
+        "A compact smart support building within the Smart Buildings Arena. Equipped with rooftop solar, LED beacons and modern glazing, it supports the surrounding smart infrastructure.");
     }
     if(item.type==="antenna"){
       showPanel(item.name, "COMMUNICATION ANTENNA",
-        "A communication antenna model loaded from a GLB file. It is part of the city's smart communication and energy network, connected to the Solar Park and Wind Farm through the underground power grid.");
+        "A communication antenna model loaded from a GLB file. It is part of the Power Supply Smart City zone, connected to the Solar Park and Wind Farm through the underground power grid.");
     }
     return;
   }
@@ -1216,12 +1416,6 @@ renderer.domElement.addEventListener("click", event => {
     showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION ZONE",
       "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow.");
     return;
-  }
-
-  const solarHits = raycaster.intersectObject(solarPark, true);
-  if(solarHits.length){
-    showPanel("Solar Energy Park", "RENEWABLE ENERGY ZONE",
-      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Antenna Array and Wind Farm are also directly connected via dedicated power lines.");
   }
 });
 
@@ -1407,7 +1601,7 @@ function animate(){
   updateCars();
   updateTrafficLights(elapsed);
 
-  /* Wind turbines spin */
+  /* Wind turbines */
   turbines.forEach(blades => { blades.rotation.z = elapsed*2.4; });
 
   radar.rotation.z = elapsed*1.7;
@@ -1415,19 +1609,35 @@ function animate(){
   controllerRing.rotation.z = elapsed*.5;
   warningLights.forEach(light => { light.material.emissiveIntensity = 1.5 + Math.sin(elapsed*6)*1.5; });
 
+  /* Solar arrays subtle movement */
   solarFieldPanels.forEach((group,index) => { group.rotation.z = Math.sin(elapsed*.18+index)*.006; });
   solarBeams.forEach((beam,index) => { beam.material.opacity = .035 + Math.sin(elapsed*1.5+index)*.018; });
+
+  /* Smart buildings beacons */
   smartBuildings.forEach((building,index) => {
     building.beacon.material.emissiveIntensity = 2 + Math.sin(elapsed*3+index)*.8;
   });
+
+  /* Small buildings light pulses */
+  smallBuildings.forEach((b, index) => {
+    b.light.material.emissiveIntensity = 2 + Math.sin(elapsed*4 + index*0.7)*1.0;
+  });
+
   solarScreen.material.emissiveIntensity = 2 + Math.sin(elapsed*2.5)*.5;
 
-  /* Animated antenna area ring */
+  /* Antenna area ring */
   antAreaRing.rotation.z = elapsed * 0.6;
   antAreaRing.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
 
-  /* Animated arena border */
-  arenaBorderMat.emissiveIntensity = 1.4 + Math.sin(elapsed*2.5)*0.5;
+  /* Zone border glow */
+  powerZoneBorderMat.emissiveIntensity = 1.4 + Math.sin(elapsed*2.2)*0.5;
+
+  /* Arena border glow */
+  arenaBorderMat.emissiveIntensity = 1.6 + Math.sin(elapsed*2.8)*0.5;
+
+  /* Holographic display */
+  holoRing.rotation.z = elapsed * 0.9;
+  holoDisplay.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
 
   controls.update();
   renderer.render(scene, camera);
