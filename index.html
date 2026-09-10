@@ -3,117 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BSS WORLD — 3D Smart City</title>
+<title>BSS WORLD — 3D Smart City 2027</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{overflow:hidden;background:#a9dcf4;font-family:Arial,Helvetica,sans-serif;color:white;}
+*{box-sizing:border-box}
 
-#ui{
-    position:fixed;top:18px;left:18px;z-index:50;
-    padding:19px 25px;border:1px solid rgba(75,220,255,.45);
-    border-radius:17px;background:rgba(3,13,22,.90);
-    backdrop-filter:blur(16px);box-shadow:0 15px 55px rgba(0,0,0,.3);
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#9bd8f5;
 }
-#ui .title{font-size:28px;font-weight:900;letter-spacing:5px;}
-#ui .sub{margin-top:7px;color:#70e4ff;font-size:12px;letter-spacing:1.4px;}
 
-#trafficStatus{
-    position:fixed;top:18px;right:18px;z-index:50;width:315px;
-    padding:18px;border-radius:17px;background:rgba(3,13,22,.92);
-    border:1px solid rgba(70,220,255,.35);backdrop-filter:blur(16px);
+#app{
+    width:100%;
+    height:100%;
 }
-#trafficStatus .heading{color:#70e4ff;font-size:11px;letter-spacing:2px;margin-bottom:9px;}
-#trafficState{font-size:21px;font-weight:900;margin-bottom:13px;}
-#trafficInfo{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.infoBox{padding:10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);}
-.infoBox span{display:block;color:#91a5ae;font-size:9px;letter-spacing:1px;margin-bottom:4px;}
-.infoBox strong{font-size:13px;}
 
-#aiMessage{
-    position:fixed;left:50%;top:100px;transform:translateX(-50%);
-    z-index:55;padding:12px 24px;border-radius:12px;
-    background:rgba(3,14,22,.95);border:1px solid rgba(90,225,255,.4);
-    color:#c9f5ff;font-size:12px;opacity:0;transition:.4s;
+#hud{
+    position:fixed;
+    top:18px;
+    left:18px;
+    z-index:20;
+    color:#fff;
+    background:rgba(5,15,28,.86);
+    border:1px solid rgba(70,190,255,.5);
+    border-radius:14px;
+    padding:14px 18px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 10px 35px rgba(0,0,0,.25);
+    min-width:245px;
 }
-#aiMessage.show{opacity:1;}
 
-#panel{
-    position:fixed;right:18px;top:185px;width:380px;display:none;z-index:60;
-    padding:25px;border-radius:18px;background:rgba(3,13,22,.97);
-    border:1px solid rgba(70,220,255,.4);box-shadow:0 25px 80px rgba(0,0,0,.55);
+#hud .title{
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:2px;
 }
-#panel h2{color:#68e2ff;margin-bottom:9px;font-size:23px;}
-#panel .type{color:#8097a2;font-size:11px;letter-spacing:1.5px;margin-bottom:16px;}
-#panel p{color:#d0dce1;line-height:1.7;font-size:13px;}
-.close{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;
-    border-radius:8px;background:#172731;color:white;font-size:19px;cursor:pointer;}
 
-#hint{
-    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-    z-index:50;padding:11px 20px;border-radius:12px;
-    background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);
-    color:#d2e1e7;font-size:12px;white-space:nowrap;
+#hud .sub{
+    font-size:11px;
+    opacity:.75;
+    margin-top:3px;
+    letter-spacing:1px;
+}
+
+#traffic{
+    margin-top:10px;
+    font-size:12px;
+    font-weight:800;
+}
+
+#traffic span{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:7px;
+    background:#159447;
+}
+
+#info{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    z-index:20;
+    width:320px;
+    color:#fff;
+    background:rgba(5,15,28,.88);
+    border:1px solid rgba(70,190,255,.45);
+    border-radius:14px;
+    padding:15px;
+    backdrop-filter:blur(10px);
+    display:none;
+}
+
+#info h3{
+    margin:0 0 7px;
+    font-size:18px;
+}
+
+#info p{
+    margin:0;
+    font-size:12px;
+    line-height:1.55;
+    opacity:.88;
+}
+
+#help{
+    position:fixed;
+    left:50%;
+    bottom:18px;
+    transform:translateX(-50%);
+    z-index:20;
+    color:#102030;
+    background:rgba(255,255,255,.82);
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    backdrop-filter:blur(6px);
 }
 
 #loading{
-    position:fixed;inset:0;z-index:100;
-    background:#0a1a24;display:flex;
-    flex-direction:column;align-items:center;justify-content:center;
-    transition:opacity .6s;color:#70e4ff;font-size:14px;letter-spacing:3px;
-}
-#loading.hide{opacity:0;pointer-events:none;}
-#loading .bar{
-    width:260px;height:3px;background:rgba(112,228,255,.15);
-    border-radius:2px;margin-top:20px;overflow:hidden;
-}
-#loading .fill{
-    height:100%;width:0%;background:#70e4ff;
-    transition:width .3s;box-shadow:0 0 12px #70e4ff;
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#8fd3f2;
+    z-index:50;
+    color:#07304a;
+    font-weight:900;
+    font-size:20px;
+    letter-spacing:2px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="loading">
-    LOADING BSS WORLD
-    <div class="bar"><div class="fill" id="loadFill"></div></div>
-</div>
+<div id="loading">BSS WORLD — LOADING SMART CITY...</div>
 
-<div id="ui">
+<div id="app"></div>
+
+<div id="hud">
     <div class="title">BSS WORLD</div>
-    <div class="sub">3D SMART CITY • BEACONHOUSE SCHOOL SYSTEM</div>
-</div>
-
-<div id="trafficStatus">
-    <div class="heading">AI TRAFFIC MANAGEMENT</div>
-    <div id="trafficState">TRAFFIC NORMAL</div>
-    <div id="trafficInfo">
-        <div class="infoBox"><span>SIMULATION</span><strong id="simulationTime">00:00</strong></div>
-        <div class="infoBox"><span>TRAFFIC</span><strong id="trafficLevel">NORMAL</strong></div>
-        <div class="infoBox"><span>FLOW</span><strong id="trafficFlow">92%</strong></div>
-        <div class="infoBox"><span>AI MODE</span><strong id="aiMode">MONITORING</strong></div>
+    <div class="sub">3D SMART CITY 2027</div>
+    <div id="traffic">
+        TRAFFIC:
+        <span id="trafficState">NORMAL</span>
     </div>
 </div>
 
-<div id="aiMessage">AI Traffic Controller</div>
-
-<div id="panel">
-    <button class="close" onclick="closePanel()">×</button>
-    <div id="panelContent"></div>
+<div id="info">
+    <h3 id="infoTitle"></h3>
+    <p id="infoText"></p>
 </div>
 
-<div id="hint">
-    Drag = Rotate &nbsp; | &nbsp; Wheel = Zoom &nbsp; | &nbsp;
-    Click School / Hospital / Society / Bank
+<div id="help">
+    Drag = rotate • Wheel = zoom • Click a building/system
 </div>
 
 <script type="importmap">
 {
     "imports":{
-        "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-        "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
     }
 }
 </script>
@@ -121,976 +157,2581 @@ body{overflow:hidden;background:#a9dcf4;font-family:Arial,Helvetica,sans-serif;c
 <script type="module">
 
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 
-/* =========================================================
-   LOADING BAR
-========================================================= */
-const loadFill = document.getElementById("loadFill");
-const loadingScreen = document.getElementById("loading");
 
 /* =========================================================
    SCENE
 ========================================================= */
+
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xa9dcf4);
-scene.fog = new THREE.Fog(0xa9dcf4, 1000, 2600);
+
+scene.background = new THREE.Color(0x9edbf6);
+
+scene.fog = new THREE.Fog(
+    0x9edbf6,
+    1500,
+    3400
+);
+
 
 /* =========================================================
    CAMERA
 ========================================================= */
+
 const camera = new THREE.PerspectiveCamera(
-    52, window.innerWidth / window.innerHeight, .1, 3500
+    48,
+    innerWidth / innerHeight,
+    0.1,
+    5000
 );
-camera.position.set(750, 560, 820);
+
+camera.position.set(
+    1250,
+    820,
+    1350
+);
+
 
 /* =========================================================
    RENDERER
 ========================================================= */
+
 const renderer = new THREE.WebGLRenderer({
-    antialias: true, powerPreference: "high-performance"
+    antialias:true
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.setPixelRatio(
+    Math.min(devicePixelRatio,2)
+);
+
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.25;
-document.body.appendChild(renderer.domElement);
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+renderer.toneMapping =
+    THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure = 1.35;
+
+document
+    .getElementById("app")
+    .appendChild(renderer.domElement);
+
 
 /* =========================================================
    CONTROLS
 ========================================================= */
-const controls = new OrbitControls(camera, renderer.domElement);
+
+const controls =
+    new OrbitControls(
+        camera,
+        renderer.domElement
+    );
+
 controls.enableDamping = true;
 controls.dampingFactor = .055;
-controls.minDistance = 80;
-controls.maxDistance = 1800;
-controls.target.set(0, 5, 0);
+
+controls.minDistance = 280;
+controls.maxDistance = 2600;
+
+controls.maxPolarAngle =
+    Math.PI / 2.12;
+
+controls.target.set(0,0,0);
+
 
 /* =========================================================
-   LIGHTS
+   DAYLIGHT
 ========================================================= */
-scene.add(new THREE.HemisphereLight(0xf2fbff, 0x73916b, 3.4));
 
-const sun = new THREE.DirectionalLight(0xffffff, 5.2);
-sun.position.set(-400, 700, 350);
+scene.add(
+    new THREE.HemisphereLight(
+        0xeaf8ff,
+        0x52705f,
+        4.2
+    )
+);
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        6
+    );
+
+sun.position.set(
+    700,
+    1200,
+    600
+);
+
 sun.castShadow = true;
-sun.shadow.mapSize.width = 2048;
-sun.shadow.mapSize.height = 2048;
-sun.shadow.camera.left = -950;
-sun.shadow.camera.right = 950;
-sun.shadow.camera.top = 950;
-sun.shadow.camera.bottom = -950;
+
+sun.shadow.mapSize.set(
+    2048,
+    2048
+);
+
+sun.shadow.camera.left = -1600;
+sun.shadow.camera.right = 1600;
+sun.shadow.camera.top = 1600;
+sun.shadow.camera.bottom = -1600;
+
 scene.add(sun);
 
-/* =========================================================
-   MATERIAL HELPERS
-========================================================= */
-const mat = (c, r = .8, m = 0) =>
-    new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m });
-
-const groundMaterial = mat(0x477a4b, .95);
-const roadMaterial   = mat(0x22282c, .96);
-const roadLineMat    = mat(0xf5f7f7, .65);
-const curbMaterial   = mat(0x9aa5a8, .88);
-const whiteMaterial  = mat(0xf4f7f8, .65);
-const blueMaterial   = mat(0x087fa8, .35, .25);
 
 /* =========================================================
-   GROUND + CITY PLATFORM
+   CITY SIZE
 ========================================================= */
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(2600, 2600), groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
 
-const city = new THREE.Mesh(new THREE.BoxGeometry(1120, 1, 880), groundMaterial);
-city.position.set(0, .5, 0);
-city.receiveShadow = true;
+const CITY_W = 1700;
+const CITY_D = 1250;
+
+const CITY_LEFT =
+    -CITY_W / 2;
+
+const CITY_RIGHT =
+    CITY_W / 2;
+
+const CITY_TOP =
+    -CITY_D / 2;
+
+const CITY_BOTTOM =
+    CITY_D / 2;
+
+const city =
+    new THREE.Group();
+
 scene.add(city);
 
-/* =========================================================
-   ROADS
-========================================================= */
-function createRoad(x, z, width, depth) {
-    const road = new THREE.Mesh(new THREE.BoxGeometry(width, .45, depth), roadMaterial);
-    road.position.set(x, 1.25, z);
-    road.receiveShadow = true;
-    scene.add(road);
 
-    if (width > depth) {
-        for (let i = -width/2 + 10; i < width/2; i += 26) {
-            const line = new THREE.Mesh(new THREE.BoxGeometry(14, .08, .42), roadLineMat);
-            line.position.set(x + i, 1.51, z);
-            scene.add(line);
-        }
-    } else {
-        for (let i = -depth/2 + 10; i < depth/2; i += 26) {
-            const line = new THREE.Mesh(new THREE.BoxGeometry(.42, .08, 14), roadLineMat);
-            line.position.set(x, 1.51, z + i);
-            scene.add(line);
-        }
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function mat(
+    color,
+    rough=.7,
+    metal=0
+){
+    return new THREE.MeshStandardMaterial({
+        color,
+        roughness:rough,
+        metalness:metal
+    });
+}
+
+
+function box(
+    w,
+    h,
+    d,
+    color,
+    y=0
+){
+    const m =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                w,
+                h,
+                d
+            ),
+            mat(color)
+        );
+
+    m.position.y =
+        y + h / 2;
+
+    m.castShadow = true;
+    m.receiveShadow = true;
+
+    return m;
+}
+
+
+function plane(
+    w,
+    d,
+    color,
+    y=.03
+){
+    const m =
+        new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                w,
+                d
+            ),
+            mat(color)
+        );
+
+    m.rotation.x =
+        -Math.PI / 2;
+
+    m.position.y = y;
+
+    m.receiveShadow = true;
+
+    return m;
+}
+
+
+function cyl(
+    r,
+    h,
+    color
+){
+    const m =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                r,
+                r,
+                h,
+                20
+            ),
+            mat(color)
+        );
+
+    m.position.y =
+        h / 2;
+
+    m.castShadow = true;
+
+    return m;
+}
+
+
+function line(
+    points,
+    color=0x2b7ca5
+){
+    const g =
+        new THREE.BufferGeometry()
+        .setFromPoints(points);
+
+    return new THREE.Line(
+        g,
+        new THREE.LineBasicMaterial({
+            color
+        })
+    );
+}
+
+
+/* =========================================================
+   GROUND
+========================================================= */
+
+scene.add(
+    plane(
+        3300,
+        3300,
+        0x8bcf91,
+        -0.05
+    )
+);
+
+
+/* =========================================================
+   LARGE CITY PLATFORM
+========================================================= */
+
+city.add(
+    box(
+        CITY_W,
+        10,
+        CITY_D,
+        0xc8d0d5,
+        0
+    )
+);
+
+city.add(
+    plane(
+        CITY_W - 30,
+        CITY_D - 30,
+        0xdce4e8,
+        10.1
+    )
+);
+
+
+/* =========================================================
+   ROAD SYSTEM
+========================================================= */
+
+function road(
+    x,
+    z,
+    w,
+    d
+){
+    city.add(
+        box(
+            w,
+            2,
+            d,
+            0x343b42,
+            8.2
+        )
+    );
+}
+
+
+function dashX(
+    z,
+    length
+){
+    for(
+        let x=-length/2+18;
+        x<length/2;
+        x+=52
+    ){
+
+        city.add(
+            box(
+                28,
+                .35,
+                3,
+                0xf4df65,
+                10.25
+            )
+            .translateX(x)
+            .translateZ(z)
+        );
     }
 }
 
-createRoad(0, -440, 1160, 32);
-createRoad(0,  440, 1160, 32);
-createRoad(-580, 0, 32, 900);
-createRoad( 580, 0, 32, 900);
 
-createRoad(0, -240, 1110, 18);
-createRoad(0,    0, 1110, 20);
-createRoad(0,  240, 1110, 18);
-createRoad(-280, 0, 18, 880);
-createRoad( 100, 0, 18, 880);
-createRoad( 420, 0, 18, 880);
+function dashZ(
+    x,
+    length
+){
+    for(
+        let z=-length/2+18;
+        z<length/2;
+        z+=52
+    ){
 
-createRoad(-320, 360, 460, 16);
-
-/* =========================================================
-   CURBS
-========================================================= */
-function createCurb(x, z, w, d) {
-    const c = new THREE.Mesh(new THREE.BoxGeometry(w, .25, d), curbMaterial);
-    c.position.set(x, 1.5, z);
-    scene.add(c);
+        city.add(
+            box(
+                3,
+                .35,
+                28,
+                0xf4df65,
+                10.25
+            )
+            .translateX(x)
+            .translateZ(z)
+        );
+    }
 }
-createCurb(0, -224, 1110, 1.5);
-createCurb(0, -256, 1110, 1.5);
-createCurb(0,  224, 1110, 1.5);
-createCurb(0,  256, 1110, 1.5);
 
-/* =========================================================
-   TREES
-========================================================= */
-function createTree(x, z, scale = 1) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
-    g.scale.setScalar(scale);
 
-    const trunk = new THREE.Mesh(
-        new THREE.CylinderGeometry(.4, .6, 5, 8),
-        mat(0x5a3a1e, .9)
+function sidewalksX(
+    z,
+    length
+){
+    city.add(
+        box(
+            length,
+            2.5,
+            8,
+            0xaeb8bd,
+            10.3
+        )
+        .translateZ(z)
     );
-    trunk.position.y = 2.5;
-    trunk.castShadow = true;
-    g.add(trunk);
-
-    const f1 = new THREE.Mesh(new THREE.SphereGeometry(3.5, 12, 12), mat(0x2d6e2d, .85));
-    f1.position.y = 6.5;
-    f1.castShadow = true;
-    g.add(f1);
-
-    const f2 = new THREE.Mesh(new THREE.SphereGeometry(2.6, 10, 10), mat(0x3a8a3a, .85));
-    f2.position.set(1.2, 8, .8);
-    f2.castShadow = true;
-    g.add(f2);
-
-    const f3 = new THREE.Mesh(new THREE.SphereGeometry(2.2, 10, 10), mat(0x256025, .85));
-    f3.position.set(-1.3, 7.5, -.7);
-    f3.castShadow = true;
-    g.add(f3);
-
-    scene.add(g);
 }
 
-for (let x = -560; x <= 560; x += 40) {
-    createTree(x, -480, .9 + Math.random()*.4);
-    createTree(x,  480, .9 + Math.random()*.4);
+
+function sidewalksZ(
+    x,
+    length
+){
+    city.add(
+        box(
+            8,
+            2.5,
+            length,
+            0xaeb8bd,
+            10.3
+        )
+        .translateX(x)
+    );
 }
-for (let z = -400; z <= 400; z += 40) {
-    createTree(-620, z, .9 + Math.random()*.4);
-    createTree( 620, z, .9 + Math.random()*.4);
+
+
+/* =========================================================
+   OUTER BORDER ROADS
+========================================================= */
+
+road(
+    0,
+    -635,
+    1700,
+    70
+);
+
+road(
+    0,
+    635,
+    1700,
+    70
+);
+
+road(
+    -855,
+    0,
+    70,
+    1250
+);
+
+road(
+    855,
+    0,
+    70,
+    1250
+);
+
+dashX(
+    -635,
+    1630
+);
+
+dashX(
+    635,
+    1630
+);
+
+dashZ(
+    -855,
+    1180
+);
+
+dashZ(
+    855,
+    1180
+);
+
+sidewalksX(
+    -596,
+    1680
+);
+
+sidewalksX(
+    596,
+    1680
+);
+
+sidewalksZ(
+    -816,
+    1240
+);
+
+sidewalksZ(
+    816,
+    1240
+);
+
+
+/* =========================================================
+   INTERNAL ROAD GRID
+========================================================= */
+
+const hz = [
+    -400,
+    0,
+    400
+];
+
+const vx = [
+    -520,
+    0,
+    520
+];
+
+
+for(
+    const z of hz
+){
+
+    road(
+        0,
+        z,
+        1640,
+        58
+    );
+
+    dashX(
+        z,
+        1580
+    );
+
+    sidewalksX(
+        z-34,
+        1640
+    );
+
+    sidewalksX(
+        z+34,
+        1640
+    );
 }
+
+
+for(
+    const x of vx
+){
+
+    road(
+        x,
+        0,
+        58,
+        1180
+    );
+
+    dashZ(
+        x,
+        1130
+    );
+
+    sidewalksZ(
+        x-34,
+        1180
+    );
+
+    sidewalksZ(
+        x+34,
+        1180
+    );
+}
+
+
+/* =========================================================
+   INTERSECTION MARKINGS
+========================================================= */
+
+for(
+    const x of vx
+){
+
+    for(
+        const z of hz
+    ){
+
+        const ring =
+            new THREE.Mesh(
+                new THREE.RingGeometry(
+                    42,
+                    46,
+                    48
+                ),
+                new THREE.MeshBasicMaterial({
+                    color:0x9ca8ae,
+                    side:THREE.DoubleSide
+                })
+            );
+
+        ring.rotation.x =
+            -Math.PI / 2;
+
+        ring.position.set(
+            x,
+            10.4,
+            z
+        );
+
+        city.add(ring);
+    }
+}
+
+
+/* =========================================================
+   ZONE POSITIONS
+   LARGE SEPARATE AREAS
+========================================================= */
+
+const POS = {
+
+    school:{
+        x:-690,
+        z:-210
+    },
+
+    hospital:{
+        x:250,
+        z:-210
+    },
+
+    society:{
+        x:-260,
+        z:210
+    },
+
+    bank:{
+        x:350,
+        z:210
+    },
+
+    controller:{
+        x:0,
+        z:505
+    }
+
+};
+
+
+/* =========================================================
+   ZONE BORDER
+========================================================= */
+
+const clickable=[];
+
+
+function zoneBorder(
+    x,
+    z,
+    w,
+    d
+){
+
+    const c =
+        0x56bde8;
+
+    city.add(
+        line([
+            new THREE.Vector3(
+                x-w/2,
+                11,
+                z-d/2
+            ),
+
+            new THREE.Vector3(
+                x+w/2,
+                11,
+                z-d/2
+            ),
+
+            new THREE.Vector3(
+                x+w/2,
+                11,
+                z+d/2
+            ),
+
+            new THREE.Vector3(
+                x-w/2,
+                11,
+                z+d/2
+            ),
+
+            new THREE.Vector3(
+                x-w/2,
+                11,
+                z-d/2
+            )
+        ],c)
+    );
+}
+
+
+/* =========================================================
+   LARGE ZONES
+========================================================= */
+
+zoneBorder(
+    POS.school.x,
+    POS.school.z,
+    440,
+    320
+);
+
+zoneBorder(
+    POS.hospital.x,
+    POS.hospital.z,
+    440,
+    320
+);
+
+zoneBorder(
+    POS.society.x,
+    POS.society.z,
+    480,
+    330
+);
+
+zoneBorder(
+    POS.bank.x,
+    POS.bank.z,
+    390,
+    330
+);
+
+
+/* =========================================================
+   LARGE GREEN AREAS
+========================================================= */
+
+function greenArea(
+    x,
+    z,
+    w,
+    d
+){
+
+    city.add(
+        plane(
+            w,
+            d,
+            0xa7d8a0,
+            10.15
+        )
+    );
+
+    city.children[
+        city.children.length-1
+    ].position.x = x;
+
+    city.children[
+        city.children.length-1
+    ].position.z = z;
+}
+
+
+greenArea(
+    POS.school.x,
+    POS.school.z,
+    420,
+    300
+);
+
+greenArea(
+    POS.hospital.x,
+    POS.hospital.z,
+    420,
+    300
+);
+
+greenArea(
+    POS.society.x,
+    POS.society.z,
+    460,
+    310
+);
+
+greenArea(
+    POS.bank.x,
+    POS.bank.z,
+    370,
+    310
+);
+
+
+/* =========================================================
+   BOARD SYSTEM
+========================================================= */
+
+function board(
+    text,
+    x,
+    z,
+    w=150
+){
+
+    const g =
+        new THREE.Group();
+
+    g.position.set(
+        x,
+        0,
+        z
+    );
+
+    const pole =
+        box(
+            5,
+            42,
+            5,
+            0x424b53,
+            0
+        );
+
+    const sign =
+        box(
+            w,
+            32,
+            4,
+            0x12314a,
+            44
+        );
+
+    g.add(
+        pole,
+        sign
+    );
+
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.width=1000;
+    canvas.height=200;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.fillStyle =
+        "#0b2032";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.strokeStyle =
+        "#52c9ff";
+
+    ctx.lineWidth=8;
+
+    ctx.strokeRect(
+        5,
+        5,
+        canvas.width-10,
+        canvas.height-10
+    );
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.font =
+        "bold 72px Arial";
+
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
+
+    ctx.fillText(
+        text,
+        canvas.width/2,
+        canvas.height/2
+    );
+
+
+    const texture =
+        new THREE.CanvasTexture(canvas);
+
+    texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+
+    const boardMesh =
+        new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                w-8,
+                27
+            ),
+            new THREE.MeshBasicMaterial({
+                map:texture
+            })
+        );
+
+    boardMesh.position.set(
+        0,
+        44.3,
+        2.2
+    );
+
+    g.add(boardMesh);
+
+    city.add(g);
+
+    return g;
+}
+
 
 /* =========================================================
    BOARDS
 ========================================================= */
-function createBoard(text, x, y, z, width = 65, height = 9) {
-    const g = new THREE.Group();
-    g.position.set(x, y, z);
 
-    const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(.5, .7, 13, 12),
-        mat(0x303a40, .5, .25)
-    );
-    pole.position.y = 6.5;
-    pole.castShadow = true;
-    g.add(pole);
+board(
+    "BSS SCHOOL",
+    POS.school.x,
+    POS.school.z-175,
+    190
+);
 
-    const spike = new THREE.Mesh(
-        new THREE.ConeGeometry(.9, 3.2, 8),
-        mat(0x4b5960, .5, .25)
-    );
-    spike.position.y = 14.6;
-    g.add(spike);
+board(
+    "SMART HOSPITAL",
+    POS.hospital.x,
+    POS.hospital.z-175,
+    190
+);
 
-    const board = new THREE.Mesh(
-        new THREE.BoxGeometry(width, height, .7),
-        blueMaterial
-    );
-    board.position.y = 10;
-    board.castShadow = true;
-    g.add(board);
+board(
+    "SMART SOCIETY",
+    POS.society.x,
+    POS.society.z-175,
+    200
+);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 2200;
-    canvas.height = 600;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#075c7b";
-    ctx.fillRect(0, 0, 2200, 600);
-    ctx.strokeStyle = "#78e9ff";
-    ctx.lineWidth = 16;
-    ctx.strokeRect(12, 12, 2176, 576);
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 145px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, 1100, 300);
+board(
+    "STATE BANK",
+    POS.bank.x,
+    POS.bank.z-175,
+    170
+);
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
+board(
+    "AI TRAFFIC CONTROL",
+    POS.controller.x,
+    POS.controller.z-65,
+    210
+);
 
-    const sign = new THREE.Mesh(
-        new THREE.PlaneGeometry(width - 1, height - .8),
-        new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
-    );
-    sign.position.set(0, 10, .37);
-    g.add(sign);
 
-    scene.add(g);
+/* =========================================================
+   SCHOOL PARKING / DRIVEWAY
+========================================================= */
+
+function parkingRow(
+    x,
+    z,
+    count
+){
+
+    for(
+        let i=0;
+        i<count;
+        i++
+    ){
+
+        const p =
+            box(
+                15,
+                .6,
+                28,
+                0x6d767c,
+                10.4
+            );
+
+        p.position.x =
+            x + i*25;
+
+        p.position.z =
+            z;
+
+        city.add(p);
+    }
 }
 
-createBoard("BSS SCHOOL SYSTEM",      -380, 0, -330, 90, 11);
-createBoard("BSS SMART HOSPITAL",      100, 0, -170, 95, 11);
-createBoard("BSS SMART SOCIETY",      -320, 0,  400, 110, 12);
-createBoard("SMART CITY STATE BANK",   420, 0,  260, 110, 12);
-createBoard("AI TRAFFIC CONTROLLER",   240, 0,  400, 110, 12);
-createBoard("WIND ENERGY",             -80, 0,  400, 80, 11);
+parkingRow(
+    -850,
+    -335,
+    10
+);
+
+
+/* =========================================================
+   HOSPITAL DROP-OFF
+========================================================= */
+
+city.add(
+    plane(
+        170,
+        70,
+        0xb7c2c7,
+        10.5
+    )
+);
+
+city.children[
+    city.children.length-1
+].position.set(
+    250,
+    10.5,
+    -350
+);
+
 
 /* =========================================================
    STREET LIGHTS
 ========================================================= */
-function createStreetLight(x, z) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
 
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.22, .3, 11, 10), mat(0x69757a, .7));
-    pole.position.y = 5.5;
-    g.add(pole);
+function streetLight(
+    x,
+    z,
+    rot=0
+){
 
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(4, .22, .22), mat(0x69757a, .7));
-    arm.position.set(1.7, 9.7, 0);
-    g.add(arm);
+    const g =
+        new THREE.Group();
 
-    const bulb = new THREE.Mesh(
-        new THREE.SphereGeometry(.52, 14, 14),
-        new THREE.MeshStandardMaterial({ color: 0xfff2b0, emissive: 0xffd36a, emissiveIntensity: .9 })
+    g.position.set(
+        x,
+        10,
+        z
     );
-    bulb.position.set(3.4, 9.5, 0);
-    g.add(bulb);
 
-    scene.add(g);
+    g.rotation.y =
+        rot;
+
+
+    const pole =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                1.4,
+                1.8,
+                28,
+                10
+            ),
+            mat(0x29343d)
+        );
+
+    pole.position.y=14;
+
+
+    const arm =
+        box(
+            12,
+            1.4,
+            1.4,
+            0x29343d,
+            28
+        );
+
+    arm.position.x=6;
+
+
+    const lamp =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                2.8,
+                12,
+                8
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xfff2b0,
+                emissive:0xffe99b,
+                emissiveIntensity:2
+            })
+        );
+
+    lamp.position.set(
+        12,
+        27.5,
+        0
+    );
+
+
+    g.add(
+        pole,
+        arm,
+        lamp
+    );
+
+    city.add(g);
 }
 
-for (let x = -540; x <= 540; x += 60) {
-    createStreetLight(x, -330);
-    createStreetLight(x,  330);
+
+/* Outer lights */
+
+for(
+    let x=-780;
+    x<=780;
+    x+=110
+){
+
+    streetLight(
+        x,
+        -595
+    );
+
+    streetLight(
+        x,
+        595,
+        Math.PI
+    );
 }
-for (let z = -350; z <= 350; z += 60) {
-    createStreetLight(-330, z);
-    createStreetLight( 330, z);
+
+
+for(
+    let z=-540;
+    z<=540;
+    z+=110
+){
+
+    streetLight(
+        -815,
+        z,
+        Math.PI/2
+    );
+
+    streetLight(
+        815,
+        z,
+        -Math.PI/2
+    );
 }
+
+
+/* Internal lights */
+
+for(
+    const z of hz
+){
+
+    for(
+        let x=-760;
+        x<=760;
+        x+=150
+    ){
+
+        streetLight(
+            x,
+            z-43
+        );
+    }
+}
+
 
 /* =========================================================
    TRAFFIC LIGHTS
 ========================================================= */
-const trafficLights = [];
 
-function createTrafficLight(x, z, rotation = 0) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
-    g.rotation.y = rotation;
+const trafficLights=[];
 
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.2, .25, 9, 8), curbMaterial);
-    pole.position.y = 4.5;
-    g.add(pole);
 
-    const box = new THREE.Mesh(new THREE.BoxGeometry(1.7, 5, 1.4), mat(0x15191c, .5));
-    box.position.y = 7.5;
-    g.add(box);
+function trafficLight(
+    x,
+    z
+){
 
-    const red = new THREE.Mesh(
-        new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff0000, emissiveIntensity: 0 })
+    const g =
+        new THREE.Group();
+
+    g.position.set(
+        x,
+        10,
+        z
     );
-    red.position.set(0, 8.8, .75);
-    g.add(red);
 
-    const yellow = new THREE.Mesh(
-        new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({ color: 0xffcc22, emissive: 0xffaa00, emissiveIntensity: 0 })
+
+    const pole =
+        box(
+            2.5,
+            23,
+            2.5,
+            0x22282d,
+            0
+        );
+
+
+    const head =
+        box(
+            6,
+            17,
+            6,
+            0x181c20,
+            23
+        );
+
+    g.add(
+        pole,
+        head
     );
-    yellow.position.set(0, 7.4, .75);
-    g.add(yellow);
 
-    const green = new THREE.Mesh(
-        new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({ color: 0x22ff66, emissive: 0x00ff44, emissiveIntensity: 1 })
+
+    const lights=[];
+
+
+    [0,5,10].forEach(
+        (y,i)=>{
+
+            const sphere =
+                new THREE.Mesh(
+                    new THREE.SphereGeometry(
+                        1.5,
+                        12,
+                        8
+                    ),
+                    new THREE.MeshStandardMaterial({
+                        color:0x333333,
+                        emissive:0x000000
+                    })
+                );
+
+            sphere.position.set(
+                0,
+                27-y,
+                3.2
+            );
+
+            g.add(sphere);
+
+            lights.push(sphere);
+        }
     );
-    green.position.set(0, 6, .75);
-    g.add(green);
 
-    scene.add(g);
-    trafficLights.push({ red, yellow, green, phase: Math.random() * 10 });
+
+    city.add(g);
+
+    trafficLights.push({
+        group:g,
+        lights
+    });
 }
 
-createTrafficLight(-280, -240);
-createTrafficLight( 100, -240, Math.PI/2);
-createTrafficLight(-280,    0);
-createTrafficLight( 100,    0, Math.PI/2);
-createTrafficLight( 420,    0);
-createTrafficLight(-280,  240);
-createTrafficLight( 100,  240, Math.PI/2);
-createTrafficLight( 420,  240);
+
+for(
+    const x of vx
+){
+
+    trafficLight(
+        x,
+        -42
+    );
+
+    trafficLight(
+        x,
+        42
+    );
+}
+
+
+/* =========================================================
+   GLB LOADER
+========================================================= */
+
+const loader =
+    new GLTFLoader();
+
+
+function loadGLB(
+    file,
+    x,
+    z,
+    targetSize,
+    name,
+    description
+){
+
+    loader.load(
+        file,
+
+        (gltf)=>{
+
+            const obj =
+                gltf.scene;
+
+
+            obj.traverse(
+                o=>{
+
+                    if(o.isMesh){
+
+                        o.castShadow=true;
+                        o.receiveShadow=true;
+
+                        if(o.material){
+
+                            if(
+                                Array.isArray(
+                                    o.material
+                                )
+                            ){
+
+                                o.material.forEach(
+                                    m=>{
+                                        if(m)
+                                            m.side =
+                                                THREE.FrontSide;
+                                    }
+                                );
+
+                            }else{
+
+                                o.material.side =
+                                    THREE.FrontSide;
+                            }
+                        }
+                    }
+                }
+            );
+
+
+            scene.updateMatrixWorld(true);
+
+
+            const originalBox =
+                new THREE.Box3()
+                .setFromObject(obj);
+
+
+            const originalSize =
+                originalBox.getSize(
+                    new THREE.Vector3()
+                );
+
+
+            const max =
+                Math.max(
+                    originalSize.x,
+                    originalSize.y,
+                    originalSize.z
+                );
+
+
+            if(max > 0){
+
+                obj.scale.multiplyScalar(
+                    targetSize / max
+                );
+            }
+
+
+            scene.updateMatrixWorld(true);
+
+
+            const finalBox =
+                new THREE.Box3()
+                .setFromObject(obj);
+
+
+            const center =
+                finalBox.getCenter(
+                    new THREE.Vector3()
+                );
+
+
+            obj.position.x +=
+                x-center.x;
+
+            obj.position.z +=
+                z-center.z;
+
+            obj.position.y +=
+                10-finalBox.min.y;
+
+
+            city.add(obj);
+
+
+            clickable.push({
+                object:obj,
+                title:name,
+                text:description
+            });
+
+
+            console.log(
+                "Loaded:",
+                file
+            );
+
+        },
+
+        undefined,
+
+        error=>{
+
+            console.warn(
+                "Could not load:",
+                file,
+                error
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   YOUR REAL GLB MODELS
+========================================================= */
+
+loadGLB(
+    "high_school.glb",
+
+    POS.school.x,
+    POS.school.z,
+
+    185,
+
+    "BSS SCHOOL SYSTEM",
+
+    "A large modern education campus designed for Cambridge O Level learning, digital education, accessibility and future-ready students."
+);
+
+
+loadGLB(
+    "stylized_modern_hospital.glb",
+
+    POS.hospital.x,
+    POS.hospital.z,
+
+    175,
+
+    "SMART HOSPITAL",
+
+    "A smart healthcare centre with emergency services, patient treatment, connected healthcare systems and accessible facilities."
+);
+
+
+loadGLB(
+    "low_poly_night_city_building_skyline.glb",
+
+    POS.society.x,
+    POS.society.z,
+
+    315,
+
+    "SMART SOCIETY",
+
+    "A large connected society with modern buildings, smart infrastructure, community facilities and efficient urban services."
+);
+
+
+loadGLB(
+    "us_bank_tower.glb",
+
+    POS.bank.x,
+    POS.bank.z,
+
+    275,
+
+    "STATE BANK",
+
+    "A modern financial centre representing secure digital banking, financial services and connected smart-city infrastructure."
+);
+
 
 /* =========================================================
    AI TRAFFIC CONTROLLER
 ========================================================= */
-const controller = new THREE.Group();
-controller.position.set(240, 0, 340);
 
-const cBase = new THREE.Mesh(new THREE.BoxGeometry(48, 1, 36), mat(0x263d47, .4, .2));
-cBase.position.y = .8;
-controller.add(cBase);
+const ai =
+    new THREE.Group();
 
-const cTower = new THREE.Mesh(new THREE.BoxGeometry(15, 23, 15), mat(0x185a72, .35, .25));
-cTower.position.y = 12;
-cTower.castShadow = true;
-controller.add(cTower);
-
-const cScreen = new THREE.Mesh(
-    new THREE.BoxGeometry(9, 6, .4),
-    new THREE.MeshStandardMaterial({ color: 0x04151d, emissive: 0x087d9f, emissiveIntensity: 1.5 })
+ai.position.set(
+    POS.controller.x,
+    10,
+    POS.controller.z
 );
-cScreen.position.set(0, 13, -7.7);
-controller.add(cScreen);
 
-const antenna = new THREE.Mesh(new THREE.CylinderGeometry(.18, .18, 16, 8), curbMaterial);
-antenna.position.y = 29;
-controller.add(antenna);
 
-const signal = new THREE.Mesh(
-    new THREE.SphereGeometry(1.1, 18, 18),
-    new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 2 })
+ai.add(
+    cyl(
+        16,
+        80,
+        0x1d5f82
+    )
 );
-signal.position.y = 38;
-controller.add(signal);
 
-scene.add(controller);
 
-/* =========================================================
-   WIND TURBINES
-========================================================= */
-const turbines = [];
+ai.add(
+    box(
+        50,
+        4,
+        50,
+        0x263b49,
+        80
+    )
+);
 
-function createTurbine(x, z, scale = 1) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
-    g.scale.setScalar(scale);
 
-    const tower = new THREE.Mesh(new THREE.CylinderGeometry(.9, 1.4, 45, 14), whiteMaterial);
-    tower.position.y = 22.5;
-    tower.castShadow = true;
-    g.add(tower);
+for(
+    let i=0;
+    i<4;
+    i++
+){
 
-    const hub = new THREE.Group();
-    hub.position.set(0, 45, 0);
+    const ring =
+        new THREE.Mesh(
+            new THREE.TorusGeometry(
+                19+i*5,
+                1,
+                8,
+                32
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x35c8ff,
+                emissive:0x149ed0,
+                emissiveIntensity:2
+            })
+        );
 
-    const center = new THREE.Mesh(new THREE.SphereGeometry(2.6, 18, 18), whiteMaterial);
-    hub.add(center);
+    ring.rotation.x =
+        Math.PI/2;
 
-    for (let i = 0; i < 3; i++) {
-        const blade = new THREE.Mesh(new THREE.BoxGeometry(1.2, 18, .5), whiteMaterial);
-        blade.position.y = 9;
-        blade.rotation.z = i * Math.PI * 2 / 3;
-        blade.geometry.translate(0, 8, 0);
-        hub.add(blade);
-    }
+    ring.position.y =
+        22+i*13;
 
-    g.add(hub);
-    scene.add(g);
-    turbines.push(hub);
+    ai.add(ring);
 }
 
-createTurbine(-180, 340, 1.2);
-createTurbine(-100, 340, 1.1);
-createTurbine( -20, 340, 1);
+
+city.add(ai);
+
+
+clickable.push({
+    object:ai,
+
+    title:"AI TRAFFIC CONTROLLER",
+
+    text:"AI monitors traffic congestion, detects traffic jams and coordinates smart traffic signals to restore smooth vehicle movement."
+});
+
+
+/* =========================================================
+   WIND FARM — COMPLETELY OUTSIDE CITY
+========================================================= */
+
+const windFarm =
+    new THREE.Group();
+
+
+/*
+   IMPORTANT:
+   CITY LEFT EDGE = -850
+   WIND FARM STARTS AROUND -1100
+   So turbines are OUTSIDE the city.
+*/
+
+
+const turbinePositions = [
+
+    [-1250,-450],
+    [-1080,-450],
+
+    [-1250,-150],
+    [-1080,-150],
+
+    [-1250,150],
+    [-1080,150],
+
+    [-1250,450],
+    [-1080,450]
+
+];
+
+
+function turbine(
+    x,
+    z
+){
+
+    const g =
+        new THREE.Group();
+
+    g.position.set(
+        x,
+        0,
+        z
+    );
+
+
+    /* tower */
+
+    const tower =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                5,
+                9,
+                145,
+                20
+            ),
+            mat(
+                0xe7edf0,
+                .45,
+                .15
+            )
+        );
+
+    tower.position.y =
+        72.5;
+
+    tower.castShadow=true;
+
+    g.add(tower);
+
+
+    /* hub */
+
+    const hub =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                11,
+                18,
+                14
+            ),
+            mat(
+                0xf4f6f7,
+                .35,
+                .15
+            )
+        );
+
+    hub.position.set(
+        0,
+        148,
+        0
+    );
+
+    g.add(hub);
+
+
+    /* blades */
+
+    const blades =
+        new THREE.Group();
+
+    blades.position.set(
+        0,
+        148,
+        0
+    );
+
+
+    for(
+        let i=0;
+        i<3;
+        i++
+    ){
+
+        const blade =
+            box(
+                8,
+                58,
+                2.5,
+                0xf8fafb,
+                29
+            );
+
+        blade.position.y =
+            29;
+
+        blade.rotation.z =
+            i*Math.PI*2/3;
+
+        blades.add(blade);
+    }
+
+
+    g.add(blades);
+
+    windFarm.add(g);
+
+    return blades;
+}
+
+
+turbinePositions.forEach(
+    p=>{
+        turbine(
+            p[0],
+            p[1]
+        );
+    }
+);
+
+
+/* =========================================================
+   WIND FARM LAND
+========================================================= */
+
+const windLand =
+    plane(
+        500,
+        1100,
+        0x92c98c,
+        0.1
+    );
+
+windLand.position.set(
+    -1160,
+    0.1,
+    0
+);
+
+scene.add(windLand);
+
+
+/* =========================================================
+   WIND FARM SIGN
+========================================================= */
+
+function windSign(){
+
+    const group =
+        new THREE.Group();
+
+    group.position.set(
+        -1160,
+        0,
+        -580
+    );
+
+
+    const pole =
+        box(
+            6,
+            55,
+            6,
+            0x454d52,
+            0
+        );
+
+
+    const sign =
+        box(
+            250,
+            45,
+            5,
+            0x12314a,
+            55
+        );
+
+    group.add(
+        pole,
+        sign
+    );
+
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.width=1000;
+    canvas.height=180;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.fillStyle="#0b2032";
+
+    ctx.fillRect(
+        0,
+        0,
+        1000,
+        180
+    );
+
+    ctx.strokeStyle="#52c9ff";
+
+    ctx.lineWidth=8;
+
+    ctx.strokeRect(
+        5,
+        5,
+        990,
+        170
+    );
+
+    ctx.fillStyle="#ffffff";
+
+    ctx.font=
+        "bold 62px Arial";
+
+    ctx.textAlign=
+        "center";
+
+    ctx.textBaseline=
+        "middle";
+
+    ctx.fillText(
+        "WIND FARM",
+        500,
+        90
+    );
+
+
+    const texture =
+        new THREE.CanvasTexture(canvas);
+
+    texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+
+    const boardMesh =
+        new THREE.Mesh(
+            new THREE.PlaneGeometry(
+                235,
+                40
+            ),
+            new THREE.MeshBasicMaterial({
+                map:texture
+            })
+        );
+
+    boardMesh.position.set(
+        0,
+        55.5,
+        3
+    );
+
+
+    group.add(
+        boardMesh
+    );
+
+
+    scene.add(group);
+}
+
+
+windSign();
+
+
+/* =========================================================
+   POWER SUBSTATION OUTSIDE CITY
+========================================================= */
+
+const substation =
+    new THREE.Group();
+
+substation.position.set(
+    -900,
+    10,
+    0
+);
+
+
+substation.add(
+    box(
+        90,
+        24,
+        70,
+        0x68757d,
+        0
+    )
+);
+
+
+for(
+    let i=0;
+    i<4;
+    i++
+){
+
+    const tower =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                2,
+                2,
+                40,
+                10
+            ),
+            mat(0x3e4b53)
+        );
+
+    tower.position.set(
+        -30+i*20,
+        44,
+        0
+    );
+
+    substation.add(tower);
+}
+
+
+scene.add(
+    substation
+);
+
+
+/* =========================================================
+   POWER CABLES
+========================================================= */
+
+function cable(
+    points
+){
+
+    const curve =
+        new THREE.CatmullRomCurve3(
+            points
+        );
+
+    const tube =
+        new THREE.Mesh(
+            new THREE.TubeGeometry(
+                curve,
+                45,
+                1.1,
+                8,
+                false
+            ),
+            new THREE.MeshBasicMaterial({
+                color:0x202a31
+            })
+        );
+
+    scene.add(tube);
+}
+
+
+/* Turbine rows -> substation */
+
+for(
+    const z of [-450,-150,150,450]
+){
+
+    cable([
+        new THREE.Vector3(
+            -1080,
+            115,
+            z
+        ),
+
+        new THREE.Vector3(
+            -1030,
+            155,
+            z
+        ),
+
+        new THREE.Vector3(
+            -960,
+            155,
+            z
+        ),
+
+        new THREE.Vector3(
+            -900,
+            80,
+            z
+        )
+    ]);
+}
+
+
+/* Substation -> city */
+
+cable([
+    new THREE.Vector3(
+        -900,
+        55,
+        0
+    ),
+
+    new THREE.Vector3(
+        -875,
+        75,
+        0
+    ),
+
+    new THREE.Vector3(
+        -850,
+        70,
+        0
+    )
+]);
+
 
 /* =========================================================
    CARS
 ========================================================= */
-const cars = [];
 
-function createCar(x, z, speed, direction = 1) {
-    const car = new THREE.Group();
+const cars=[];
 
-    const body = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 3.5), mat(0x287ca3, .4, .2));
-    body.position.y = 2.4;
-    car.add(body);
 
-    const cabin = new THREE.Mesh(
-        new THREE.BoxGeometry(4.2, 1.5, 2.7),
-        new THREE.MeshStandardMaterial({
-            color: 0x82eaff, transparent: true, opacity: .48, roughness: .1, metalness: .3
-        })
+function car(
+    x,
+    z,
+    dir=0,
+    color=0x1474b8
+){
+
+    const g =
+        new THREE.Group();
+
+    g.position.set(
+        x,
+        12,
+        z
     );
-    cabin.position.set(.5, 3.8, 0);
-    car.add(cabin);
 
-    const wheelMat = mat(0x111518);
-    for (const xx of [-2.5, 2.5]) {
-        for (const zz of [-1.7, 1.7]) {
-            const wheel = new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, .55, 16), wheelMat);
-            wheel.rotation.z = Math.PI / 2;
-            wheel.position.set(xx, 1.2, zz);
-            car.add(wheel);
-        }
-    }
+    g.rotation.y =
+        dir;
 
-    car.position.set(x, 1, z);
-    scene.add(car);
 
-    cars.push({ car, speed, baseSpeed: speed, direction, jamStopped: false });
-}
+    const body =
+        box(
+            12,
+            4,
+            24,
+            color,
+            0
+        );
 
-createCar(-490,-240,.70,1);
-createCar(-350,-240,.62,1);
-createCar(-200,-240,.75,1);
-createCar( -50,-240,.68,1);
-createCar( 150,-240,.72,1);
-createCar( 300,-240,.65,1);
-createCar( 470,-240,.74,1);
-
-createCar( 490, 240,.66,-1);
-createCar( 330, 240,.72,-1);
-createCar( 170, 240,.64,-1);
-createCar(  10, 240,.75,-1);
-createCar(-150, 240,.67,-1);
-createCar(-300, 240,.72,-1);
-createCar(-460, 240,.65,-1);
-
-/* =========================================================
-   GLTF LOADER + FALLBACKS
-========================================================= */
-const loader = new GLTFLoader();
-const clickable = [];
-
-let totalModels = 4;
-let loadedModels = 0;
-
-function updateLoadBar() {
-    loadedModels++;
-    const pct = (loadedModels / totalModels) * 100;
-    loadFill.style.width = pct + "%";
-    if (loadedModels >= totalModels) {
-        setTimeout(() => loadingScreen.classList.add("hide"), 500);
-    }
-}
-
-function prepareModel(object, targetSize) {
-    const box = new THREE.Box3().setFromObject(object);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    object.scale.setScalar(targetSize / Math.max(maxDim, .001));
-
-    const newBox = new THREE.Box3().setFromObject(object);
-    const center = new THREE.Vector3();
-    newBox.getCenter(center);
-    object.position.x -= center.x;
-    object.position.z -= center.z;
-    object.position.y -= newBox.min.y;
-
-    object.traverse(c => {
-        if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; }
-    });
-}
-
-/* ---- Fallback: code se building jab GLB fail ho ---- */
-function makeFallbackBuilding({ x, z, w, d, h, color, type, roof = true }) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
-
-    const body = new THREE.Mesh(
-        new THREE.BoxGeometry(w, h, d),
-        new THREE.MeshStandardMaterial({ color, roughness: .55, metalness: .15 })
-    );
-    body.position.y = h / 2;
-    body.castShadow = true;
-    body.receiveShadow = true;
     g.add(body);
 
-    const winMat = new THREE.MeshStandardMaterial({
-        color: 0xa8e8ff, emissive: 0x4fc8ff, emissiveIntensity: .85, roughness: .2
+
+    const roof =
+        box(
+            9,
+            3,
+            11,
+            0xdbe8ef,
+            4
+        );
+
+    g.add(roof);
+
+
+    const wheelMat =
+        mat(0x202326);
+
+
+    for(
+        const xx of [-6,6]
+    ){
+
+        for(
+            const zz of [-7,7]
+        ){
+
+            const wheel =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        2.1,
+                        2.1,
+                        2,
+                        12
+                    ),
+                    wheelMat
+                );
+
+            wheel.rotation.z =
+                Math.PI/2;
+
+            wheel.position.set(
+                xx,
+                0,
+                zz
+            );
+
+            g.add(wheel);
+        }
+    }
+
+
+    city.add(g);
+
+
+    cars.push({
+        g,
+        dir,
+        base:
+            45 + Math.random()*18
     });
-    const floors = Math.max(1, Math.floor(h / 7));
-    const colsF = Math.max(2, Math.floor(w / 6));
-    const colsB = Math.max(2, Math.floor(d / 6));
-
-    for (let f = 0; f < floors; f++) {
-        const y = 4 + f * 7;
-        for (let c = 0; c < colsF; c++) {
-            const xx = -w/2 + 4 + c * (w / colsF);
-            const wf = new THREE.Mesh(new THREE.BoxGeometry(3, 3, .18), winMat);
-            wf.position.set(xx, y, d/2 + .09);
-            g.add(wf);
-            const wb = wf.clone();
-            wb.position.z = -d/2 - .09;
-            g.add(wb);
-        }
-        for (let c = 0; c < colsB; c++) {
-            const zz = -d/2 + 4 + c * (d / colsB);
-            const wl = new THREE.Mesh(new THREE.BoxGeometry(.18, 3, 3), winMat);
-            wl.position.set(-w/2 - .09, y, zz);
-            g.add(wl);
-            const wr = wl.clone();
-            wr.position.x = w/2 + .09;
-            g.add(wr);
-        }
-    }
-
-    if (roof) {
-        const rm = new THREE.Mesh(
-            new THREE.BoxGeometry(w + 1.5, 1.2, d + 1.5),
-            mat(0x1c2b33, .6, .4)
-        );
-        rm.position.y = h + .6;
-        rm.castShadow = true;
-        g.add(rm);
-
-        const tip = new THREE.Mesh(
-            new THREE.SphereGeometry(.5, 10, 10),
-            new THREE.MeshStandardMaterial({ color: 0xff3355, emissive: 0xff2244, emissiveIntensity: 2 })
-        );
-        tip.position.y = h + 3;
-        g.add(tip);
-    }
-
-    scene.add(g);
-    if (type) clickable.push({ object: g, type });
-    return g;
 }
 
-function makeTower(x, z, maxH = 220) {
-    const h = 70 + Math.random() * (maxH - 70);
-    const w = 16 + Math.random() * 12;
-    const d = 16 + Math.random() * 12;
-    const palette = [0x1a5f7a, 0x2c7da0, 0x3a86a8, 0x468faf, 0x61a5c2, 0x1e3a5f, 0x22333b, 0x2b6b8a];
-    const color = palette[Math.floor(Math.random() * palette.length)];
-    return makeFallbackBuilding({ x, z, w, d, h, color, type: "society" });
+
+/* Horizontal roads */
+
+for(
+    let i=0;
+    i<13;
+    i++
+){
+
+    car(
+        -760+i*125,
+        -400,
+        0,
+        0x1769aa
+    );
 }
 
-/* =========================================================
-   SCHOOL
-========================================================= */
-loader.load(
-    "high_school.glb",
-    gltf => {
-        const school = gltf.scene;
-        prepareModel(school, 150);
-        school.position.set(-380, 1, -100);
-        scene.add(school);
-        clickable.push({ object: school, type: "school" });
-        console.log("✅ School loaded");
-        updateLoadBar();
-    },
-    undefined,
-    err => {
-        console.error("❌ School Error:", err);
-        makeFallbackBuilding({ x: -380, z: -100, w: 150, d: 100, h: 50, color: 0x4b8fb5, type: "school" });
-        makeFallbackBuilding({ x: -470, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
-        makeFallbackBuilding({ x: -290, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
-        updateLoadBar();
-    }
-);
 
-/* =========================================================
-   HOSPITAL
-========================================================= */
-loader.load(
-    "stylized_modern_hospital.glb",
-    gltf => {
-        const hospital = gltf.scene;
-        prepareModel(hospital, 130);
-        hospital.position.set(100, 1, -110);
-        scene.add(hospital);
-        clickable.push({ object: hospital, type: "hospital" });
-        console.log("✅ Hospital loaded");
-        updateLoadBar();
-    },
-    undefined,
-    err => {
-        console.error("❌ Hospital Error:", err);
-        makeFallbackBuilding({ x: 100, z: -110, w: 130, d: 90, h: 85, color: 0xe8f2f7, type: "hospital" });
-        makeFallbackBuilding({ x: 100, z: -110, w: 45, d: 35, h: 130, color: 0xdfeaf0 });
-        updateLoadBar();
-    }
-);
+for(
+    let i=0;
+    i<13;
+    i++
+){
 
-/* =========================================================
-   SOCIETY
-========================================================= */
-loader.load(
-    "low_poly_night_city_building_skyline.glb",
-    gltf => {
-        const society = gltf.scene;
-        prepareModel(society, 340);
-        society.position.set(-320, 1, 100);
-        scene.add(society);
-        clickable.push({ object: society, type: "society" });
-        console.log("✅ Society loaded");
-        updateLoadBar();
-    },
-    undefined,
-    err => {
-        console.error("❌ Society Error:", err);
-        // fallback cluster
-        const spots = [
-            [-420, 40], [-380, 90], [-340, 30], [-310, 90],
-            [-270, 40], [-240, 100], [-380, 150], [-330, 160],
-            [-260, 150], [-220, 80], [-410, 130], [-350, 130],
-        ];
-        spots.forEach(([x, z]) => makeTower(x, z, 220));
-        updateLoadBar();
-    }
-);
-
-/* =========================================================
-   BANK
-========================================================= */
-loader.load(
-    "us_bank_tower.glb",
-    gltf => {
-        const bank = gltf.scene;
-        prepareModel(bank, 270);
-        bank.position.set(420, 1, 120);
-        scene.add(bank);
-        clickable.push({ object: bank, type: "bank" });
-        console.log("✅ Bank loaded");
-        updateLoadBar();
-    },
-    undefined,
-    err => {
-        console.error("❌ Bank Error:", err);
-        makeFallbackBuilding({ x: 420, z: 120, w: 80, d: 80, h: 260, color: 0x1e3a5f, type: "bank" });
-        makeFallbackBuilding({ x: 510, z:  60, w: 60, d: 60, h: 160, color: 0x245c7a });
-        makeFallbackBuilding({ x: 510, z: 180, w: 60, d: 60, h: 190, color: 0x2b6b8a });
-        makeFallbackBuilding({ x: 340, z:  60, w: 55, d: 55, h: 140, color: 0x1a5f7a });
-        makeFallbackBuilding({ x: 340, z: 180, w: 55, d: 55, h: 170, color: 0x1e3a5f });
-        updateLoadBar();
-    }
-);
-
-/* =========================================================
-   EXTRA CITY FILLER TOWERS  (hamesha add honge)
-========================================================= */
-const fillers = [
-    [  60, -350], [ 180, -350], [ 300, -350], [ 460, -350],
-    [-100, -350], [-220, -350], [-500, -350], [-420, -350],
-    [  60,  360], [ 180,  360], [ 300,  360], [ 460,  360],
-    [ 500, -120], [ 500,  120], [ 500, -280], [ 500,  280],
-    [-520, -120], [-520,  120], [-520, -280], [-520,  280],
-    [ 200, -110], [ 280, -110], [ 200,   40], [ 300,   40],
-    [ -100,  240], [   0,  240], [ -100,  120], [   0,  120],
-];
-fillers.forEach(([x, z]) => makeTower(x, z, 180));
-
-/* =========================================================
-   SOCIETY ENTRY GATE
-========================================================= */
-const societyGate = new THREE.Group();
-societyGate.position.set(-320, 0, 400);
-
-const gateLeft = new THREE.Mesh(new THREE.BoxGeometry(9, 20, 9), mat(0x315d70, .4, .2));
-gateLeft.position.set(-60, 10, 0);
-gateLeft.castShadow = true;
-societyGate.add(gateLeft);
-
-const gateRight = gateLeft.clone();
-gateRight.position.x = 60;
-societyGate.add(gateRight);
-
-const gateTop = new THREE.Mesh(new THREE.BoxGeometry(130, 6, 9), mat(0x164e67, .35, .25));
-gateTop.position.y = 18;
-gateTop.castShadow = true;
-societyGate.add(gateTop);
-
-const gateLightMat = new THREE.MeshStandardMaterial({
-    color: 0x63ddff, emissive: 0x21cfff, emissiveIntensity: 1.8
-});
-
-const glLeft = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), gateLightMat);
-glLeft.position.set(-60, 21, 0);
-societyGate.add(glLeft);
-
-const glRight = glLeft.clone();
-glRight.position.x = 60;
-societyGate.add(glRight);
-
-scene.add(societyGate);
-
-/* =========================================================
-   INFO PANEL
-========================================================= */
-function showPanel(title, type, text) {
-    document.getElementById("panelContent").innerHTML = `
-        <h2>${title}</h2>
-        <div class="type">${type}</div>
-        <p>${text}</p>
-    `;
-    document.getElementById("panel").style.display = "block";
+    car(
+        -760+i*125,
+        400,
+        Math.PI,
+        0x2f7e45
+    );
 }
 
-window.closePanel = function () {
-    document.getElementById("panel").style.display = "none";
-};
 
-/* =========================================================
-   CLICK DETECTION
-========================================================= */
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+/* Vertical road */
 
-renderer.domElement.addEventListener("click", event => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+for(
+    let i=0;
+    i<10;
+    i++
+){
 
-    raycaster.setFromCamera(mouse, camera);
+    car(
+        -520,
+        -520+i*105,
+        Math.PI/2,
+        0xd45b35
+    );
+}
 
-    for (const item of clickable) {
-        const hit = raycaster.intersectObject(item.object, true);
-        if (!hit.length) continue;
 
-        if (item.type === "school") {
-            showPanel(
-                "BSS Smart School",
-                "EDUCATION ZONE",
-                "A future-ready Beaconhouse educational facility supporting smart learning, digital education, accessibility and student innovation."
-            );
-        }
-        if (item.type === "hospital") {
-            showPanel(
-                "BSS Smart Hospital",
-                "HEALTHCARE ZONE",
-                "A modern smart healthcare facility connected with emergency transportation, digital healthcare systems and intelligent city infrastructure."
-            );
-        }
-        if (item.type === "society") {
-            showPanel(
-                "BSS Smart Society",
-                "RESIDENTIAL ZONE",
-                "A large connected residential community with organized housing, controlled access, smart roads and modern neighborhood infrastructure."
-            );
-        }
-        if (item.type === "bank") {
-            showPanel(
-                "Smart City State Bank",
-                "FINANCIAL ZONE",
-                "A smart banking facility providing secure digital financial services for the connected smart city."
-            );
-        }
-        return;
-    }
-});
+for(
+    let i=0;
+    i<10;
+    i++
+){
+
+    car(
+        520,
+        -520+i*105,
+        -Math.PI/2,
+        0x6e4fb0
+    );
+}
+
 
 /* =========================================================
    TRAFFIC SYSTEM
 ========================================================= */
-const clock = new THREE.Clock();
-let simulationSeconds = 0;
-let trafficState = 0;
 
-const JAM_TIME = 60;
-const JAM_DURATION = 25;
-const RESOLVE_DURATION = 30;
+let elapsed=0;
 
-let jamStartTime = 0;
-let resolveStartTime = 0;
+let state=0;
 
-const simulationTime = document.getElementById("simulationTime");
-const trafficLevel   = document.getElementById("trafficLevel");
-const trafficFlow    = document.getElementById("trafficFlow");
-const aiMode         = document.getElementById("aiMode");
-const trafficStateElement = document.getElementById("trafficState");
-const aiMessage      = document.getElementById("aiMessage");
+let stateStart=0;
 
-function showAIMessage(message) {
-    aiMessage.textContent = message;
-    aiMessage.classList.add("show");
-    setTimeout(() => aiMessage.classList.remove("show"), 4500);
+const stateEl =
+    document.getElementById(
+        "trafficState"
+    );
+
+
+function setTraffic(){
+
+    if(state===0){
+
+        stateEl.textContent =
+            "NORMAL";
+
+        stateEl.style.background =
+            "#159447";
+    }
+
+
+    if(state===1){
+
+        stateEl.textContent =
+            "TRAFFIC JAM";
+
+        stateEl.style.background =
+            "#b63a24";
+    }
+
+
+    if(state===2){
+
+        stateEl.textContent =
+            "AI RESOLVING";
+
+        stateEl.style.background =
+            "#c58b14";
+    }
+
+
+    if(state===3){
+
+        stateEl.textContent =
+            "CLEAR";
+
+        stateEl.style.background =
+            "#176eaa";
+    }
 }
 
-function setTrafficStatus(state) {
-    if (state === 0) {
-        trafficStateElement.textContent = "TRAFFIC NORMAL";
-        trafficStateElement.style.color = "#63ddff";
-        trafficLevel.textContent = "NORMAL";
-        trafficFlow.textContent = "92%";
-        aiMode.textContent = "MONITORING";
-    }
-    if (state === 1) {
-        trafficStateElement.textContent = "TRAFFIC JAM";
-        trafficStateElement.style.color = "#ffd15a";
-        trafficLevel.textContent = "JAM";
-        trafficFlow.textContent = "18%";
-        aiMode.textContent = "DETECTING";
-    }
-    if (state === 2) {
-        trafficStateElement.textContent = "AI RESOLVING";
-        trafficStateElement.style.color = "#67e4ff";
-        trafficLevel.textContent = "HEAVY";
-        trafficFlow.textContent = "54%";
-        aiMode.textContent = "OPTIMIZING";
-    }
-    if (state === 3) {
-        trafficStateElement.textContent = "TRAFFIC CLEAR";
-        trafficStateElement.style.color = "#6aff9d";
-        trafficLevel.textContent = "CLEAR";
-        trafficFlow.textContent = "96%";
-        aiMode.textContent = "OPTIMAL";
-    }
-}
 
-function activateTrafficJam() {
-    trafficState = 1;
-    jamStartTime = simulationSeconds;
+setTraffic();
 
-    let queueIndex = 0;
-    for (const data of cars) {
-        data.jamStopped = true;
-        data.speed = 0;
-        data.car.position.x = -200 + queueIndex * 16;
-        queueIndex++;
-        if (queueIndex >= cars.length) queueIndex = 0;
-    }
 
-    setTrafficStatus(1);
-    showAIMessage("AI TRAFFIC CONTROLLER: CONGESTION DETECTED");
-}
+/* =========================================================
+   CLICK INTERACTION
+========================================================= */
 
-function activateAIResolution() {
-    trafficState = 2;
-    resolveStartTime = simulationSeconds;
+const ray =
+    new THREE.Raycaster();
 
-    for (const data of cars) {
-        data.jamStopped = false;
-        data.speed = data.baseSpeed * .35;
-    }
+const mouse =
+    new THREE.Vector2();
 
-    setTrafficStatus(2);
-    showAIMessage("AI is optimizing traffic signals and opening alternate routes.");
-}
 
-function clearTraffic() {
-    trafficState = 3;
-    for (const data of cars) {
-        data.jamStopped = false;
-        data.speed = data.baseSpeed;
-    }
-    setTrafficStatus(3);
-    showAIMessage("AI TRAFFIC CONTROLLER: TRAFFIC FLOW RESTORED");
-}
+renderer.domElement.addEventListener(
+    "pointerdown",
+    e=>{
 
-function updateCars() {
-    for (const data of cars) {
-        if (trafficState === 0) data.speed = data.baseSpeed;
-        if (trafficState === 1) data.speed = 0;
-        if (trafficState === 2) {
-            const elapsed = simulationSeconds - resolveStartTime;
-            const progress = Math.min(elapsed / RESOLVE_DURATION, 1);
-            data.speed = data.baseSpeed * (.35 + progress * .65);
+        mouse.x =
+            e.clientX / innerWidth * 2 - 1;
+
+        mouse.y =
+            -(e.clientY / innerHeight) * 2 + 1;
+
+
+        ray.setFromCamera(
+            mouse,
+            camera
+        );
+
+
+        const hits =
+            ray.intersectObjects(
+                scene.children,
+                true
+            );
+
+
+        if(!hits.length)
+            return;
+
+
+        let o =
+            hits[0].object;
+
+        let found=null;
+
+
+        while(o){
+
+            found =
+                clickable.find(
+                    v=>v.object===o
+                );
+
+            if(found)
+                break;
+
+            o=o.parent;
         }
-        if (trafficState === 3) data.speed = data.baseSpeed;
 
-        data.car.position.x += data.speed * data.direction;
 
-        if (data.car.position.x >  560) data.car.position.x = -560;
-        if (data.car.position.x < -560) data.car.position.x =  560;
+        if(found){
+
+            document
+                .getElementById(
+                    "infoTitle"
+                )
+                .textContent =
+                    found.title;
+
+
+            document
+                .getElementById(
+                    "infoText"
+                )
+                .textContent =
+                    found.text;
+
+
+            document
+                .getElementById(
+                    "info"
+                )
+                .style.display =
+                    "block";
+        }
     }
-}
+);
 
-function updateTrafficLights(time) {
-    trafficLights.forEach(light => {
-        const cycle = (time + light.phase) % 12;
-        light.red.material.emissiveIntensity = 0;
-        light.yellow.material.emissiveIntensity = 0;
-        light.green.material.emissiveIntensity = 0;
 
-        if (cycle < 5)      light.red.material.emissiveIntensity = 3;
-        else if (cycle < 7) light.yellow.material.emissiveIntensity = 3;
-        else                light.green.material.emissiveIntensity = 3;
-    });
-}
+/* =========================================================
+   CLOCK
+========================================================= */
 
-function updateTrafficSystem() {
-    if (trafficState === 0 && simulationSeconds >= JAM_TIME) {
-        activateTrafficJam();
-    }
-    if (trafficState === 1 && simulationSeconds - jamStartTime >= JAM_DURATION) {
-        activateAIResolution();
-    }
-    if (trafficState === 2 && simulationSeconds - resolveStartTime >= RESOLVE_DURATION) {
-        clearTraffic();
-    }
-}
+const clock =
+    new THREE.Clock();
 
-function updateTimer() {
-    const total = Math.floor(simulationSeconds);
-    const m = Math.floor(total / 60);
-    const s = total % 60;
-    simulationTime.textContent =
-        String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
-}
 
 /* =========================================================
    ANIMATION
 ========================================================= */
-function animate() {
-    requestAnimationFrame(animate);
 
-    const delta = clock.getDelta();
-    const elapsed = clock.elapsedTime;
+function animate(){
 
-    simulationSeconds += delta;
+    requestAnimationFrame(
+        animate
+    );
 
-    updateTimer();
-    updateTrafficSystem();
-    updateCars();
-    updateTrafficLights(elapsed);
 
-    turbines.forEach(t => { t.rotation.z = elapsed * 2.3; });
+    const dt =
+        clock.getDelta();
 
-    signal.scale.setScalar(1 + Math.sin(elapsed * 4) * .08);
+
+    elapsed += dt;
+
+
+    /* --------------------------------
+       TRAFFIC STATES
+    -------------------------------- */
+
+    if(
+        state===0 &&
+        elapsed>=60
+    ){
+
+        state=1;
+
+        stateStart=
+            elapsed;
+
+        setTraffic();
+    }
+
+
+    if(
+        state===1 &&
+        elapsed-stateStart>=25
+    ){
+
+        state=2;
+
+        stateStart=
+            elapsed;
+
+        setTraffic();
+    }
+
+
+    if(
+        state===2 &&
+        elapsed-stateStart>=30
+    ){
+
+        state=3;
+
+        stateStart=
+            elapsed;
+
+        setTraffic();
+    }
+
+
+    if(
+        state===3 &&
+        elapsed-stateStart>=18
+    ){
+
+        state=0;
+
+        stateStart=
+            elapsed;
+
+        elapsed=0;
+
+        setTraffic();
+    }
+
+
+    /* --------------------------------
+       CAR SPEED
+    -------------------------------- */
+
+    let speed;
+
+
+    if(state===1){
+
+        speed=0;
+
+    }else if(state===2){
+
+        speed=20;
+
+    }else if(state===3){
+
+        speed=42;
+
+    }else{
+
+        speed=52;
+    }
+
+
+    cars.forEach(
+        c=>{
+
+            if(state===1)
+                return;
+
+
+            c.g.position.x +=
+                Math.cos(c.dir) *
+                speed *
+                dt;
+
+
+            c.g.position.z +=
+                Math.sin(c.dir) *
+                speed *
+                dt;
+
+
+            if(
+                c.g.position.x >
+                800
+            )
+                c.g.position.x=-800;
+
+
+            if(
+                c.g.position.x <
+                -800
+            )
+                c.g.position.x=800;
+
+
+            if(
+                c.g.position.z >
+                580
+            )
+                c.g.position.z=-580;
+
+
+            if(
+                c.g.position.z <
+                -580
+            )
+                c.g.position.z=580;
+        }
+    );
+
+
+    /* --------------------------------
+       TURBINE ANIMATION
+    -------------------------------- */
+
+    windFarm.children.forEach(
+        g=>{
+
+            if(
+                g.children[2]
+            ){
+
+                g.children[2]
+                    .rotation.z +=
+                    dt*1.7;
+            }
+        }
+    );
+
+
+    /* --------------------------------
+       TRAFFIC LIGHT ANIMATION
+    -------------------------------- */
+
+    const cycle =
+        elapsed % 8;
+
+
+    trafficLights.forEach(
+        t=>{
+
+            if(
+                state===2
+            ){
+
+                t.lights[0]
+                    .material.emissive
+                    .setHex(
+                        cycle < 2
+                        ? 0xff2222
+                        : 0x000000
+                    );
+
+                t.lights[1]
+                    .material.emissive
+                    .setHex(
+                        cycle >=2 &&
+                        cycle <4
+                        ? 0xffaa00
+                        : 0x000000
+                    );
+
+                t.lights[2]
+                    .material.emissive
+                    .setHex(
+                        cycle >=4
+                        ? 0x22dd55
+                        : 0x000000
+                    );
+
+            }else{
+
+                t.lights[1]
+                    .material.emissive
+                    .setHex(
+                        0xffaa00
+                    );
+            }
+        }
+    );
+
 
     controls.update();
-    renderer.render(scene, camera);
+
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
-setTrafficStatus(0);
+
 animate();
+
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+setTimeout(
+    ()=>{
+        document
+            .getElementById(
+                "loading"
+            )
+            .style.display="none";
+    },
+    1800
+);
+
 
 /* =========================================================
    RESIZE
 ========================================================= */
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
+
+addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+    }
+);
 
 </script>
 
