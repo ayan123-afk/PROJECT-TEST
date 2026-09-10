@@ -59,7 +59,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Solar Park / Smart Buildings / Traffic Manager / Antenna Array
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Solar Park / Smart Buildings / Traffic Manager / Antenna
 </div>
 
 <script type="importmap">
@@ -528,203 +528,48 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   BIG ANTENNA SYSTEM — NO CABLES / WIRES AT ALL
+   ANTENNA MODELS — old_antenna.glb + antena.glb
+   (Code-built antenna array has been REMOVED)
 ========================================================= */
-const antennaArray = new THREE.Group();
-antennaArray.position.set(-950, 5, 1050);
-scene.add(antennaArray);
+const antennaGroup = new THREE.Group();
+antennaGroup.position.set(-950, 5, 1050);
+scene.add(antennaGroup);
 
-/* --- base platform --- */
-const antBase = new THREE.Mesh(
-  new THREE.CylinderGeometry(90, 105, 6, 36),
-  material(0x1a3a44, .35, .3)
-);
-antBase.position.y = 3;
-antBase.receiveShadow = true;
-antBase.castShadow = true;
-antennaArray.add(antBase);
-
-/* --- support pillars (6 around) --- */
-for(let i=0; i<6; i++){
-  const angle = (i/6) * Math.PI * 2;
-  const px = Math.cos(angle) * 62;
-  const pz = Math.sin(angle) * 62;
-  const pillar = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.8, 3.8, 22, 10),
-    material(0x3a5e6b, .4, .35)
-  );
-  pillar.position.set(px, 12, pz);
-  pillar.castShadow = true;
-  antennaArray.add(pillar);
-  const cap = new THREE.Mesh(
-    new THREE.CylinderGeometry(4.5, 5, 1.5, 10),
-    material(0x4d7a8a, .3, .4)
-  );
-  cap.position.set(px, 23.5, pz);
-  antennaArray.add(cap);
-}
-
-/* --- central mast (tall & layered) --- */
-const mastSegments = [
-  { y: 18, r: 5.5, h: 30, color: 0x2d5f70 },
-  { y: 42, r: 4.5, h: 32, color: 0x3a7385 },
-  { y: 68, r: 3.6, h: 34, color: 0x4a8a9c },
-  { y: 96, r: 2.8, h: 36, color: 0x5aa0b4 },
-  { y: 126, r: 2.0, h: 38, color: 0x6bb8ce },
-];
-mastSegments.forEach(seg => {
-  const mast = new THREE.Mesh(
-    new THREE.CylinderGeometry(seg.r, seg.r+0.5, seg.h, 12),
-    material(seg.color, .3, .5)
-  );
-  mast.position.y = seg.y;
-  mast.castShadow = true;
-  antennaArray.add(mast);
+/* --- Antenna 1: old_antenna.glb (big one) --- */
+loader.load("./old_antenna.glb", gltf => {
+  const oldAnt = gltf.scene;
+  prepareModel(oldAnt, 280);
+  oldAnt.position.set(0, 0, 0);
+  antennaGroup.add(oldAnt);
+  clickable.push({ object: oldAnt, type: "antenna", name: "Old Antenna" });
+}, undefined, error => {
+  console.error("old_antenna.glb load error:", error);
 });
 
-/* --- top antenna spike --- */
-const spikeTop = new THREE.Mesh(
-  new THREE.ConeGeometry(2.2, 18, 10),
-  material(0xaad4e0, .25, .6)
-);
-spikeTop.position.y = 154;
-spikeTop.castShadow = true;
-antennaArray.add(spikeTop);
-
-/* --- cross arms (3 levels) --- */
-const crossArmLevels = [38, 68, 100];
-crossArmLevels.forEach((y, idx) => {
-  const armLen = 70 - idx * 12;
-  const arm = new THREE.Mesh(
-    new THREE.BoxGeometry(armLen, 1.8, 1.8),
-    material(0x5588a0, .35, .45)
-  );
-  arm.position.y = y;
-  arm.castShadow = true;
-  antennaArray.add(arm);
-  const arm2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1.8, 1.8, armLen),
-    material(0x5588a0, .35, .45)
-  );
-  arm2.position.y = y;
-  arm2.castShadow = true;
-  antennaArray.add(arm2);
-  for(const sx of [-1,1]){
-    for(const sz of [-1,1]){
-      const dishBase = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.2, 4.2, 1.8, 10),
-        material(0x6a9fb0, .25, .55)
-      );
-      dishBase.position.set(sx * armLen/2, y, sz * armLen/2);
-      dishBase.castShadow = true;
-      antennaArray.add(dishBase);
-      const dishCone = new THREE.Mesh(
-        new THREE.ConeGeometry(3.8, 5, 12),
-        material(0x8ac0d0, .2, .6)
-      );
-      dishCone.position.set(sx * armLen/2, y+3.5, sz * armLen/2);
-      dishCone.castShadow = true;
-      antennaArray.add(dishCone);
-    }
-  }
+/* --- Antenna 2: antena.glb (second antenna) --- */
+loader.load("./antena.glb", gltf => {
+  const ant = gltf.scene;
+  prepareModel(ant, 180);
+  ant.position.set(120, 0, -60);
+  antennaGroup.add(ant);
+  clickable.push({ object: ant, type: "antenna", name: "Antenna" });
+}, undefined, error => {
+  console.error("antena.glb load error:", error);
 });
 
-/* --- top ring platform --- */
-const ringPlatform = new THREE.Mesh(
-  new THREE.TorusGeometry(32, 2.2, 12, 48),
-  material(0x7ab8cc, .25, .5)
-);
-ringPlatform.rotation.x = Math.PI/2;
-ringPlatform.position.y = 148;
-antennaArray.add(ringPlatform);
-
-/* --- glowing signal nodes on mast --- */
-const signalNodes = [];
-for(let i=0; i<12; i++){
-  const node = new THREE.Mesh(
-    new THREE.SphereGeometry(1.8, 10, 10),
-    new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x22dfff, emissiveIntensity:2.8 })
-  );
-  const angle = (i/12) * Math.PI * 2;
-  const radius = 34;
-  node.position.set(Math.cos(angle)*radius, 108 + Math.sin(i)*6, Math.sin(angle)*radius);
-  antennaArray.add(node);
-  signalNodes.push(node);
-}
-
-/* --- SOLAR PANELS around antenna (NO CABLES CONNECTING THEM) --- */
-const antSolarPanelMat = new THREE.MeshStandardMaterial({
-  color:0x092f4e,
-  emissive:0x075c85,
-  emissiveIntensity:1.2,
-  metalness:.7,
-  roughness:.18
+/* --- Antenna 3: antena.glb (third copy, different position) --- */
+loader.load("./antena.glb", gltf => {
+  const ant2 = gltf.scene;
+  prepareModel(ant2, 160);
+  ant2.position.set(-130, 0, 40);
+  antennaGroup.add(ant2);
+  clickable.push({ object: ant2, type: "antenna", name: "Antenna 2" });
+}, undefined, error => {
+  console.error("antena.glb load error:", error);
 });
 
-for(let i=0; i<8; i++){
-  const angle = (i/8) * Math.PI * 2;
-  const px = Math.cos(angle) * 78;
-  const pz = Math.sin(angle) * 78;
-  const panelGroup = new THREE.Group();
-  panelGroup.position.set(px, 8, pz);
-  panelGroup.rotation.y = angle;
-  const panel = new THREE.Mesh(
-    new THREE.BoxGeometry(22, .8, 14),
-    antSolarPanelMat
-  );
-  panel.rotation.x = -0.35;
-  panel.castShadow = true;
-  panelGroup.add(panel);
-  for(let gx=-1; gx<=1; gx++){
-    const line = new THREE.Mesh(
-      new THREE.BoxGeometry(.2, .1, 14),
-      material(0xb7c4c8, .28, .8)
-    );
-    line.position.set(gx*7, .5, 0);
-    line.rotation.x = -0.35;
-    panelGroup.add(line);
-  }
-  for(const lx of [-7,7]){
-    const leg = new THREE.Mesh(
-      new THREE.CylinderGeometry(.5, .6, 5, 6),
-      material(0xaaa, .4, .6)
-    );
-    leg.position.set(lx, -2, 0);
-    panelGroup.add(leg);
-  }
-  antennaArray.add(panelGroup);
-}
-
-/* --- power hub at antenna base (NO CABLES) --- */
-const antPowerHub = new THREE.Mesh(
-  new THREE.CylinderGeometry(16, 20, 4, 24),
-  new THREE.MeshStandardMaterial({
-    color:0x07516a,
-    emissive:0x10dfff,
-    emissiveIntensity:2.4,
-    metalness:.5
-  })
-);
-antPowerHub.position.y = 7;
-antennaArray.add(antPowerHub);
-
-/* --- antenna power ring (glowing, animated) --- */
-const antPowerRing = new THREE.Mesh(
-  new THREE.TorusGeometry(44, 1.2, 12, 60),
-  new THREE.MeshStandardMaterial({
-    color:0x32dfff,
-    emissive:0x18cfff,
-    emissiveIntensity:2.2,
-    metalness:.7,
-    roughness:.2
-  })
-);
-antPowerRing.rotation.x = Math.PI/2;
-antPowerRing.position.y = 13;
-antennaArray.add(antPowerRing);
-
-/* --- label sign --- */
-createBoard("BIG ANTENNA ARRAY · SOLAR LINK", -950, 5, 1170, 160, 12);
+/* --- label sign for antenna site --- */
+createBoard("ANTENNA ARRAY · SOLAR LINK", -950, 5, 1170, 160, 12);
 
 /* =========================================================
    SOLAR ENERGY PARK
@@ -904,11 +749,8 @@ for(let i=0; i<12; i++){
 }
 
 /* =========================================================
-   NO UNDERGROUND POWER NETWORK — ALL CABLES REMOVED
-   (Previously there were tubes/curves — now completely gone)
+   POWER HUB (no cables)
 ========================================================= */
-
-/* just the power hub remains — no cables attached */
 const powerHub = new THREE.Mesh(
   new THREE.CylinderGeometry(14, 18, 4, 24),
   new THREE.MeshStandardMaterial({ color:0x07516a, emissive:0x10dfff, emissiveIntensity:2, metalness:.5 })
@@ -917,7 +759,7 @@ powerHub.position.set(0, 3.5, 520);
 scene.add(powerHub);
 
 /* =========================================================
-   SMART BUILDINGS — TALLER & ENHANCED
+   SMART BUILDINGS
 ========================================================= */
 const smartBuildings = [];
 
@@ -1238,10 +1080,10 @@ renderer.domElement.addEventListener("click", event => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
-  const antHits = raycaster.intersectObject(antennaArray, true);
+  const antHits = raycaster.intersectObject(antennaGroup, true);
   if(antHits.length){
     showPanel(
-      "Big Antenna Array · Solar Link",
+      "Antenna Array · Solar Link",
       "COMMUNICATION & ENERGY HUB",
       "A massive multi-band antenna system integrated with solar panels. The array receives clean energy from the Solar Park through invisible underground power lines, supporting city-wide communication and smart-grid telemetry."
     );
@@ -1275,6 +1117,10 @@ renderer.domElement.addEventListener("click", event => {
       showPanel(item.name, "SMART BUILDING",
         "A digitally designed high-efficiency building created directly with Three.js. Rooftop solar panels generate clean electricity while the underground smart-energy network connects this building to the Solar Energy Park.");
     }
+    if(item.type==="antenna"){
+      showPanel(item.name, "COMMUNICATION ANTENNA",
+        "A communication antenna model loaded from a GLB file. It is part of the city's smart communication and energy network, connected to the Solar Park through the underground power grid.");
+    }
     return;
   }
 
@@ -1288,7 +1134,7 @@ renderer.domElement.addEventListener("click", event => {
   const solarHits = raycaster.intersectObject(solarPark, true);
   if(solarHits.length){
     showPanel("Solar Energy Park", "RENEWABLE ENERGY ZONE",
-      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Big Antenna Array is also directly connected via dedicated power lines.");
+      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Antenna Array is also directly connected via dedicated power lines.");
   }
 });
 
@@ -1486,12 +1332,6 @@ function animate(){
     building.beacon.material.emissiveIntensity = 2 + Math.sin(elapsed*3+index)*.8;
   });
   solarScreen.material.emissiveIntensity = 2 + Math.sin(elapsed*2.5)*.5;
-
-  antPowerRing.rotation.z = elapsed * 0.8;
-  antPowerRing.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
-  signalNodes.forEach((node, idx) => {
-    node.material.emissiveIntensity = 2.2 + Math.sin(elapsed*5 + idx)*0.8;
-  });
 
   controls.update();
   renderer.render(scene, camera);
