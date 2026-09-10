@@ -104,15 +104,12 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 ========================================================= */
 const scene = new THREE.Scene();
 const DAY_BG = new THREE.Color(0xa9dcf4);
-const NIGHT_BG = new THREE.Color(0x0a1225);
+const NIGHT_BG = new THREE.Color(0x050810);
 scene.background = DAY_BG.clone();
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 5, 5000);
 camera.position.set(1250, 850, 1350);
 
-/* =========================================================
-   RENDERER
-========================================================= */
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
   powerPreference: "high-performance"
@@ -139,6 +136,10 @@ scene.add(ambient);
 const sun = new THREE.DirectionalLight(0xffffff, 3.5);
 sun.position.set(-700, 1200, 450);
 scene.add(sun);
+
+/* Night ambient — starts at 0 and turns on at night */
+const nightAmbient = new THREE.AmbientLight(0x3a5a8a, 0);
+scene.add(nightAmbient);
 
 /* =========================================================
    MATERIALS
@@ -272,9 +273,10 @@ board("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 board("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
 
 /* =========================================================
-   STREET LIGHTS
+   STREET LIGHTS — with real point lights for night
 ========================================================= */
 const streetBulbMats = [];
+const streetPointLights = [];
 function sl(x, z){
   const g = new THREE.Group();
   g.position.set(x, 5, z);
@@ -292,11 +294,16 @@ function sl(x, z){
   const b = new THREE.Mesh(new THREE.SphereGeometry(.55, 8, 8), bMat);
   b.position.set(3.4, 9.5, 0);
   g.add(b);
+  /* Real point light for glow at night */
+  const pl = new THREE.PointLight(0xffd97a, 0, 140, 1.5);
+  pl.position.set(3.4, 9.5, 0);
+  g.add(pl);
   scene.add(g);
   streetBulbMats.push(bMat);
+  streetPointLights.push(pl);
 }
-for(let x=-700; x<=700; x+=140){ sl(x, -610); sl(x, 610); }
-for(let z=-500; z<=500; z+=140){ sl(-830, z); sl(830, z); }
+for(let x=-700; x<=700; x+=160){ sl(x, -610); sl(x, 610); }
+for(let z=-500; z<=500; z+=160){ sl(-830, z); sl(830, z); }
 
 /* =========================================================
    TRAFFIC LIGHTS
@@ -372,14 +379,14 @@ const screenPositions = [
   { x: 10.5, y: 15, z: 0, ry: Math.PI/2 },
   { x: -10.5, y: 15, z: 0, ry: -Math.PI/2 }
 ];
+const aiScreenMats = [];
 screenPositions.forEach(sp => {
-  const s = new THREE.Mesh(
-    new THREE.BoxGeometry(9, 6, .35),
-    new THREE.MeshStandardMaterial({ color: 0x03141b, emissive: 0x21cfff, emissiveIntensity: 2.4 })
-  );
+  const m = new THREE.MeshStandardMaterial({ color: 0x03141b, emissive: 0x21cfff, emissiveIntensity: 2.4 });
+  const s = new THREE.Mesh(new THREE.BoxGeometry(9, 6, .35), m);
   s.position.set(sp.x, sp.y, sp.z);
   s.rotation.y = sp.ry;
   controller.add(s);
+  aiScreenMats.push(m);
 });
 
 const radar = new THREE.Mesh(
@@ -539,7 +546,7 @@ loader.load("./antena.glb", g => {
 }, undefined, () => {});
 
 /* =========================================================
-   ██████  WIND TURBINES — MANY MORE (24 total) ██████
+   WIND TURBINES — 24 total
 ========================================================= */
 const turbines = [];
 const turbTowerMat = mat(0xeeeeee, .4, .3);
@@ -565,8 +572,6 @@ function turbine(x, z, sc=1){
   powerZone.add(g);
   turbines.push(blades);
 }
-
-/* Turbine grid — 4 rows × 6 columns around antenna area */
 for(let x=-620; x<=-80; x+=90){
   turbine(x, -450, 0.9);
   turbine(x, -350, 1.0);
@@ -575,7 +580,7 @@ for(let x=-620; x<=-80; x+=90){
 }
 
 /* =========================================================
-   SOLAR PARK — MORE ARRAYS (16 total)
+   SOLAR PARK
 ========================================================= */
 const solarPark = new THREE.Group();
 solarPark.position.set(400, 0, 0);
@@ -603,12 +608,10 @@ function solarArray(x, z, w, d, rows, cols){
     for(let c=0; c<cols; c++){
       const px = (c-(cols-1)/2) * (w/cols);
       const pz = (r-(rows-1)/2) * (d/rows);
-      /* Panel */
       const p = new THREE.Mesh(solarPanelGeo, solarMat);
       p.scale.set(pw, .45, pd);
       p.position.set(px, 0, pz);
       g.add(p);
-      /* Frame border (thin lines on top) */
       const f = new THREE.Mesh(solarFrameGeo, solarFrameMat);
       f.scale.set(pw + 0.5, .15, 0.4);
       f.position.set(px, .35, pz - pd/2);
@@ -619,7 +622,6 @@ function solarArray(x, z, w, d, rows, cols){
       g.add(f2);
     }
   }
-  /* Support legs */
   for(let r=0; r<rows; r++){
     for(let c=0; c<cols; c++){
       const px = (c-(cols-1)/2) * (w/cols);
@@ -633,7 +635,6 @@ function solarArray(x, z, w, d, rows, cols){
   }
   solarPark.add(g);
 }
-/* 16 solar arrays filling the solar park */
 solarArray(-155, -420, 280, 140, 2, 4);
 solarArray(160, -420, 280, 140, 2, 4);
 solarArray(-155, -260, 280, 140, 2, 4);
@@ -647,7 +648,6 @@ solarArray(160, 260, 280, 140, 2, 4);
 solarArray(-155, 420, 280, 140, 2, 4);
 solarArray(160, 420, 280, 140, 2, 4);
 
-/* Control station */
 const control = new THREE.Mesh(new THREE.BoxGeometry(28, 48, 22), mat(0x15536a, .25, .35));
 control.position.set(0, 32, 0);
 solarPark.add(control);
@@ -660,17 +660,25 @@ controlScreen.position.set(0, 36, -11.3);
 solarPark.add(controlScreen);
 
 /* =========================================================
-   10 BATTERIES
+   ██████  10 BATTERIES — INSIDE POWER ZONE  ██████
 ========================================================= */
 const batteries = [];
+const batteryRings = [];
+const batteryLights = [];
+
+/* Batteries positioned in the solar park area (right side of power zone) */
 const batteryPositions = [
-  [-500, 620], [-350, 620], [-200, 620], [-50, 620], [100, 620],
-  [-500, 700], [-350, 700], [-200, 700], [-50, 700], [100, 700]
+  [-380, 620], [-230, 620], [-80, 620],
+  [70, 620], [220, 620],
+  [-380, 720], [-230, 720], [-80, 720],
+  [70, 720], [220, 720]
 ];
+
 const ringGeo = new THREE.TorusGeometry(22, .6, 6, 16);
 const ringMat = new THREE.MeshStandardMaterial({
   color: 0x22ff9d, emissive: 0x22ff9d, emissiveIntensity: 1.5
 });
+
 batteryPositions.forEach((pos, i) => {
   loader.load("./battery.glb", g => {
     const b = g.scene;
@@ -678,11 +686,21 @@ batteryPositions.forEach((pos, i) => {
     b.position.set(pos[0], 6, pos[1]);
     b.rotation.y = Math.PI/2;
     powerZone.add(b);
-    const r = new THREE.Mesh(ringGeo, ringMat);
+
+    /* Glowing charge ring */
+    const r = new THREE.Mesh(ringGeo, ringMat.clone());
     r.rotation.x = Math.PI/2;
     r.position.set(pos[0], 7, pos[1]);
     powerZone.add(r);
-    batteries.push(r);
+    batteryRings.push(r);
+
+    /* Battery indicator light (turns on at night) */
+    const bl = new THREE.PointLight(0x22ff9d, 0, 100, 1.5);
+    bl.position.set(pos[0], 12, pos[1]);
+    powerZone.add(bl);
+    batteryLights.push(bl);
+
+    batteries.push(b);
     clickable.push({ object: b, type: "battery", name: "Battery " + (i+1) });
   }, undefined, () => {});
 });
@@ -712,14 +730,11 @@ function smartBld(name, x, z, w, d, h, color){
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, .3, .35));
   m.position.y = h/2;
   g.add(m);
-
   for(let y=12; y<h-8; y+=14){
     const win = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 3, .2), winMat);
     win.position.set(0, y, d/2+.11);
     g.add(win);
   }
-
-  /* Rooftop solar panels — MORE (4x3 = 12 per roof) */
   const solarG = new THREE.Group();
   solarG.position.y = h + 1.5;
   solarG.rotation.x = -0.22;
@@ -733,11 +748,9 @@ function smartBld(name, x, z, w, d, h, color){
     }
   }
   g.add(solarG);
-
   const frame = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 1, d*.85), mat(0x65777b, .3, .7));
   frame.position.y = h + 0.4;
   g.add(frame);
-
   const bc = new THREE.Mesh(
     new THREE.SphereGeometry(2, 8, 8),
     new THREE.MeshStandardMaterial({ color: 0x61eaff, emissive: 0x16dfff, emissiveIntensity: 3.2 })
@@ -745,7 +758,6 @@ function smartBld(name, x, z, w, d, h, color){
   bc.position.y = h + 4;
   g.add(bc);
   smartBeacons.push(bc);
-
   arena.add(g);
   clickable.push({ object: g, type: "smartBuilding", name });
 }
@@ -816,47 +828,141 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 ].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   ██████  CARS — BIGGER + SLOWER ██████
+   ██████  ENHANCED VEHICLES — proper car design ██████
 ========================================================= */
 const cars = [];
-const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8];
+const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
 
-/* MUCH BIGGER car: 22 wide × 8 deep (was 10 × 4.2) */
-const carBodyGeo = new THREE.BoxGeometry(22, 6, 8);
-const carCabinGeo = new THREE.BoxGeometry(11, 4.5, 6.5);
-const carLightGeo = new THREE.BoxGeometry(1.2, 1, 1.4);
-const headlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.5 });
-const taillightMat = new THREE.MeshStandardMaterial({ color: 0xff1e1e, emissive: 0xff1010, emissiveIntensity: 1.5 });
+/* Vehicle dimensions */
+const V_LEN = 22;
+const V_WID = 8;
+const V_HGT = 5;
+
+/* Shared geometries */
+const carBodyGeo = new THREE.BoxGeometry(V_LEN, V_HGT, V_WID);
+const carHoodGeo = new THREE.BoxGeometry(V_LEN * 0.25, V_HGT * 0.55, V_WID * 0.95);
+const carCabinGeo = new THREE.BoxGeometry(V_LEN * 0.42, V_HGT * 0.85, V_WID * 0.88);
+const carWindshieldGeo = new THREE.BoxGeometry(1.6, V_HGT * 0.75, V_WID * 0.82);
+const carWheelGeo = new THREE.CylinderGeometry(2.2, 2.2, 1.4, 12);
+const carWheelHubGeo = new THREE.CylinderGeometry(.8, .8, 1.5, 10);
+const carLightGeo = new THREE.BoxGeometry(1.2, 1.4, 1.6);
+
+const carGlassMat = new THREE.MeshStandardMaterial({
+  color: 0x1a3a4a,
+  emissive: 0x0a2535,
+  emissiveIntensity: 0.4,
+  roughness: .12,
+  metalness: .5
+});
+
+const wheelMat = mat(0x0c1012, .6, .1);
+const hubMat = mat(0xa0a8ac, .3, .7);
+
+const headlightMat = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  emissive: 0xfff8e0,
+  emissiveIntensity: 2.5
+});
+const taillightMat = new THREE.MeshStandardMaterial({
+  color: 0xff1e1e,
+  emissive: 0xff1010,
+  emissiveIntensity: 2.5
+});
+
+/* Headlight beam (spot) — real glow on road at night */
+const carHeadlightSpots = [];
 
 function car(route, progress, dir, spd){
   const g = new THREE.Group();
-  const bodyMat = mat(carColors[Math.floor(Math.random()*carColors.length)], .3, .4);
+
+  const color = carColors[Math.floor(Math.random()*carColors.length)];
+  const bodyMat = mat(color, .35, .5);
+
+  /* Main body */
   const body = new THREE.Mesh(carBodyGeo, bodyMat);
-  body.position.y = 6;
+  body.position.y = 3.5;
   g.add(body);
-  const cabin = new THREE.Mesh(carCabinGeo, mat(0x164457, .12, .4));
-  cabin.position.set(-1, 9.5, 0);
+
+  /* Hood (front lower section) */
+  const hood = new THREE.Mesh(carHoodGeo, bodyMat);
+  hood.position.set(V_LEN * 0.36, 3.2, 0);
+  g.add(hood);
+
+  /* Trunk (rear lower section) */
+  const trunk = new THREE.Mesh(carHoodGeo, bodyMat);
+  trunk.position.set(-V_LEN * 0.36, 3.2, 0);
+  g.add(trunk);
+
+  /* Cabin (middle section) */
+  const cabin = new THREE.Mesh(carCabinGeo, carGlassMat);
+  cabin.position.set(-1, 7, 0);
   g.add(cabin);
-  /* Headlights (front = +x) */
-  for(const z of [-2.8, 2.8]){
+
+  /* Windshield */
+  const windshield = new THREE.Mesh(carWindshieldGeo, carGlassMat);
+  windshield.position.set(V_LEN * 0.18, 6.8, 0);
+  g.add(windshield);
+
+  /* Rear window */
+  const rearWindow = new THREE.Mesh(carWindshieldGeo, carGlassMat);
+  rearWindow.position.set(-V_LEN * 0.22, 6.8, 0);
+  g.add(rearWindow);
+
+  /* Roof accent stripe */
+  const roof = new THREE.Mesh(
+    new THREE.BoxGeometry(V_LEN * 0.35, 0.3, V_WID * 0.6),
+    mat(0x222222, .5, .3)
+  );
+  roof.position.set(-1, 9.5, 0);
+  g.add(roof);
+
+  /* 4 Wheels */
+  const wheelPositions = [
+    [V_LEN * 0.32, V_WID * 0.48],
+    [V_LEN * 0.32, -V_WID * 0.48],
+    [-V_LEN * 0.32, V_WID * 0.48],
+    [-V_LEN * 0.32, -V_WID * 0.48]
+  ];
+  for(const wp of wheelPositions){
+    const wheel = new THREE.Mesh(carWheelGeo, wheelMat);
+    wheel.rotation.x = Math.PI/2;
+    wheel.position.set(wp[0], 2.2, wp[1]);
+    g.add(wheel);
+    const hub = new THREE.Mesh(carWheelHubGeo, hubMat);
+    hub.rotation.x = Math.PI/2;
+    hub.position.set(wp[0], 2.2, wp[1]);
+    g.add(hub);
+  }
+
+  /* Headlights (front) */
+  for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, headlightMat);
-    l.position.set(11, 6.5, z);
+    l.position.set(V_LEN * 0.49, 4, z);
     g.add(l);
   }
-  /* Taillights (back = -x) */
-  for(const z of [-2.8, 2.8]){
+
+  /* Taillights (back) */
+  for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, taillightMat);
-    l.position.set(-11, 6.5, z);
+    l.position.set(-V_LEN * 0.49, 4, z);
     g.add(l);
   }
+
+  /* Real headlight spotlight — for night driving */
+  const spot = new THREE.SpotLight(0xfff8d0, 0, 200, Math.PI/5, 0.6, 1.5);
+  spot.position.set(V_LEN * 0.5, 4, 0);
+  spot.target.position.set(V_LEN * 1.5, 4, 0);
+  g.add(spot);
+  g.add(spot.target);
+  carHeadlightSpots.push(spot);
+
   scene.add(g);
-  cars.push({ car: g, route, progress, direction: dir, speed: spd, baseSpeed: spd, rerouted: false });
+  cars.push({ car: g, route, progress, direction: dir, speed: spd, baseSpeed: spd, rerouted: false, headlight: spot });
 }
 
 const outerRoute = [[-855,-635],[855,-635],[855,635],[-855,635]];
 const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
 
-/* Slower speeds: 0.35 instead of 0.72 */
 for(let i=0; i<4; i++) car("outer", .05+i*.15, 1, .35 + Math.random()*.08);
 for(let i=0; i<4; i++) car("outer", .4+i*.15, 1, .35 + Math.random()*.08);
 for(let i=0; i<3; i++) car("inner", i/3, 1, .30 + Math.random()*.08);
@@ -937,7 +1043,7 @@ renderer.domElement.addEventListener("click", e => {
   const p = ray.intersectObject(powerZone, true);
   if(p.length){
     showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE",
-      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Batteries charge in the day and power city lights at night.");
+      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. During the day, solar panels charge the batteries. At night, the batteries power the entire city's lighting and vehicle headlights.");
     return;
   }
   for(const it of clickable){
@@ -947,10 +1053,10 @@ renderer.domElement.addEventListener("click", e => {
     else if(it.type === "society") showPanel("BSS Smart Society", "RESIDENTIAL", "Connected residential community.");
     else if(it.type === "bank") showPanel("Smart City State Bank", "FINANCIAL", "Smart banking facility.");
     else if(it.type === "farm") showPanel("Smart Eco Farm", "AGRICULTURE", "Sustainable smart farming.");
-    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with 12 rooftop solar panels.");
+    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with rooftop solar panels.");
     else if(it.type === "smallBuilding") showPanel(it.name, "SMART SUPPORT", "Compact smart support building with rooftop solar.");
     else if(it.type === "antenna") showPanel(it.name, "ANTENNA", "Communication antenna.");
-    else if(it.type === "battery") showPanel(it.name, "BATTERY", "Stores energy and powers city lights at night.");
+    else if(it.type === "battery") showPanel(it.name, "BATTERY", "Stores solar & wind energy. Powers the entire city lighting at night.");
     else if(it.type === "shop") showPanel(it.name, "SHOP", "Dagashiya snack shop.");
     return;
   }
@@ -961,33 +1067,35 @@ renderer.domElement.addEventListener("click", e => {
 });
 
 /* =========================================================
-   DAY / NIGHT
+   DAY / NIGHT — with real city-lights glow
 ========================================================= */
 let isNight = false;
 const btn = document.getElementById("dayNightBtn");
 const DAY_GRASS = new THREE.Color(0x4d8f50);
-const NIGHT_GRASS = new THREE.Color(0x1e3a24);
+const NIGHT_GRASS = new THREE.Color(0x14241a);
 const DAY_GRASS_DARK = new THREE.Color(0x28633a);
-const NIGHT_GRASS_DARK = new THREE.Color(0x122a1a);
+const NIGHT_GRASS_DARK = new THREE.Color(0x0a1810);
 const DAY_ZONE = new THREE.Color(0x72ad58);
-const NIGHT_ZONE = new THREE.Color(0x2c4a30);
+const NIGHT_ZONE = new THREE.Color(0x1f3824);
 const DAY_ROAD = new THREE.Color(0x20272a);
-const NIGHT_ROAD = new THREE.Color(0x0c1013);
+const NIGHT_ROAD = new THREE.Color(0x080a0c);
 const DAY_CURB = new THREE.Color(0x697578);
-const NIGHT_CURB = new THREE.Color(0x2a3438);
+const NIGHT_CURB = new THREE.Color(0x1e262a);
 
 function setDN(night){
   isNight = night;
   if(night){
     scene.background = NIGHT_BG.clone();
-    ambient.intensity = 0.6;
-    sun.intensity = 0.15;
+    ambient.intensity = 0.25;
+    sun.intensity = 0.05;
+    nightAmbient.intensity = 0.9;
     btn.textContent = "🌙 NIGHT";
     btn.classList.add("night");
   } else {
     scene.background = DAY_BG.clone();
     ambient.intensity = 3.7;
     sun.intensity = 3.5;
+    nightAmbient.intensity = 0;
     btn.textContent = "☀ DAY";
     btn.classList.remove("night");
   }
@@ -997,9 +1105,49 @@ function setDN(night){
   roadMaterial.color.copy(night ? NIGHT_ROAD : DAY_ROAD);
   curbMaterial.color.copy(night ? NIGHT_CURB : DAY_CURB);
 
-  streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 0.9; });
-  ringMat.emissiveIntensity = night ? 4.0 : 1.5;
-  winMat.emissiveIntensity = night ? 3.5 : 1.2;
+  /* Street lights ON at night — powered by batteries */
+  streetBulbMats.forEach(m => {
+    m.emissiveIntensity = night ? 6.0 : 0.9;
+  });
+  streetPointLights.forEach(pl => {
+    pl.intensity = night ? 3.5 : 0;
+  });
+
+  /* Battery rings glow brighter at night (they are supplying power) */
+  batteryRings.forEach(r => {
+    r.material.emissiveIntensity = night ? 5.0 : 1.5;
+  });
+  batteryLights.forEach(bl => {
+    bl.intensity = night ? 2.5 : 0;
+  });
+
+  /* Building windows glow */
+  winMat.emissiveIntensity = night ? 5.0 : 1.2;
+
+  /* Smart & small building beacons glow brighter */
+  smartBeacons.forEach(bc => {
+    bc.material.emissiveIntensity = night ? 5.0 : 3.2;
+  });
+  smallBeacons.forEach(bc => {
+    bc.material.emissiveIntensity = night ? 4.0 : 2.5;
+  });
+
+  /* AI screens glow */
+  aiScreenMats.forEach(m => {
+    m.emissiveIntensity = night ? 4.5 : 2.4;
+  });
+
+  /* Vehicle headlights ON at night — powered by batteries */
+  carHeadlightSpots.forEach(spot => {
+    spot.intensity = night ? 25 : 0;
+  });
+  cars.forEach(d => {
+    d.car.traverse(ch => {
+      if(ch.isMesh && ch.material === headlightMat){
+        ch.material.emissiveIntensity = night ? 5.0 : 2.5;
+      }
+    });
+  });
 }
 btn.addEventListener("click", () => setDN(!isNight));
 
@@ -1186,13 +1334,13 @@ function updateTL(t){
     l.y.material.emissiveIntensity = 0;
     l.gr.material.emissiveIntensity = 0;
     if(tState === 1){
-      if(cycle < 7) l.r.material.emissiveIntensity = 3;
-      else if(cycle < 8.5) l.y.material.emissiveIntensity = 3;
-      else l.gr.material.emissiveIntensity = 3;
+      if(cycle < 7) l.r.material.emissiveIntensity = 4;
+      else if(cycle < 8.5) l.y.material.emissiveIntensity = 4;
+      else l.gr.material.emissiveIntensity = 4;
     } else {
-      if(cycle < 5) l.r.material.emissiveIntensity = 3;
-      else if(cycle < 7) l.y.material.emissiveIntensity = 3;
-      else l.gr.material.emissiveIntensity = 3;
+      if(cycle < 5) l.r.material.emissiveIntensity = 4;
+      else if(cycle < 7) l.y.material.emissiveIntensity = 4;
+      else l.gr.material.emissiveIntensity = 4;
     }
   }
 }
@@ -1243,10 +1391,12 @@ function animate(){
   if(fc % 4 === 0){
     const amp = Math.sin(t*3);
     for(let i=0; i<smartBeacons.length; i++){
-      smartBeacons[i].material.emissiveIntensity = 2.5 + amp * 1.0;
+      const base = isNight ? 5.0 : 2.5;
+      smartBeacons[i].material.emissiveIntensity = base + amp * 1.0;
     }
     for(let i=0; i<smallBeacons.length; i++){
-      smallBeacons[i].material.emissiveIntensity = 2 + Math.sin(t*4+i)*.8;
+      const base = isNight ? 4.0 : 2.0;
+      smallBeacons[i].material.emissiveIntensity = base + Math.sin(t*4+i)*.8;
     }
   }
 
