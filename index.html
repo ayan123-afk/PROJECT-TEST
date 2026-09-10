@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BSS WORLD — 3D Smart City · Antenna & Solar</title>
+  <title>BSS WORLD — 3D Smart City · Antenna, Wind & Solar</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;color:white}
@@ -59,7 +59,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Solar Park / Smart Buildings / Traffic Manager / Antenna
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Solar Park / Smart Buildings Arena / Traffic Manager / Antenna + Wind Farm
 </div>
 
 <script type="importmap">
@@ -81,7 +81,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 ========================================================= */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa9dcf4);
-scene.fog = new THREE.Fog(0xa9dcf4, 950, 3000);
+scene.fog = new THREE.Fog(0xa9dcf4, 950, 3200);
 
 /* =========================================================
    CAMERA
@@ -155,7 +155,7 @@ const whiteMaterial = material(0xe8eeee, .7);
 /* =========================================================
    WORLD GROUND
 ========================================================= */
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(3500, 3500), grassMaterial);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(3800, 3800), grassMaterial);
 ground.rotation.x = -Math.PI/2;
 ground.receiveShadow = true;
 scene.add(ground);
@@ -326,6 +326,7 @@ createBoard("BSS SMART HOSPITAL", 250, 5, -375, 105, 11);
 createBoard("BSS SMART SOCIETY", -260, 5, 390, 110, 11);
 createBoard("SMART CITY STATE BANK", 350, 5, 390, 115, 11);
 createBoard("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
+createBoard("POWER SUPPLY SMART CITY", -950, 5, 780, 220, 16);
 
 /* =========================================================
    STREET LIGHTS
@@ -528,48 +529,116 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   ANTENNA MODELS — old_antenna.glb + antena.glb
-   (Code-built antenna array has been REMOVED)
+   ANTENNA AREA — ENLARGED WITH WIND FARM
 ========================================================= */
-const antennaGroup = new THREE.Group();
-antennaGroup.position.set(-950, 5, 1050);
-scene.add(antennaGroup);
+const antennaArea = new THREE.Group();
+antennaArea.position.set(-950, 5, 980);
+scene.add(antennaArea);
+
+/* --- enlarged base pad for antenna area --- */
+const antAreaPad = new THREE.Mesh(
+  new THREE.CylinderGeometry(180, 200, 4, 48),
+  material(0x1a3a44, .4, .25)
+);
+antAreaPad.position.y = 2;
+antAreaPad.receiveShadow = true;
+antAreaPad.castShadow = true;
+antennaArea.add(antAreaPad);
+
+/* --- glowing ring around the entire antenna area --- */
+const antAreaRing = new THREE.Mesh(
+  new THREE.TorusGeometry(185, 1.6, 12, 80),
+  new THREE.MeshStandardMaterial({
+    color:0x32dfff,
+    emissive:0x18cfff,
+    emissiveIntensity:2.2,
+    metalness:.7,
+    roughness:.2
+  })
+);
+antAreaRing.rotation.x = Math.PI/2;
+antAreaRing.position.y = 4.5;
+antennaArea.add(antAreaRing);
 
 /* --- Antenna 1: old_antenna.glb (big one) --- */
 loader.load("./old_antenna.glb", gltf => {
   const oldAnt = gltf.scene;
-  prepareModel(oldAnt, 280);
+  prepareModel(oldAnt, 300);
   oldAnt.position.set(0, 0, 0);
-  antennaGroup.add(oldAnt);
+  antennaArea.add(oldAnt);
   clickable.push({ object: oldAnt, type: "antenna", name: "Old Antenna" });
 }, undefined, error => {
   console.error("old_antenna.glb load error:", error);
 });
 
-/* --- Antenna 2: antena.glb (second antenna) --- */
+/* --- Antenna 2: antena.glb --- */
 loader.load("./antena.glb", gltf => {
   const ant = gltf.scene;
-  prepareModel(ant, 180);
-  ant.position.set(120, 0, -60);
-  antennaGroup.add(ant);
+  prepareModel(ant, 190);
+  ant.position.set(140, 0, -70);
+  antennaArea.add(ant);
   clickable.push({ object: ant, type: "antenna", name: "Antenna" });
 }, undefined, error => {
   console.error("antena.glb load error:", error);
 });
 
-/* --- Antenna 3: antena.glb (third copy, different position) --- */
+/* --- Antenna 3: antena.glb (second copy) --- */
 loader.load("./antena.glb", gltf => {
   const ant2 = gltf.scene;
-  prepareModel(ant2, 160);
-  ant2.position.set(-130, 0, 40);
-  antennaGroup.add(ant2);
+  prepareModel(ant2, 170);
+  ant2.position.set(-150, 0, 50);
+  antennaArea.add(ant2);
   clickable.push({ object: ant2, type: "antenna", name: "Antenna 2" });
 }, undefined, error => {
   console.error("antena.glb load error:", error);
 });
 
-/* --- label sign for antenna site --- */
-createBoard("ANTENNA ARRAY · SOLAR LINK", -950, 5, 1170, 160, 12);
+/* =========================================================
+   WIND FARM — MOVED NEXT TO ANTENNA AREA
+========================================================= */
+const windFarmGroup = new THREE.Group();
+windFarmGroup.position.set(-950, 5, 980);
+scene.add(windFarmGroup);
+
+const turbines = [];
+function createTurbine(x, z, scale=1){
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+  group.scale.setScalar(scale);
+  const tower = new THREE.Mesh(
+    new THREE.CylinderGeometry(.9, 1.4, 55, 16),
+    whiteMaterial
+  );
+  tower.position.y = 27.5;
+  tower.castShadow = true;
+  group.add(tower);
+  const hub = new THREE.Group();
+  hub.position.set(0, 55, 0);
+  const center = new THREE.Mesh(new THREE.SphereGeometry(2.8, 18, 18), whiteMaterial);
+  hub.add(center);
+  const blades = new THREE.Group();
+  for(let i=0; i<3; i++){
+    const blade = new THREE.Mesh(new THREE.BoxGeometry(1.8, 20, .6), whiteMaterial);
+    blade.position.y = 9.5;
+    blade.rotation.z = i * Math.PI * 2/3;
+    blades.add(blade);
+  }
+  hub.add(blades);
+  group.add(hub);
+  windFarmGroup.add(group);
+  turbines.push(blades);
+}
+
+/* 8 turbines arranged around the antenna area */
+const windPositions = [
+  [-110, -110], [110, -110],
+  [-110, 110], [110, 110],
+  [-170, 0], [170, 0],
+  [0, -170], [0, 170]
+];
+windPositions.forEach((pos, i) => {
+  createTurbine(pos[0], pos[1], 1.1 + (i % 3) * 0.08);
+});
 
 /* =========================================================
    SOLAR ENERGY PARK
@@ -749,7 +818,7 @@ for(let i=0; i<12; i++){
 }
 
 /* =========================================================
-   POWER HUB (no cables)
+   POWER HUB
 ========================================================= */
 const powerHub = new THREE.Mesh(
   new THREE.CylinderGeometry(14, 18, 4, 24),
@@ -759,7 +828,47 @@ powerHub.position.set(0, 3.5, 520);
 scene.add(powerHub);
 
 /* =========================================================
-   SMART BUILDINGS
+   SMART BUILDINGS ARENA — MOVED OFF ROADS TO DEDICATED ZONE
+========================================================= */
+const smartArena = new THREE.Group();
+smartArena.position.set(1550, 0, -650);
+scene.add(smartArena);
+
+/* --- arena pad --- */
+const arenaPad = new THREE.Mesh(
+  new THREE.BoxGeometry(700, .8, 500),
+  material(0x2c4a3a, .92)
+);
+arenaPad.position.y = 4.2;
+arenaPad.receiveShadow = true;
+smartArena.add(arenaPad);
+
+/* --- arena border glow --- */
+const arenaBorderMat = new THREE.MeshStandardMaterial({
+  color:0x63e7ff,
+  emissive:0x16cfff,
+  emissiveIntensity:1.6,
+  metalness:.6,
+  roughness:.25
+});
+const arenaBorderFront = new THREE.Mesh(new THREE.BoxGeometry(700, .6, 3), arenaBorderMat);
+arenaBorderFront.position.set(0, 6.5, -250);
+smartArena.add(arenaBorderFront);
+const arenaBorderBack = arenaBorderFront.clone();
+arenaBorderBack.position.z = 250;
+smartArena.add(arenaBorderBack);
+const arenaBorderLeft = new THREE.Mesh(new THREE.BoxGeometry(3, .6, 500), arenaBorderMat);
+arenaBorderLeft.position.set(-350, 6.5, 0);
+smartArena.add(arenaBorderLeft);
+const arenaBorderRight = arenaBorderLeft.clone();
+arenaBorderRight.position.x = 350;
+smartArena.add(arenaBorderRight);
+
+/* --- arena label sign --- */
+createBoard("SMART BUILDINGS ARENA", 1550, 5, -920, 220, 14);
+
+/* =========================================================
+   SMART BUILDINGS (inside arena)
 ========================================================= */
 const smartBuildings = [];
 
@@ -860,16 +969,17 @@ function createCodedSmartBuilding(name, x, z, width, depth, height, color){
   );
   foundation.position.y = .7;
   group.add(foundation);
-  scene.add(group);
+  smartArena.add(group);
   smartBuildings.push({ group, beacon });
   clickable.push({ object:group, type:"smartBuilding", name });
   return group;
 }
 
-createCodedSmartBuilding("Smart Energy Tower", -850, 380, 100, 80, 185, 0x245d72);
-createCodedSmartBuilding("Green Technology Tower", -650, 380, 90, 75, 155, 0x356b57);
-createCodedSmartBuilding("Digital Innovation Center", 700, 380, 105, 82, 195, 0x31547c);
-createCodedSmartBuilding("Smart Research Center", 700, -380, 98, 78, 165, 0x674d68);
+/* All 4 smart buildings placed inside the arena, off the main roads */
+createCodedSmartBuilding("Smart Energy Tower", -180, -100, 100, 80, 185, 0x245d72);
+createCodedSmartBuilding("Green Technology Tower", 0, -100, 90, 75, 155, 0x356b57);
+createCodedSmartBuilding("Digital Innovation Center", 180, -100, 105, 82, 195, 0x31547c);
+createCodedSmartBuilding("Smart Research Center", 0, 120, 98, 78, 165, 0x674d68);
 
 /* =========================================================
    FARM MODEL
@@ -883,41 +993,6 @@ loader.load("./simple_farm_free.glb", gltf => {
 }, undefined, error => { console.error("Farm GLB Error:", error); });
 
 createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
-
-/* =========================================================
-   WIND TURBINES
-========================================================= */
-const turbines = [];
-function createTurbine(x, z, scale=1){
-  const group = new THREE.Group();
-  group.position.set(x, 5, z);
-  group.scale.setScalar(scale);
-  const tower = new THREE.Mesh(
-    new THREE.CylinderGeometry(.8, 1.25, 42, 16),
-    whiteMaterial
-  );
-  tower.position.y = 21;
-  tower.castShadow = true;
-  group.add(tower);
-  const hub = new THREE.Group();
-  hub.position.set(0, 42, 0);
-  const center = new THREE.Mesh(new THREE.SphereGeometry(2.5, 18, 18), whiteMaterial);
-  hub.add(center);
-  const blades = new THREE.Group();
-  for(let i=0; i<3; i++){
-    const blade = new THREE.Mesh(new THREE.BoxGeometry(1.5, 17, .55), whiteMaterial);
-    blade.position.y = 8;
-    blade.rotation.z = i * Math.PI * 2/3;
-    blades.add(blade);
-  }
-  hub.add(blades);
-  group.add(hub);
-  farmGroup.add(group);
-  turbines.push(blades);
-}
-const turbineX = [-200, -100, 0, 100, 200];
-const turbineZ = [-290, -145, 145, 290];
-for(const z of turbineZ){ for(const x of turbineX){ createTurbine(x, z, 1.05 + Math.random()*.12); } }
 
 /* =========================================================
    CAR SYSTEM
@@ -1080,12 +1155,24 @@ renderer.domElement.addEventListener("click", event => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
-  const antHits = raycaster.intersectObject(antennaGroup, true);
+  /* Wind farm click */
+  const windHits = raycaster.intersectObject(windFarmGroup, true);
+  if(windHits.length){
+    showPanel(
+      "Wind Farm · Power Supply Smart City",
+      "RENEWABLE WIND ENERGY",
+      "A cluster of 8 wind turbines integrated with the antenna array area. These turbines generate clean renewable electricity that feeds into the smart city's power grid, complementing the Solar Energy Park."
+    );
+    return;
+  }
+
+  /* Antenna area click */
+  const antHits = raycaster.intersectObject(antennaArea, true);
   if(antHits.length){
     showPanel(
-      "Antenna Array · Solar Link",
+      "Antenna Array · Power Supply Smart City",
       "COMMUNICATION & ENERGY HUB",
-      "A massive multi-band antenna system integrated with solar panels. The array receives clean energy from the Solar Park through invisible underground power lines, supporting city-wide communication and smart-grid telemetry."
+      "A massive multi-band antenna system integrated with solar panels and surrounded by wind turbines. The array receives clean energy from the Solar Park and Wind Farm through invisible underground power lines, supporting city-wide communication and smart-grid telemetry."
     );
     return;
   }
@@ -1115,11 +1202,11 @@ renderer.domElement.addEventListener("click", event => {
     }
     if(item.type==="smartBuilding"){
       showPanel(item.name, "SMART BUILDING",
-        "A digitally designed high-efficiency building created directly with Three.js. Rooftop solar panels generate clean electricity while the underground smart-energy network connects this building to the Solar Energy Park.");
+        "A digitally designed high-efficiency building located in the Smart Buildings Arena, off the main roads. Rooftop solar panels generate clean electricity while the underground smart-energy network connects this building to the Solar Energy Park.");
     }
     if(item.type==="antenna"){
       showPanel(item.name, "COMMUNICATION ANTENNA",
-        "A communication antenna model loaded from a GLB file. It is part of the city's smart communication and energy network, connected to the Solar Park through the underground power grid.");
+        "A communication antenna model loaded from a GLB file. It is part of the city's smart communication and energy network, connected to the Solar Park and Wind Farm through the underground power grid.");
     }
     return;
   }
@@ -1134,7 +1221,7 @@ renderer.domElement.addEventListener("click", event => {
   const solarHits = raycaster.intersectObject(solarPark, true);
   if(solarHits.length){
     showPanel("Solar Energy Park", "RENEWABLE ENERGY ZONE",
-      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Antenna Array is also directly connected via dedicated power lines.");
+      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Antenna Array and Wind Farm are also directly connected via dedicated power lines.");
   }
 });
 
@@ -1320,7 +1407,9 @@ function animate(){
   updateCars();
   updateTrafficLights(elapsed);
 
+  /* Wind turbines spin */
   turbines.forEach(blades => { blades.rotation.z = elapsed*2.4; });
+
   radar.rotation.z = elapsed*1.7;
   signal.scale.setScalar(1 + Math.sin(elapsed*4)*.12);
   controllerRing.rotation.z = elapsed*.5;
@@ -1332,6 +1421,13 @@ function animate(){
     building.beacon.material.emissiveIntensity = 2 + Math.sin(elapsed*3+index)*.8;
   });
   solarScreen.material.emissiveIntensity = 2 + Math.sin(elapsed*2.5)*.5;
+
+  /* Animated antenna area ring */
+  antAreaRing.rotation.z = elapsed * 0.6;
+  antAreaRing.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
+
+  /* Animated arena border */
+  arenaBorderMat.emissiveIntensity = 1.4 + Math.sin(elapsed*2.5)*0.5;
 
   controls.update();
   renderer.render(scene, camera);
