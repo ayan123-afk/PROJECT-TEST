@@ -128,7 +128,7 @@ controls.maxDistance = 3000;
 controls.target.set(0, 5, 0);
 
 /* =========================================================
-   LIGHTING — ONLY 2 REAL LIGHTS (keeps perf high)
+   LIGHTING
 ========================================================= */
 const ambient = new THREE.HemisphereLight(0xf8fcff, 0x315c38, 3.7);
 scene.add(ambient);
@@ -269,7 +269,7 @@ board("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 board("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
 
 /* =========================================================
-   STREET LIGHTS — emissive glow only (NO point lights!)
+   STREET LIGHTS
 ========================================================= */
 const streetBulbMats = [];
 function sl(x, z){
@@ -472,13 +472,14 @@ function shop(x, z, scale=1, name){
 }
 
 /* =========================================================
-   POWER SUPPLY SMART CITY ZONE
+   ██████ POWER SUPPLY ZONE — MOVED FAR FROM CITY ROADS ██████
+   New position: bottom-left of the map, well away from roads
 ========================================================= */
 const powerZone = new THREE.Group();
-powerZone.position.set(-1500, 0, 900);
+powerZone.position.set(-2200, 0, 1900);   /* MOVED FAR AWAY */
 scene.add(powerZone);
 
-board("POWER SUPPLY (SMART-CITY)", -1500, 5, 1450, 320, 18);
+board("POWER SUPPLY (SMART-CITY)", -2200, 5, 2450, 320, 18);
 
 const pad = new THREE.Mesh(new THREE.BoxGeometry(1400, .8, 1100), mat(0x1d3a2e, .92));
 pad.position.y = 4.2;
@@ -531,7 +532,7 @@ loader.load("./antena.glb", g => {
   clickable.push({ object: a, type: "antenna", name: "Antenna 2" });
 }, undefined, () => {});
 
-/* Wind turbines — 24 */
+/* Wind turbines */
 const turbines = [];
 const turbTowerMat = mat(0xeeeeee, .4, .3);
 const turbTowerGeo = new THREE.CylinderGeometry(.9, 1.4, 55, 6);
@@ -640,9 +641,7 @@ const controlScreen = new THREE.Mesh(
 controlScreen.position.set(0, 36, -11.3);
 solarPark.add(controlScreen);
 
-/* =========================================================
-   10 BATTERIES (inside power zone)
-========================================================= */
+/* 10 batteries */
 const batteryRings = [];
 const batteryPositions = [
   [-380, 620], [-230, 620], [-80, 620], [70, 620], [220, 620],
@@ -657,8 +656,6 @@ batteryPositions.forEach((pos, i) => {
     b.position.set(pos[0], 6, pos[1]);
     b.rotation.y = Math.PI/2;
     powerZone.add(b);
-
-    /* Ring with own material so we can change emissive at night */
     const rMat = new THREE.MeshStandardMaterial({
       color: 0x22ff9d, emissive: 0x22ff9d, emissiveIntensity: 1.5
     });
@@ -667,7 +664,6 @@ batteryPositions.forEach((pos, i) => {
     r.position.set(pos[0], 7, pos[1]);
     powerZone.add(r);
     batteryRings.push(rMat);
-
     clickable.push({ object: b, type: "battery", name: "Battery " + (i+1) });
   }, undefined, () => {});
 });
@@ -801,7 +797,7 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 ].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   ██████ CARS — enhanced design, NO spotlights ██████
+   CARS
 ========================================================= */
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
@@ -827,7 +823,6 @@ const carGlassMat = new THREE.MeshStandardMaterial({
 const wheelMat = mat(0x0c1012, .6, .1);
 const hubMat = mat(0xa0a8ac, .3, .7);
 
-/* Shared emissive materials for all cars (updates once at night) */
 const sharedHeadlightMat = new THREE.MeshStandardMaterial({
   color: 0xffffff,
   emissive: 0xfff8e0,
@@ -892,14 +887,11 @@ function car(route, progress, dir, spd){
     g.add(hub);
   }
 
-  /* Headlights — shared material */
   for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, sharedHeadlightMat);
     l.position.set(V_LEN * 0.49, 4, z);
     g.add(l);
   }
-
-  /* Taillights — shared material */
   for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, sharedTaillightMat);
     l.position.set(-V_LEN * 0.49, 4, z);
@@ -993,7 +985,7 @@ renderer.domElement.addEventListener("click", e => {
   const p = ray.intersectObject(powerZone, true);
   if(p.length){
     showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE",
-      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Batteries charge in the day and power the city lights at night.");
+      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Located outside the main city, this zone powers the entire smart city.");
     return;
   }
   for(const it of clickable){
@@ -1017,7 +1009,7 @@ renderer.domElement.addEventListener("click", e => {
 });
 
 /* =========================================================
-   DAY / NIGHT — battery-powered city glow
+   DAY / NIGHT
 ========================================================= */
 let isNight = false;
 const btn = document.getElementById("dayNightBtn");
@@ -1037,32 +1029,19 @@ function setDN(night){
     btn.textContent = "☀ DAY";
     btn.classList.remove("night");
   }
-
-  /* Grass + road colors */
   grassMaterial.color.setHex(night ? 0x14241a : 0x4d8f50);
   grassDarkMaterial.color.setHex(night ? 0x0a1810 : 0x28633a);
   zoneMaterial.color.setHex(night ? 0x1f3824 : 0x72ad58);
   roadMaterial.color.setHex(night ? 0x080a0c : 0x20272a);
   curbMaterial.color.setHex(night ? 0x1e262a : 0x697578);
 
-  /* Street lights glow (battery powered) */
   streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 6.0 : 0.9; });
-
-  /* Battery rings glow strongly at night */
   batteryRings.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.5; });
-
-  /* Vehicle headlights */
   sharedHeadlightMat.emissiveIntensity = night ? 5.0 : 2.5;
   sharedTaillightMat.emissiveIntensity = night ? 4.0 : 2.5;
-
-  /* Window glow */
   winMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.2; });
-
-  /* Building beacons */
   smartBeaconMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 3.2; });
   smallBeaconMats.forEach(m => { m.emissiveIntensity = night ? 4.0 : 2.5; });
-
-  /* AI screens */
   aiScreenMats.forEach(m => { m.emissiveIntensity = night ? 4.5 : 2.4; });
 }
 btn.addEventListener("click", () => setDN(!isNight));
@@ -1327,7 +1306,7 @@ function animate(){
 setState(0);
 animate();
 
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
