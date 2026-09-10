@@ -192,7 +192,6 @@ createBoundary();
 
 /* =========================================================
    ZONES
-   ── School moved AWAY from the left road ──
 ========================================================= */
 function createZone(x, z, width, depth){
   const zone = new THREE.Mesh(new THREE.BoxGeometry(width, .35, depth), zoneMaterial);
@@ -206,9 +205,9 @@ function createZone(x, z, width, depth){
   trim.position.set(x, 4.5, z);
   scene.add(trim);
 }
-/* SCHOOL — shifted RIGHT away from the -855 left road (was -370, now -280) */
+/* SCHOOL */
 createZone(-280, -210, 340, 250);
-/* HOSPITAL — unchanged */
+/* HOSPITAL */
 createZone( 250, -210, 340, 250);
 /* SOCIETY */
 createZone(-260, 210, 480, 330);
@@ -217,6 +216,8 @@ createZone(350, 210, 320, 260);
 
 /* =========================================================
    ROADS
+   ── Removed the vertical x=0 road through AI Traffic Manager ──
+   ── Kept only 2 vertical roads (-520, 520) & 3 horizontal (-400,0,400) ──
 ========================================================= */
 function createRoad(x, z, width, depth){
   const shoulder = new THREE.Mesh(new THREE.BoxGeometry(width+7, .25, depth+7), roadShoulderMaterial);
@@ -252,12 +253,25 @@ function createRoad(x, z, width, depth){
     }
   }
 }
+/* Outer ring roads — connected */
 createRoad(0, -635, 1740, 34);
 createRoad(0, 635, 1740, 34);
 createRoad(-855, 0, 34, 1250);
 createRoad(855, 0, 34, 1250);
-for(const z of [-400,0,400]){ createRoad(0, z, 1680, 24); }
-for(const x of [-520,0,520]){ createRoad(x, 0, 24, 1200); }
+
+/* Horizontal inner roads (3) — span the full width to connect to outer ring */
+for(const z of [-400, 0, 400]){ createRoad(0, z, 1680, 24); }
+
+/* Vertical inner roads — REMOVED x=0 middle road (going through AI Traffic Manager) */
+/* Only left (-520) and right (520) vertical roads remain, but they don't reach z=505 */
+createRoad(-520, 0, 24, 1200);
+createRoad( 520, 0, 24, 1200);
+
+/* Short inner connector roads to keep the AI Manager area connected but NOT running through it */
+createRoad(-520, 400, 24, 24);  /* small junction pad at x=-520,z=400 */
+createRoad( 520, 400, 24, 24);  /* small junction pad at x=520,z=400  */
+createRoad(-520, -400, 24, 24); /* small junction pad at x=-520,z=-400 */
+createRoad( 520, -400, 24, 24); /* small junction pad at x=520,z=-400  */
 
 /* =========================================================
    CROSSWALKS
@@ -271,7 +285,20 @@ function createCrosswalk(x, z, horizontal=true){
     scene.add(stripe);
   }
 }
-for(const x of [-520,0,520]){ for(const z of [-400,0,400]){ createCrosswalk(x,z,true); createCrosswalk(x,z,false); } }
+/* Crosswalks only at real junctions (not at x=0 anymore) */
+for(const x of [-520, 520]){
+  for(const z of [-400, 0, 400]){
+    createCrosswalk(x, z, true);
+    createCrosswalk(x, z, false);
+  }
+}
+/* Also crosswalks on the outer ring corners */
+for(const x of [-855, 855]){
+  for(const z of [-635, 635]){
+    createCrosswalk(x, z, true);
+    createCrosswalk(x, z, false);
+  }
+}
 
 /* =========================================================
    SIDEWALKS
@@ -358,6 +385,7 @@ for(let x=-780; x<=780; x+=130){ createStreetLight(x, -425); createStreetLight(x
 
 /* =========================================================
    TRAFFIC LIGHTS
+   ── Removed lights at x=0 (middle road removed) ──
 ========================================================= */
 const trafficLights = [];
 function createTrafficLight(x, z, rotation=0){
@@ -385,10 +413,16 @@ function createTrafficLight(x, z, rotation=0){
   scene.add(group);
   trafficLights.push({ red, yellow, green, phase: Math.random()*10 });
 }
-for(const x of [-520,0,520]){ for(const z of [-400,0,400]){ createTrafficLight(x, z); } }
+/* Only at x=-520 and x=520 (no x=0) */
+for(const x of [-520, 520]){
+  for(const z of [-400, 0, 400]){
+    createTrafficLight(x, z);
+  }
+}
 
 /* =========================================================
    AI TRAFFIC MANAGER
+   (now sits alone — no road through it)
 ========================================================= */
 const controller = new THREE.Group();
 controller.position.set(0, 5, 505);
@@ -553,26 +587,17 @@ function createTree(x, z, scale=1){
   const leafMat2 = material(0x3a8a4c, .9);
   const leafMat3 = material(0x4aa05c, .9);
 
-  const leaf1 = new THREE.Mesh(
-    new THREE.ConeGeometry(11, 14, 10),
-    leafMat1
-  );
+  const leaf1 = new THREE.Mesh(new THREE.ConeGeometry(11, 14, 10), leafMat1);
   leaf1.position.y = 15;
   leaf1.castShadow = true;
   group.add(leaf1);
 
-  const leaf2 = new THREE.Mesh(
-    new THREE.ConeGeometry(9, 13, 10),
-    leafMat2
-  );
+  const leaf2 = new THREE.Mesh(new THREE.ConeGeometry(9, 13, 10), leafMat2);
   leaf2.position.y = 22;
   leaf2.castShadow = true;
   group.add(leaf2);
 
-  const leaf3 = new THREE.Mesh(
-    new THREE.ConeGeometry(6.5, 11, 10),
-    leafMat3
-  );
+  const leaf3 = new THREE.Mesh(new THREE.ConeGeometry(6.5, 11, 10), leafMat3);
   leaf3.position.y = 29;
   leaf3.castShadow = true;
   group.add(leaf3);
@@ -1259,10 +1284,8 @@ loadDagashiyaShop( 270,  290, 1.4, 0, "Bank Dagashiya 1");
 loadDagashiyaShop( 430,  290, 1.4, 0, "Bank Dagashiya 2");
 
 /* =========================================================
-   ██████  TREES AROUND HOSPITAL AND BANK ONLY  ██████
+   TREES AROUND HOSPITAL AND BANK
 ========================================================= */
-
-/* --- Trees around HOSPITAL (zone 340x250 at 250,-210) --- */
 const hospitalTrees = [
   [ 150, -100], [ 190, -100], [ 350, -100], [ 390, -100],
   [ 150, -320], [ 190, -320], [ 350, -320], [ 390, -320],
@@ -1274,7 +1297,6 @@ hospitalTrees.forEach((pos, i) => {
   createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
 });
 
-/* --- Trees around BANK (zone 320x260 at 350,210) --- */
 const bankTrees = [
   [ 200, 100], [ 240, 100], [ 460, 100], [ 500, 100],
   [ 200, 320], [ 240, 320], [ 460, 320], [ 500, 320],
@@ -1397,9 +1419,7 @@ function loadBuilding(file, targetSize, position, type){
     clickable.push({ object:building, type });
   }, undefined, error => { console.error(file, error); });
 }
-/* SCHOOL — moved RIGHT, away from the left road */
 loadBuilding("./american_high_school.glb", 200, [-280,-210], "school");
-/* HOSPITAL — unchanged */
 loadBuilding("./low_poly_hospital.glb", 180, [250,-210], "hospital");
 loadBuilding("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 loadBuilding("./us_bank_tower.glb", 260, [350,210], "bank");
