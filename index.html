@@ -55,10 +55,31 @@ body{overflow:hidden;background:#a9dcf4;font-family:Arial,Helvetica,sans-serif;c
     background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);
     color:#d2e1e7;font-size:12px;white-space:nowrap;
 }
+
+#loading{
+    position:fixed;inset:0;z-index:100;
+    background:#0a1a24;display:flex;
+    flex-direction:column;align-items:center;justify-content:center;
+    transition:opacity .6s;color:#70e4ff;font-size:14px;letter-spacing:3px;
+}
+#loading.hide{opacity:0;pointer-events:none;}
+#loading .bar{
+    width:260px;height:3px;background:rgba(112,228,255,.15);
+    border-radius:2px;margin-top:20px;overflow:hidden;
+}
+#loading .fill{
+    height:100%;width:0%;background:#70e4ff;
+    transition:width .3s;box-shadow:0 0 12px #70e4ff;
+}
 </style>
 </head>
 
 <body>
+
+<div id="loading">
+    LOADING BSS WORLD
+    <div class="bar"><div class="fill" id="loadFill"></div></div>
+</div>
 
 <div id="ui">
     <div class="title">BSS WORLD</div>
@@ -101,6 +122,13 @@ body{overflow:hidden;background:#a9dcf4;font-family:Arial,Helvetica,sans-serif;c
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+/* =========================================================
+   LOADING BAR
+========================================================= */
+const loadFill = document.getElementById("loadFill");
+const loadingScreen = document.getElementById("loading");
 
 /* =========================================================
    SCENE
@@ -614,176 +642,127 @@ createCar(-300, 240,.72,-1);
 createCar(-460, 240,.65,-1);
 
 /* =========================================================
-   PROCEDURAL BUILDINGS  (GLB ki zaroorat nahi)
+   GLTF LOADER
 ========================================================= */
+const loader = new GLTFLoader();
 const clickable = [];
 
-function makeBuilding({ x, z, w, d, h, color, type, windows = true, roof = true }) {
-    const g = new THREE.Group();
-    g.position.set(x, 0, z);
+/* =========================================================
+   LOADING TRACKER
+========================================================= */
+let totalModels = 4;
+let loadedModels = 0;
 
-    const body = new THREE.Mesh(
-        new THREE.BoxGeometry(w, h, d),
-        mat(color, .55, .15)
-    );
-    body.position.y = h / 2;
-    body.castShadow = true;
-    body.receiveShadow = true;
-    g.add(body);
+function updateLoadBar() {
+    loadedModels++;
+    const pct = (loadedModels / totalModels) * 100;
+    loadFill.style.width = pct + "%";
 
-    // Windows
-    if (windows) {
-        const winMat = new THREE.MeshStandardMaterial({
-            color: 0xa8e8ff, emissive: 0x4fc8ff, emissiveIntensity: .75,
-            roughness: .2
-        });
+    if (loadedModels >= totalModels) {
+        setTimeout(() => {
+            loadingScreen.classList.add("hide");
+        }, 500);
+    }
+}
 
-        const floors = Math.max(1, Math.floor(h / 7));
-        const colsF  = Math.max(2, Math.floor(w / 6));
-        const colsB  = Math.max(2, Math.floor(d / 6));
+/* =========================================================
+   PREPARE MODEL  (auto scale + center + sit on ground)
+========================================================= */
+function prepareModel(object, targetSize) {
+    const box = new THREE.Box3().setFromObject(object);
+    const size = new THREE.Vector3();
+    box.getSize(size);
 
-        for (let f = 0; f < floors; f++) {
-            const y = 4 + f * 7;
+    const maxDim = Math.max(size.x, size.y, size.z);
+    object.scale.setScalar(targetSize / Math.max(maxDim, .001));
 
-            // front / back
-            for (let c = 0; c < colsF; c++) {
-                const xx = -w/2 + 4 + c * (w / colsF);
+    const newBox = new THREE.Box3().setFromObject(object);
+    const center = new THREE.Vector3();
+    newBox.getCenter(center);
 
-                const wf = new THREE.Mesh(new THREE.BoxGeometry(3, 3, .18), winMat);
-                wf.position.set(xx, y, d/2 + .09);
-                g.add(wf);
+    object.position.x -= center.x;
+    object.position.z -= center.z;
+    object.position.y -= newBox.min.y;
 
-                const wb = wf.clone();
-                wb.position.z = -d/2 - .09;
-                g.add(wb);
-            }
-
-            // left / right
-            for (let c = 0; c < colsB; c++) {
-                const zz = -d/2 + 4 + c * (d / colsB);
-
-                const wl = new THREE.Mesh(new THREE.BoxGeometry(.18, 3, 3), winMat);
-                wl.position.set(-w/2 - .09, y, zz);
-                g.add(wl);
-
-                const wr = wl.clone();
-                wr.position.x = w/2 + .09;
-                g.add(wr);
-            }
+    object.traverse(child => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
         }
-    }
-
-    // Roof
-    if (roof) {
-        const roofMesh = new THREE.Mesh(
-            new THREE.BoxGeometry(w + 1.5, 1.2, d + 1.5),
-            mat(0x1c2b33, .6, .4)
-        );
-        roofMesh.position.y = h + .6;
-        roofMesh.castShadow = true;
-        g.add(roofMesh);
-
-        const ant = new THREE.Mesh(
-            new THREE.CylinderGeometry(.15, .15, 6, 6),
-            mat(0x8899aa, .5)
-        );
-        ant.position.y = h + 4;
-        g.add(ant);
-
-        const tip = new THREE.Mesh(
-            new THREE.SphereGeometry(.5, 10, 10),
-            new THREE.MeshStandardMaterial({
-                color: 0xff3355, emissive: 0xff2244, emissiveIntensity: 2
-            })
-        );
-        tip.position.y = h + 7.2;
-        g.add(tip);
-    }
-
-    scene.add(g);
-
-    if (type) clickable.push({ object: g, type });
-    return g;
-}
-
-/* ---- SKYSCRAPER GENERATOR ---- */
-function makeTower(x, z, maxH = 220) {
-    const h = 70 + Math.random() * (maxH - 70);
-    const w = 16 + Math.random() * 12;
-    const d = 16 + Math.random() * 12;
-
-    const palette = [
-        0x1a5f7a, 0x2c7da0, 0x3a86a8,
-        0x468faf, 0x61a5c2, 0x89c2d9,
-        0x1e3a5f, 0x22333b, 0x2b6b8a
-    ];
-    const color = palette[Math.floor(Math.random() * palette.length)];
-
-    makeBuilding({ x, z, w, d, h, color, type: "society" });
+    });
 }
 
 /* =========================================================
-   BSS SMART SOCIETY  —  cluster of towers
+   SCHOOL
 ========================================================= */
-makeBuilding({
-    x: -300, z: 100, w: 100, d: 80, h: 60,
-    color: 0x2c7da0, type: "society"
-});
-
-const societySpots = [
-    [-400,  40], [-360,  90], [-330,  30], [-300,  90],
-    [-270,  40], [-240, 100], [-370, 150], [-320, 160],
-    [-260, 150], [-220,  80], [-400, 130], [-340, 130],
-    [-250,  30], [-200, 100], [-380, 200], [-310, 200],
-    [-240, 200], [-200, 160], [-380, -20], [-280, -20]
-];
-societySpots.forEach(([x, z]) => makeTower(x, z, 230));
-
-/* =========================================================
-   BSS SMART SCHOOL
-========================================================= */
-makeBuilding({
-    x: -380, z: -100, w: 150, d: 100, h: 45,
-    color: 0x4b8fb5, type: "school"
-});
-makeBuilding({ x: -470, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
-makeBuilding({ x: -290, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
+loader.load(
+    "high_school.glb",
+    gltf => {
+        const school = gltf.scene;
+        prepareModel(school, 150);
+        school.position.set(-380, 1, -100);
+        scene.add(school);
+        clickable.push({ object: school, type: "school" });
+        console.log("School loaded");
+        updateLoadBar();
+    },
+    undefined,
+    err => { console.error("School Error:", err); updateLoadBar(); }
+);
 
 /* =========================================================
-   BSS SMART HOSPITAL
+   HOSPITAL
 ========================================================= */
-makeBuilding({
-    x: 100, z: -110, w: 130, d: 90, h: 80,
-    color: 0xe8f2f7, type: "hospital"
-});
-makeBuilding({
-    x: 100, z: -110, w: 45, d: 35, h: 120,
-    color: 0xdfeaf0
-});
+loader.load(
+    "stylized_modern_hospital.glb",
+    gltf => {
+        const hospital = gltf.scene;
+        prepareModel(hospital, 130);
+        hospital.position.set(100, 1, -110);
+        scene.add(hospital);
+        clickable.push({ object: hospital, type: "hospital" });
+        console.log("Hospital loaded");
+        updateLoadBar();
+    },
+    undefined,
+    err => { console.error("Hospital Error:", err); updateLoadBar(); }
+);
 
 /* =========================================================
-   SMART CITY STATE BANK
+   SOCIETY
 ========================================================= */
-makeBuilding({
-    x: 420, z: 120, w: 80, d: 80, h: 260,
-    color: 0x1e3a5f, type: "bank"
-});
-makeBuilding({ x: 510, z:  60, w: 60, d: 60, h: 160, color: 0x245c7a });
-makeBuilding({ x: 510, z: 180, w: 60, d: 60, h: 190, color: 0x2b6b8a });
-makeBuilding({ x: 340, z:  60, w: 55, d: 55, h: 140, color: 0x1a5f7a });
-makeBuilding({ x: 340, z: 180, w: 55, d: 55, h: 170, color: 0x1e3a5f });
+loader.load(
+    "low_poly_night_city_building_skyline.glb",
+    gltf => {
+        const society = gltf.scene;
+        prepareModel(society, 320);
+        society.position.set(-300, 1, 120);
+        scene.add(society);
+        clickable.push({ object: society, type: "society" });
+        console.log("Society loaded");
+        updateLoadBar();
+    },
+    undefined,
+    err => { console.error("Society Error:", err); updateLoadBar(); }
+);
 
 /* =========================================================
-   EXTRA CITY FILLER TOWERS
+   BANK
 ========================================================= */
-const fillerSpots = [
-    [  60, -350], [ 180, -350], [ 300, -350], [ 420, -350],
-    [ -100, -350], [-220, -350],
-    [ 60,  350], [ 180,  350],
-    [ 500, -120], [ 500,  120],
-    [-520,  120], [-520, -120]
-];
-fillerSpots.forEach(([x, z]) => makeTower(x, z, 180));
+loader.load(
+    "us_bank_tower.glb",
+    gltf => {
+        const bank = gltf.scene;
+        prepareModel(bank, 260);
+        bank.position.set(420, 1, 120);
+        scene.add(bank);
+        clickable.push({ object: bank, type: "bank" });
+        console.log("Bank loaded");
+        updateLoadBar();
+    },
+    undefined,
+    err => { console.error("Bank Error:", err); updateLoadBar(); }
+);
 
 /* =========================================================
    SOCIETY ENTRY GATE
