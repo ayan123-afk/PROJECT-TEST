@@ -40,12 +40,18 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
   border:1px solid rgba(90,225,255,.55);
   border-radius:16px;padding:16px 22px;
   display:none;box-shadow:0 20px 60px rgba(0,0,0,.8);
-  transition:all .4s;
+  transition:opacity .3s, transform .3s;
+}
+#aiReason.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(20px);
 }
 #aiReason .title{
   color:#22cfff;font-size:13px;letter-spacing:2px;
   margin-bottom:10px;font-weight:900;
   display:flex;align-items:center;gap:8px;
+  padding-right:30px;
 }
 #aiReason .title .dot{
   width:10px;height:10px;border-radius:50%;
@@ -66,6 +72,64 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
   padding-top:8px;border-top:1px solid rgba(90,225,255,.2);
 }
 #aiReason .result strong{color:#6aff9d}
+
+/* × close button on AI reason panel */
+#aiReason .closeReason{
+  position:absolute;top:10px;right:10px;
+  width:26px;height:26px;border:0;border-radius:6px;
+  background:rgba(255,255,255,.1);
+  color:#c9d6dd;font-size:15px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+}
+#aiReason .closeReason:hover{
+  background:#c22b1a;color:white;
+}
+
+/* SHOW AI LOG button — appears when panel is hidden */
+#showAiBtn{
+  position:fixed;bottom:80px;right:18px;z-index:66;
+  padding:10px 18px;border-radius:12px;
+  background:linear-gradient(135deg,#1a4fc2,#0f2f8a);
+  border:1px solid rgba(90,150,255,.7);
+  color:white;font-weight:900;letter-spacing:1px;
+  font-size:11px;cursor:pointer;display:none;
+  font-family:Arial,Helvetica,sans-serif;
+  box-shadow:0 10px 30px rgba(40,100,220,.4);
+  align-items:center;gap:6px;
+}
+#showAiBtn:hover{background:linear-gradient(135deg,#2a63e0,#1540a5)}
+#showAiBtn .eye{
+  display:inline-block;
+  width:14px;height:14px;border-radius:50%;
+  background:#c9f5ff;position:relative;
+}
+#showAiBtn .eye::after{
+  content:'';position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:#03141b;
+  top:4px;left:4px;
+}
+
+/* Countdown timer bar */
+#cycleBar{
+  position:fixed;top:120px;left:50%;transform:translateX(-50%);
+  z-index:55;width:280px;padding:8px 14px;
+  border-radius:12px;background:rgba(3,13,22,.85);
+  border:1px solid rgba(90,225,255,.3);
+  font-size:10px;color:#c9d6dd;
+  display:none;text-align:center;
+}
+#cycleBar .bar{
+  height:4px;margin-top:6px;border-radius:2px;
+  background:rgba(255,255,255,.1);
+  overflow:hidden;
+}
+#cycleBar .fill{
+  height:100%;background:linear-gradient(90deg,#22cfff,#6aff9d);
+  width:0%;transition:width .2s;
+}
+#cycleBar .label{color:#22cfff;font-weight:900;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -92,11 +156,21 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 <div id="aiMessage">AI Traffic Controller</div>
 <div id="incident"><span>LIVE SYSTEM:</span> Monitoring 4 city entry routes</div>
 
+<div id="cycleBar">
+  <div class="label" id="cycleLabel">NEXT TRAFFIC EVENT IN</div>
+  <div class="bar"><div class="fill" id="cycleFill"></div></div>
+</div>
+
 <div id="aiReason">
+  <button class="closeReason" onclick="hideAiReason()" title="Hide panel">×</button>
   <div class="title"><span class="dot"></span><span id="aiReasonTitle">AI ACTION LOG</span></div>
   <div class="reason" id="aiReasonText"></div>
   <div class="result" id="aiResultText"></div>
 </div>
+
+<button id="showAiBtn" onclick="showAiReason()" title="Show AI log">
+  <span class="eye"></span> SHOW AI LOG
+</button>
 
 <div id="panel">
   <button class="close" onclick="closePanel()">×</button>
@@ -274,7 +348,6 @@ function tl(x, z){
 }
 tl(-520, -400); tl(520, -400); tl(-520, 400); tl(520, 400);
 
-/* AI CONTROLLER */
 const controller = new THREE.Group();
 controller.position.set(0, 5, 505);
 
@@ -503,8 +576,7 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 [[150, -100], [350, -100], [150, -320], [350, -320], [200, 100], [460, 100], [200, 320], [460, 320]].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   CARS — they simply drive their routes at their own speed.
-   No weird logic. Just plain driving.
+   CARS
 ========================================================= */
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
@@ -542,7 +614,6 @@ function makeCar(color){
   return g;
 }
 
-/* Main routes — like before, cars just drive around */
 const outerRoute = [[-855,-635],[855,-635],[855,635],[-855,635]];
 const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
 
@@ -552,13 +623,10 @@ function car(route, progress, dir, spd, laneOffset){
   cars.push({
     car: g, route, progress, direction: dir,
     speed: spd, baseSpeed: spd, laneOffset,
-    currentSpeed: spd,
-    rerouted: false,
-    status: 'driving'
+    rerouted: false
   });
 }
 
-/* Populate the roads — enough cars for realistic traffic */
 for(let i=0; i<6; i++) car("outer", .02 + i*.14, 1, .40, 10);
 for(let i=0; i<6; i++) car("outer", .25 + i*.14, 1, .40, 10);
 for(let i=0; i<4; i++) car("outer", .50 + i*.14, -1, .40, -10);
@@ -616,7 +684,25 @@ const gR = gL.clone(); gR.position.x = 45; gate.add(gR);
 const gT = new THREE.Mesh(new THREE.BoxGeometry(98, 5, 8), mat(0x164e67, .35, .25)); gT.position.y = 16; gate.add(gT);
 scene.add(gate);
 
-/* PANEL */
+/* =========================================================
+   AI REASON — SHOW / HIDE
+========================================================= */
+const aiReasonEl = document.getElementById("aiReason");
+const showAiBtn = document.getElementById("showAiBtn");
+
+window.hideAiReason = function(){
+  aiReasonEl.classList.add("hidden");
+  showAiBtn.style.display = "flex";
+};
+
+window.showAiReason = function(){
+  aiReasonEl.classList.remove("hidden");
+  showAiBtn.style.display = "none";
+};
+
+/* =========================================================
+   PANEL
+========================================================= */
 function showPanel(title, type, text){
   document.getElementById("panelContent").innerHTML = `<h2>${title}</h2><div class="type">${type}</div><p>${text}</p>`;
   document.getElementById("panel").style.display = "block";
@@ -650,7 +736,9 @@ renderer.domElement.addEventListener("click", e => {
   }
 });
 
-/* DAY / NIGHT */
+/* =========================================================
+   DAY / NIGHT
+========================================================= */
 let isNight = false;
 const btn = document.getElementById("dayNightBtn");
 function setDN(night){
@@ -681,15 +769,21 @@ function setDN(night){
 btn.addEventListener('click', () => setDN(!isNight));
 
 /* =========================================================
-   TRAFFIC SIM
+   TRAFFIC SIM — 1 MINUTE CYCLE
+   Every 60s: NORMAL (25s) → JAM (20s) → REROUTE (22s) → CLEAR (loops back)
 ========================================================= */
 const clock = new THREE.Clock();
 let simSec = 0;
 let tState = 0;
-const INCIDENT_TIME = 25;
-const JAM_DURATION = 20;
-const RESOLVE_DURATION = 22;
-let iStart = 0, rStart = 0;
+const CYCLE_TIME = 60;        /* every 1 minute, repeat the traffic event */
+const NORMAL_DURATION = 25;   /* 25s of normal traffic */
+const JAM_DURATION = 20;      /* 20s of jam */
+const REROUTE_DURATION = 15;  /* 15s of AI rerouting */
+
+let cycleStart = 0;
+let jamStart = 0;
+let rerouteStart = 0;
+let clearShown = false;
 
 const simTime = document.getElementById("simulationTime");
 const tLevel = document.getElementById("trafficLevel");
@@ -699,10 +793,12 @@ const tStateEl = document.getElementById("trafficState");
 const iReason = document.getElementById("incidentReason");
 const aiMsg = document.getElementById("aiMessage");
 const inc = document.getElementById("incident");
-const aiReason = document.getElementById("aiReason");
 const aiReasonTitle = document.getElementById("aiReasonTitle");
 const aiReasonText = document.getElementById("aiReasonText");
 const aiResultText = document.getElementById("aiResultText");
+const cycleBar = document.getElementById("cycleBar");
+const cycleFill = document.getElementById("cycleFill");
+const cycleLabel = document.getElementById("cycleLabel");
 
 function showMsg(msg){
   aiMsg.textContent = msg;
@@ -716,17 +812,21 @@ function setState(s){
     iReason.textContent = "4-SITE NETWORK OPERATING NORMALLY";
     tLevel.textContent = "NORMAL"; tFlow.textContent = "92%"; aMode.textContent = "MONITORING";
     inc.innerHTML = "<span>LIVE:</span> Traffic flowing normally";
-    aiReason.style.display = "none";
+    aiReasonEl.style.display = "none";
+    if(showAiBtn.style.display === "flex"){
+      aiReasonEl.classList.add("hidden");
+    }
   }
   if(s===1){
     tStateEl.textContent = "TRAFFIC JAM"; tStateEl.style.color = "#ffd15a";
     iReason.textContent = "QUEUE BUILDING AT CENTRAL INTERSECTION";
     tLevel.textContent = "HEAVY"; tFlow.textContent = "28%"; aMode.textContent = "ANALYZING";
     inc.innerHTML = "<span>INCIDENT:</span> Cars queuing at intersection";
-    /* Show reason */
-    aiReason.style.display = "block";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🔴 PROBLEM DETECTED";
-    aiReasonText.innerHTML = `<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads at the same time. Queue is building up on each road.`;
+    aiReasonText.innerHTML = `<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads at the same time. Queue building up on each road.`;
     aiResultText.innerHTML = `AI is <strong>reading the queue on all 4 roads</strong> to figure out the best fix.`;
   }
   if(s===2){
@@ -734,9 +834,11 @@ function setState(s){
     iReason.textContent = "AI SPLITTING TRAFFIC TO INNER ROADS";
     tLevel.textContent = "RECOVERING"; tFlow.textContent = "68%"; aMode.textContent = "OPTIMIZING";
     inc.innerHTML = "<span>AI ACTION:</span> Rerouting cars via inner roads";
-    aiReason.style.display = "block";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🔵 AI IS ACTING";
-    aiReasonText.innerHTML = `<strong>AI DID THIS:</strong> AI <strong>flipped some signals to green</strong> on the inner-city roads and <strong>redirected half the cars</strong> to those roads before they reach the intersection.`;
+    aiReasonText.innerHTML = `<strong>AI DID THIS:</strong> AI <strong>flipped signals to green</strong> on inner-city roads and <strong>redirected half the cars</strong> to those roads before they reach the intersection.`;
     aiResultText.innerHTML = `Result: <strong>less cars at the intersection → jam starts clearing.</strong>`;
   }
   if(s===3){
@@ -744,35 +846,75 @@ function setState(s){
     iReason.textContent = "ALL ROUTES FLOWING NORMALLY";
     tLevel.textContent = "CLEAR"; tFlow.textContent = "96%"; aMode.textContent = "OPTIMAL";
     inc.innerHTML = "<span>SYSTEM:</span> All routes flowing normally";
-    aiReason.style.display = "block";
+    aiReasonEl.style.display = "block";
+    aiReasonEl.classList.remove("hidden");
+    showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🟢 RESOLVED BY AI";
-    aiReasonText.innerHTML = `<strong>AI RESOLVED IT</strong> by splitting the traffic between the outer and inner roads. Now both are flowing.`;
-    aiResultText.innerHTML = `Jam cleared in <strong>22 seconds</strong>. AI is back to monitoring.`;
+    aiReasonText.innerHTML = `<strong>AI RESOLVED IT</strong> by splitting the traffic between outer and inner roads.`;
+    aiResultText.innerHTML = `Jam cleared in <strong>15 seconds</strong>. AI is back to monitoring.`;
   }
 }
 
-function activateJam(){
-  tState = 1; iStart = simSec;
-  setState(1);
-  showMsg("⚠ CARS QUEUING AT INTERSECTION");
+function updateCycleTimer(){
+  const now = simSec - cycleStart;
+  const pct = Math.min((now / CYCLE_TIME) * 100, 100);
+  cycleFill.style.width = pct + "%";
+
+  if(tState === 0){
+    cycleLabel.textContent = "🚦 TRAFFIC EVENT IN " + Math.max(0, Math.ceil(CYCLE_TIME - now)) + "s";
+    cycleBar.style.display = "block";
+  } else if(tState === 1){
+    cycleLabel.textContent = "🔴 JAM ACTIVE — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION - now)) + "s";
+    cycleBar.style.display = "block";
+  } else if(tState === 2){
+    cycleLabel.textContent = "🔵 AI REROUTING — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION + REROUTE_DURATION - now)) + "s";
+    cycleBar.style.display = "block";
+  } else {
+    cycleLabel.textContent = "🟢 RESOLVED";
+    cycleBar.style.display = "block";
+  }
 }
-function activateReroute(){
-  tState = 2; rStart = simSec;
-  setState(2);
-  showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
-}
-function clearAll(){
-  tState = 3;
-  setState(3);
-  showMsg("✅ JAM CLEARED BY AI");
+
+function updateCycle(){
+  const now = simSec - cycleStart;
+
+  if(tState === 0){
+    /* Wait for cycle time to pass */
+    if(now >= CYCLE_TIME){
+      /* Start jam */
+      tState = 1;
+      jamStart = simSec;
+      setState(1);
+      showMsg("⚠ CARS QUEUING AT INTERSECTION");
+    }
+  } else if(tState === 1){
+    if(simSec - jamStart >= JAM_DURATION){
+      tState = 2;
+      rerouteStart = simSec;
+      setState(2);
+      showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
+    }
+  } else if(tState === 2){
+    if(simSec - rerouteStart >= REROUTE_DURATION){
+      tState = 3;
+      setState(3);
+      showMsg("✅ JAM CLEARED BY AI");
+    }
+  } else if(tState === 3){
+    /* Wait 10s of clear display then loop */
+    if(simSec - rerouteStart >= REROUTE_DURATION + 10){
+      /* Restart cycle */
+      tState = 0;
+      cycleStart = simSec;
+      setState(0);
+    }
+  }
 }
 
 function updateCars(){
   for(const d of cars){
-    /* Each car moves at its own speed */
     let s = d.baseSpeed;
 
-    /* During jam: outer-ring cars slow down near north */
     if(tState === 1){
       const p = routeP(d.route, d.progress, d.laneOffset);
       if(d.route === "outer"){
@@ -784,16 +926,13 @@ function updateCars(){
       }
     }
 
-    /* During reroute: reroute some outer cars to inner */
     if(tState === 2){
       if(d.route === "outer" && !d.rerouted){
         const p = routeP(d.route, d.progress, d.laneOffset);
-        /* If car is near the x=520 or x=-520 junction, switch it to inner */
         if(Math.abs(p.x - 520) < 60 || Math.abs(p.x + 520) < 60){
           if(Math.random() < 0.04){
             d.route = "inner";
             d.rerouted = true;
-            /* Find nearest point on inner */
             let bp = 0, bd = Infinity;
             for(let i=0; i<50; i++){
               const tt = routeP("inner", i/50, d.laneOffset);
@@ -806,7 +945,6 @@ function updateCars(){
       }
     }
 
-    /* Move forward */
     d.progress += (s / 1400) * d.direction;
     if(d.progress > 1) d.progress -= 1;
     if(d.progress < 0) d.progress += 1;
@@ -838,13 +976,6 @@ function updateTL(t){
   }
 }
 
-function updSys(){
-  if(tState===0 && simSec >= INCIDENT_TIME) activateJam();
-  if(tState===1 && simSec - iStart >= JAM_DURATION) activateReroute();
-  if(tState===2 && simSec - rStart >= RESOLVE_DURATION) clearAll();
-  if(tState===3 && simSec - iStart > 60){ tState = 0; iStart = 0; simSec = 0; }
-}
-
 function updTimer(){
   const tt = Math.floor(simSec);
   const mm = Math.floor(tt/60);
@@ -861,7 +992,8 @@ function animate(){
   fc++;
 
   updTimer();
-  updSys();
+  updateCycle();
+  updateCycleTimer();
   updateCars();
   updateTL(t);
 
@@ -895,6 +1027,7 @@ function animate(){
 }
 
 setState(0);
+cycleStart = 0;
 animate();
 
 window.addEventListener("resize", () => {
