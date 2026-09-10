@@ -234,6 +234,7 @@ const whiteLineMaterial = mat(0xffffff, .65);
 const curbMaterial = mat(0x697578, .88);
 const darkMaterial = mat(0x182327, .65, .15);
 const blueMaterial = mat(0x087fa8, .35, .25);
+const sidewalkMat = mat(0x8a8f94, .9);
 
 /* ═══════════════════════════════════════════
    GROUND
@@ -243,98 +244,273 @@ ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
 /* ═══════════════════════════════════════════
-   2-LANE ROADS
+   CITY BLOCKS (to give proper city look)
    ═══════════════════════════════════════════ */
-function makeDualRoad(x, z, w, d){
+function cityBlock(cx, cz, w, d, color){
+  const pad = new THREE.Mesh(
+    new THREE.BoxGeometry(w, 0.6, d),
+    mat(color || 0x6b7a82, .95)
+  );
+  pad.position.set(cx, 4.9, cz);
+  scene.add(pad);
+}
+
+/* Filler buildings between main buildings (city look) */
+function smallBuilding(x, z, w, h, d, color){
+  const b = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    mat(color || 0x8b8f96, .7, .15)
+  );
+  b.position.set(x, 5 + h/2, z);
+  scene.add(b);
+
+  /* Windows */
+  const winMat = new THREE.MeshStandardMaterial({
+    color: 0x223344, emissive: 0x88ccff, emissiveIntensity: 0.5,
+    metalness: .4, roughness: .3
+  });
+  const rows = Math.max(2, Math.floor(h / 15));
+  const cols = Math.max(2, Math.floor(w / 12));
+  for(let r = 0; r < rows; r++){
+    for(let c = 0; c < cols; c++){
+      const wy = 5 + 8 + r * (h - 12) / rows;
+      const wx = x + (c - (cols-1)/2) * (w / cols) * 0.8;
+      /* front windows */
+      const wf = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 0.4), winMat);
+      wf.position.set(wx, wy, z + d/2 + 0.2);
+      scene.add(wf);
+      /* back windows */
+      const wb = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 0.4), winMat);
+      wb.position.set(wx, wy, z - d/2 - 0.2);
+      scene.add(wb);
+    }
+  }
+
+  /* Roof cap */
+  const roof = new THREE.Mesh(
+    new THREE.BoxGeometry(w + 4, 2, d + 4),
+    mat(0x3a4448, .7, .2)
+  );
+  roof.position.set(x, 5 + h + 1, z);
+  scene.add(roof);
+}
+
+/* City filler buildings to make it look like a real city */
+const fillerBuildings = [
+  /* Around school / hospital area */
+  {x: -900, z: -900, w: 90, h: 80, d: 70, c: 0x7a8288},
+  {x: -300, z: -900, w: 80, h: 120, d: 70, c: 0x6b7278},
+  {x: 300, z: -900, w: 85, h: 100, d: 65, c: 0x808890},
+  {x: 900, z: -900, w: 95, h: 140, d: 75, c: 0x6e767c},
+  {x: -900, z: -300, w: 70, h: 90, d: 85, c: 0x7e878d},
+  {x: 900, z: -300, w: 75, h: 110, d: 90, c: 0x727a80},
+  {x: -900, z: 300, w: 80, h: 95, d: 80, c: 0x767e84},
+  {x: 900, z: 300, w: 85, h: 130, d: 75, c: 0x7a8288},
+  {x: -900, z: 900, w: 90, h: 105, d: 70, c: 0x808890},
+  {x: -300, z: 900, w: 85, h: 115, d: 80, c: 0x6e767c},
+  {x: 300, z: 900, w: 80, h: 85, d: 75, c: 0x7a8288},
+  {x: 900, z: 900, w: 95, h: 125, d: 85, c: 0x727a80},
+  /* outer ring buildings */
+  {x: -1800, z: -1800, w: 120, h: 150, d: 100, c: 0x6a7278},
+  {x: -900, z: -1800, w: 110, h: 130, d: 95, c: 0x7a8288},
+  {x: 900, z: -1800, w: 115, h: 160, d: 100, c: 0x6e767c},
+  {x: 1800, z: -1800, w: 125, h: 140, d: 105, c: 0x767e84},
+  {x: -1800, z: -900, w: 100, h: 120, d: 110, c: 0x727a80},
+  {x: 1800, z: -900, w: 105, h: 155, d: 115, c: 0x7e878d},
+  {x: -1800, z: 900, w: 110, h: 135, d: 105, c: 0x808890},
+  {x: 1800, z: 900, w: 100, h: 145, d: 100, c: 0x6a7278},
+  {x: -1800, z: 1800, w: 120, h: 130, d: 110, c: 0x767e84},
+  {x: -900, z: 1800, w: 105, h: 150, d: 95, c: 0x727a80},
+  {x: 900, z: 1800, w: 115, h: 125, d: 100, c: 0x7a8288},
+  {x: 1800, z: 1800, w: 110, h: 140, d: 105, c: 0x6e767c},
+  /* outer outer layer */
+  {x: -2600, z: -1800, w: 130, h: 165, d: 110, c: 0x6a7278},
+  {x: 2600, z: -1800, w: 135, h: 155, d: 115, c: 0x727a80},
+  {x: -2600, z: 1800, w: 125, h: 145, d: 105, c: 0x7a8288},
+  {x: 2600, z: 1800, w: 130, h: 160, d: 110, c: 0x6e767c},
+  {x: -2600, z: 0, w: 100, h: 170, d: 120, c: 0x767e84},
+  {x: 2600, z: 0, w: 105, h: 150, d: 115, c: 0x808890},
+  {x: 0, z: -2600, w: 140, h: 155, d: 105, c: 0x7a8288},
+  {x: 0, z: 2600, w: 135, h: 165, d: 110, c: 0x6a7278},
+];
+fillerBuildings.forEach(b => smallBuilding(b.x, b.z, b.w, b.h, b.d, b.c));
+
+/* ═══════════════════════════════════════════
+   ROADS — PROPER GRID (FULL COVERAGE)
+   ═══════════════════════════════════════════ */
+const ROAD_W = 90;
+const ROAD_HALF = ROAD_W / 2;
+
+/*
+  Road grid plan:
+  - Horizontal roads (E-W) at Z = -2400, -1200, 0, 1200, 2400
+  - Vertical roads (N-S) at X = -2400, -1200, 0, 1200, 2400
+  
+  All roads span the whole length (from -4800 to +4800)
+  so trucks always stay on roads and lanes are proper.
+*/
+
+function makeRoadE(x, z, length){
+  /* E-W road (horizontal), width = ROAD_W, length along X */
   const shoulder = new THREE.Mesh(
-    new THREE.BoxGeometry(w + 10, .25, d + 10),
+    new THREE.BoxGeometry(length, .25, ROAD_W + 10),
     roadLaneMaterial
   );
   shoulder.position.set(x, 4.55, z);
   scene.add(shoulder);
 
-  const r = new THREE.Mesh(new THREE.BoxGeometry(w, .45, d), roadMaterial);
+  const r = new THREE.Mesh(
+    new THREE.BoxGeometry(length, .45, ROAD_W),
+    roadMaterial
+  );
   r.position.set(x, 4.7, z);
   scene.add(r);
 
-  if(w > d){
-    const c = new THREE.Mesh(new THREE.BoxGeometry(w, .1, 4), yellowLineMaterial);
-    c.position.set(x, 5, z);
-    scene.add(c);
+  /* Center yellow lines (two-way divider) */
+  const c1 = new THREE.Mesh(
+    new THREE.BoxGeometry(length, .1, 1.6),
+    yellowLineMaterial
+  );
+  c1.position.set(x, 5, z - 2);
+  scene.add(c1);
+  const c2 = new THREE.Mesh(
+    new THREE.BoxGeometry(length, .1, 1.6),
+    yellowLineMaterial
+  );
+  c2.position.set(x, 5, z + 2);
+  scene.add(c2);
 
-    const topLine = new THREE.Mesh(
-      new THREE.BoxGeometry(w, .08, 1.2),
+  /* White edge lines */
+  const topLine = new THREE.Mesh(
+    new THREE.BoxGeometry(length, .08, 1.2),
+    whiteLineMaterial
+  );
+  topLine.position.set(x, 5.05, z + ROAD_HALF - 5);
+  scene.add(topLine);
+
+  const botLine = new THREE.Mesh(
+    new THREE.BoxGeometry(length, .08, 1.2),
+    whiteLineMaterial
+  );
+  botLine.position.set(x, 5.05, z - ROAD_HALF + 5);
+  scene.add(botLine);
+
+  /* Lane dashes — two lanes each side */
+  for(let lx = x - length/2 + 20; lx < x + length/2 - 10; lx += 55){
+    /* top lane divider */
+    const d1 = new THREE.Mesh(
+      new THREE.BoxGeometry(25, .09, .6),
       whiteLineMaterial
     );
-    topLine.position.set(x, 5.05, z + d/2 - 4);
-    scene.add(topLine);
+    d1.position.set(lx, 5.06, z + ROAD_HALF/2);
+    scene.add(d1);
 
-    const bottomLine = new THREE.Mesh(
-      new THREE.BoxGeometry(w, .08, 1.2),
+    /* bottom lane divider */
+    const d2 = new THREE.Mesh(
+      new THREE.BoxGeometry(25, .09, .6),
       whiteLineMaterial
     );
-    bottomLine.position.set(x, 5.05, z - d/2 + 4);
-    scene.add(bottomLine);
-
-    for(let i=-w/2 + 20; i<w/2 - 10; i+=50){
-      const dash = new THREE.Mesh(
-        new THREE.BoxGeometry(20, .09, .6),
-        whiteLineMaterial
-      );
-      dash.position.set(x + i, 5.06, z + 10);
-      scene.add(dash);
-
-      const dash2 = new THREE.Mesh(
-        new THREE.BoxGeometry(20, .09, .6),
-        whiteLineMaterial
-      );
-      dash2.position.set(x + i, 5.06, z - 10);
-      scene.add(dash2);
-    }
-  } else {
-    const c = new THREE.Mesh(new THREE.BoxGeometry(4, .1, d), yellowLineMaterial);
-    c.position.set(x, 5, z);
-    scene.add(c);
-
-    const leftLine = new THREE.Mesh(
-      new THREE.BoxGeometry(1.2, .08, d),
-      whiteLineMaterial
-    );
-    leftLine.position.set(x - w/2 + 4, 5.05, z);
-    scene.add(leftLine);
-
-    const rightLine = new THREE.Mesh(
-      new THREE.BoxGeometry(1.2, .08, d),
-      whiteLineMaterial
-    );
-    rightLine.position.set(x + w/2 - 4, 5.05, z);
-    scene.add(rightLine);
-
-    for(let i=-d/2 + 20; i<d/2 - 10; i+=50){
-      const dash = new THREE.Mesh(
-        new THREE.BoxGeometry(.6, .09, 20),
-        whiteLineMaterial
-      );
-      dash.position.set(x + 10, 5.06, z + i);
-      scene.add(dash);
-
-      const dash2 = new THREE.Mesh(
-        new THREE.BoxGeometry(.6, .09, 20),
-        whiteLineMaterial
-      );
-      dash2.position.set(x - 10, 5.06, z + i);
-      scene.add(dash2);
-    }
+    d2.position.set(lx, 5.06, z - ROAD_HALF/2);
+    scene.add(d2);
   }
 }
 
-/* Road grid */
-makeDualRoad(0, -1200, 5200, 90);
-makeDualRoad(0, 0, 5200, 90);
-makeDualRoad(0, 1200, 5200, 90);
-makeDualRoad(-1200, 0, 90, 3400);
-makeDualRoad(0, 0, 90, 3400);
-makeDualRoad(1200, 0, 90, 3400);
+function makeRoadN(x, z, length){
+  /* N-S road (vertical), width = ROAD_W, length along Z */
+  const shoulder = new THREE.Mesh(
+    new THREE.BoxGeometry(ROAD_W + 10, .25, length),
+    roadLaneMaterial
+  );
+  shoulder.position.set(x, 4.55, z);
+  scene.add(shoulder);
+
+  const r = new THREE.Mesh(
+    new THREE.BoxGeometry(ROAD_W, .45, length),
+    roadMaterial
+  );
+  r.position.set(x, 4.7, z);
+  scene.add(r);
+
+  /* Center yellow lines */
+  const c1 = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, .1, length),
+    yellowLineMaterial
+  );
+  c1.position.set(x - 2, 5, z);
+  scene.add(c1);
+  const c2 = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, .1, length),
+    yellowLineMaterial
+  );
+  c2.position.set(x + 2, 5, z);
+  scene.add(c2);
+
+  /* White edge lines */
+  const leftLine = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, .08, length),
+    whiteLineMaterial
+  );
+  leftLine.position.set(x - ROAD_HALF + 5, 5.05, z);
+  scene.add(leftLine);
+
+  const rightLine = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, .08, length),
+    whiteLineMaterial
+  );
+  rightLine.position.set(x + ROAD_HALF - 5, 5.05, z);
+  scene.add(rightLine);
+
+  /* Lane dashes */
+  for(let lz = z - length/2 + 20; lz < z + length/2 - 10; lz += 55){
+    const d1 = new THREE.Mesh(
+      new THREE.BoxGeometry(.6, .09, 25),
+      whiteLineMaterial
+    );
+    d1.position.set(x + ROAD_HALF/2, 5.06, lz);
+    scene.add(d1);
+
+    const d2 = new THREE.Mesh(
+      new THREE.BoxGeometry(.6, .09, 25),
+      whiteLineMaterial
+    );
+    d2.position.set(x - ROAD_HALF/2, 5.06, lz);
+    scene.add(d2);
+  }
+}
+
+/* Build full road grid — 5 horizontal, 5 vertical */
+const ROAD_LEN = 9600;  /* -4800 to +4800 */
+const roadZs = [-2400, -1200, 0, 1200, 2400];
+const roadXs = [-2400, -1200, 0, 1200, 2400];
+
+roadZs.forEach(z => makeRoadE(0, z, ROAD_LEN));
+roadXs.forEach(x => makeRoadN(x, 0, ROAD_LEN));
+
+/* Sidewalks along roads */
+function sidewalkE(x, z, len){
+  const s = new THREE.Mesh(
+    new THREE.BoxGeometry(len, .3, 8),
+    sidewalkMat
+  );
+  s.position.set(x, 5.05, z + ROAD_HALF + 8);
+  scene.add(s);
+  const s2 = s.clone();
+  s2.position.z = z - ROAD_HALF - 8;
+  scene.add(s2);
+}
+function sidewalkN(x, z, len){
+  const s = new THREE.Mesh(
+    new THREE.BoxGeometry(8, .3, len),
+    sidewalkMat
+  );
+  s.position.set(x + ROAD_HALF + 8, 5.05, z);
+  scene.add(s);
+  const s2 = s.clone();
+  s2.position.x = x - ROAD_HALF - 8;
+  scene.add(s2);
+}
+roadZs.forEach(z => sidewalkE(0, z, ROAD_LEN));
+roadXs.forEach(x => sidewalkN(x, 0, ROAD_LEN));
 
 /* ═══════════════════════════════════════════
    BUILDING BORDER
@@ -397,18 +573,6 @@ function buildingBorder(x, z, w, d, color){
 }
 
 /* ═══════════════════════════════════════════
-   SIDEWALKS
-   ═══════════════════════════════════════════ */
-function sw(x, z, w, d){
-  const s = new THREE.Mesh(new THREE.BoxGeometry(w, .28, d), curbMaterial);
-  s.position.set(x, 5.05, z); scene.add(s);
-}
-sw(-900, -1200, 1800, 10);
-sw( 900, -1200, 1800, 10);
-sw(-900,  1200, 1800, 10);
-sw( 900,  1200, 1800, 10);
-
-/* ═══════════════════════════════════════════
    SIGN BOARD
    ═══════════════════════════════════════════ */
 function board(text, x, y, z, w=80, h=12, color){
@@ -462,11 +626,16 @@ function sl(x, z){
   scene.add(g);
   streetBulbMats.push(bMat);
 }
-for(let x=-2000; x<=2000; x+=250){ sl(x, -1170); sl(x, 1170); }
-for(let z=-1100; z<=1100; z+=250){ sl(-1170, z); sl(1170, z); }
+/* Street lights along each horizontal road */
+roadZs.forEach(z => {
+  for(let x = -4500; x <= 4500; x += 350){
+    sl(x, z + ROAD_HALF + 16);
+    sl(x, z - ROAD_HALF - 16);
+  }
+});
 
 /* ═══════════════════════════════════════════
-   TRAFFIC LIGHTS
+   TRAFFIC LIGHTS at all intersections
    ═══════════════════════════════════════════ */
 const trafficLights = [];
 function tl(x, z){
@@ -490,9 +659,7 @@ function tl(x, z){
   scene.add(g);
   trafficLights.push({ r, y, gr, phase: Math.random()*10 });
 }
-tl(-1200, -1200); tl(0, -1200); tl(1200, -1200);
-tl(-1200, 0);     tl(0, 0);     tl(1200, 0);
-tl(-1200, 1200);  tl(0, 1200);  tl(1200, 1200);
+roadXs.forEach(x => roadZs.forEach(z => tl(x, z)));
 
 /* ═══════════════════════════════════════════
    AI TRAFFIC CONTROLLER
@@ -625,32 +792,27 @@ function flower(x, z){
   scene.add(g);
 }
 
+/* Trees between roads — city look */
 const treePositions = [
-  [-900, -600], [-1000, -700], [-900, -900],
-  [-400, -900], [-200, -900],
-  [900, -600], [1000, -700], [900, -900],
-  [400, -900], [200, -900],
-  [-900, 600], [-1000, 700], [-900, 900],
-  [-400, 900], [-200, 900],
-  [900, 600], [1000, 700], [900, 900],
-  [400, 900], [200, 900],
-  [-400, 1600], [-200, 1700], [200, 1700], [400, 1600],
-  [1500, -600], [1600, -700], [1500, -1000],
-  [1500, 600], [1600, 700], [1500, 1000],
-  [-1300, -300], [-1300, 300], [1300, -300], [1300, 300],
-  [-700, -400], [-700, 400], [700, -400], [700, 400],
-  [-300, -1400], [300, -1400], [-300, 1400], [300, 1400],
-  [-2400, -600], [-2400, 600], [2400, -600], [2400, 600],
+  [-600, -900], [-300, -900], [300, -900], [600, -900],
+  [-900, -600], [-300, -600], [300, -600], [900, -600],
+  [-900, 0], [-600, 0], [-300, 0], [300, 0], [600, 0], [900, 0],
+  [-900, 600], [-300, 600], [300, 600], [900, 600],
+  [-600, 900], [-300, 900], [300, 900], [600, 900],
+  [-1500, -1500], [-900, -1500], [-300, -1500], [300, -1500], [900, -1500], [1500, -1500],
+  [-1500, 1500], [-900, 1500], [-300, 1500], [300, 1500], [900, 1500], [1500, 1500],
+  [-1500, -900], [-1500, -300], [-1500, 300], [-1500, 900],
+  [1500, -900], [1500, -300], [1500, 300], [1500, 900],
+  [-2100, -900], [-2100, 900], [2100, -900], [2100, 900],
+  [-900, -2100], [900, -2100], [-900, 2100], [900, 2100],
 ];
 treePositions.forEach(p => tree(p[0], p[1], 0.85 + Math.random() * 0.3));
 
 const flowerClusters = [
-  [-500, -400, 6], [500, -400, 6],
-  [-500, 400, 6], [500, 400, 6],
-  [-800, 0, 5], [800, 0, 5],
-  [0, -800, 5], [0, 800, 5],
-  [-400, 1500, 4], [400, 1500, 4],
-  [1300, -400, 4], [1300, 400, 4],
+  [-600, -400, 6], [600, -400, 6],
+  [-600, 400, 6], [600, 400, 6],
+  [-1500, 0, 5], [1500, 0, 5],
+  [0, -1500, 5], [0, 1500, 5],
 ];
 flowerClusters.forEach(cluster => {
   const [cx, cz, count] = cluster;
@@ -675,17 +837,18 @@ function bld(file, size, pos, type, name, borderColor){
   }, undefined, () => console.log("Missing:", file));
 }
 
+/* Main buildings — placed between roads (not on them) */
 bld("./american_high_school.glb", 300, [-600, -600], "school", "American High School", 0x1a5490);
 bld("./low_poly_hospital.glb", 280, [600, -600], "hospital", "Smart Hospital", 0xc0392b);
 bld("./low_poly_night_city_building_skyline.glb", 400, [-600, 600], "society", "Smart Society", 0x16a085);
 bld("./us_bank_tower.glb", 360, [600, 600], "bank", "State Bank", 0x8e44ad);
 bld("./simple_farm_free.glb", 520, [1800, -600], "farm", "Smart Eco Farm", 0x27ae60);
+bld("./great_hall.glb", 360, [600, 1800], "marriageHall", "Marriage Hall", 0xd4a017);
 
-/* Marriage Hall — X=0 road se hataya, ab X=500 par */
-bld("./great_hall.glb", 360, [500, 1800], "marriageHall", "Marriage Hall", 0xd4a017);
-
-/* Gas Station — Z=1200 road se peeche, ab Z=1700 par */
-bld("./gas_station.glb", 300, [1800, 1700], "gasStation", "Gas Station · Car Wash", 0xc0392b);
+/* Gas Station — bigger with proper border, placed away from roads */
+bld("./gas_station.glb", 380, [1800, 1750], "gasStation", "Gas Station · Car Wash", 0xc0392b);
+/* Bigger gas station border */
+buildingBorder(1800, 1750, 520, 520, 0xc0392b);
 
 bld("./brutalist_building.glb", 360, [1800, 600], "sewageCompany", "Sewage & Filtration Co.", 0x34495e);
 
@@ -695,10 +858,10 @@ board("BSS SMART HOSPITAL", 600, 5, -950, 200, 14, 0xc0392b);
 board("BSS SMART SOCIETY", -600, 5, 950, 200, 14, 0x16a085);
 board("SMART CITY STATE BANK", 600, 5, 950, 200, 14, 0x8e44ad);
 board("SMART ECO FARM", 1800, 5, -950, 200, 14, 0x27ae60);
-board("MARRIAGE HALL", 500, 5, 2200, 220, 16, 0xd4a017);
-board("CAR WASH · GAS STATION", 1800, 5, 2050, 200, 14, 0xc0392b);
+board("MARRIAGE HALL", 600, 5, 2250, 220, 16, 0xd4a017);
+board("CAR WASH · GAS STATION", 1800, 5, 2200, 220, 16, 0xc0392b);
 board("SEWAGE & FILTRATION CO.", 1800, 5, 300, 240, 16, 0x34495e);
-board("AI TRAFFIC CONTROLLER", 0, 5, 250, 190, 14);
+board("AI TRAFFIC CONTROLLER", 0, 5, 300, 190, 14);
 
 /* Society gate */
 const gate = new THREE.Group();
@@ -729,10 +892,10 @@ shop(1000, 600, 1.4, "Bank Shop");
    POWER SUPPLY ZONE
    ═══════════════════════════════════════════ */
 const powerZone = new THREE.Group();
-powerZone.position.set(-3200, 0, 2400);
+powerZone.position.set(-3600, 0, 3600);
 scene.add(powerZone);
 
-board("POWER SUPPLY (SMART-CITY)", -3200, 5, 3300, 420, 20, 0x0a4d5c);
+board("POWER SUPPLY (SMART-CITY)", -3600, 5, 4500, 420, 20, 0x0a4d5c);
 
 const powerPad = new THREE.Mesh(
   new THREE.BoxGeometry(1600, 1, 1300),
@@ -899,13 +1062,13 @@ batteryPositions.forEach((pos, i) => {
 });
 
 /* ═══════════════════════════════════════════
-   FILTRATION ZONE — GLASS BOX with cameras INSIDE
+   FILTRATION ZONE
    ═══════════════════════════════════════════ */
 const filtZone = new THREE.Group();
-filtZone.position.set(3200, 0, -2400);
+filtZone.position.set(3600, 0, -3600);
 scene.add(filtZone);
 
-board("FILTRATION SYSTEM", 3200, 5, -1600, 380, 18, 0x22cfff);
+board("FILTRATION SYSTEM", 3600, 5, -2700, 380, 18, 0x22cfff);
 
 const filtPad = new THREE.Mesh(
   new THREE.BoxGeometry(950, 1, 950),
@@ -1164,13 +1327,13 @@ insideCamGroup.add(insideRing);
 cameras.push({ group: insideCamGroup, led: null, inside: true, name: "Inside Machine" });
 
 /* ═══════════════════════════════════════════
-   ██████ AI FERTILIZER SYSTEM ██████
+   AI FERTILIZER SYSTEM
    ═══════════════════════════════════════════ */
 const fertZone = new THREE.Group();
-fertZone.position.set(-3200, 0, -2400);
+fertZone.position.set(-3600, 0, -3600);
 scene.add(fertZone);
 
-board("AI FERTILIZER SYSTEM", -3200, 5, -1600, 420, 22, 0x8e44ad);
+board("AI FERTILIZER SYSTEM", -3600, 5, -2700, 420, 22, 0x8e44ad);
 
 const fertPad = new THREE.Mesh(
   new THREE.BoxGeometry(950, 1, 950),
@@ -1313,16 +1476,14 @@ const fertLogBack = new THREE.Mesh(
 fertLogBack.position.set(0, 30, 401);
 fertZone.add(fertLogBack);
 
-board("AI FERTILIZER SYSTEM", -3200, 5, -1600, 420, 22, 0x8e44ad);
-
 /* ═══════════════════════════════════════════
    WASTE MANAGEMENT ZONE
    ═══════════════════════════════════════════ */
 const wasteZone = new THREE.Group();
-wasteZone.position.set(3200, 0, 2400);
+wasteZone.position.set(3600, 0, 3600);
 scene.add(wasteZone);
 
-board("WASTE MANAGEMENT", 3200, 5, 3300, 380, 18, 0x2ecc71);
+board("WASTE MANAGEMENT", 3600, 5, 4500, 380, 18, 0x2ecc71);
 
 const wastePad = new THREE.Mesh(
   new THREE.BoxGeometry(950, 1, 950),
@@ -1343,7 +1504,7 @@ wbL.position.set(-475, 6.5, 0); wasteZone.add(wbL);
 const wbR = wbL.clone(); wbR.position.x = 475; wasteZone.add(wbR);
 
 /* ═══════════════════════════════════════════
-   TRUCKS — all animated, ONLY on roads
+   TRUCKS — driving ONLY on roads
    ═══════════════════════════════════════════ */
 
 function buildTruck(color1, color2, textLabel, textColor){
@@ -1429,30 +1590,26 @@ const garbageWarn = gTruckObj.warn;
 scene.add(garbageTruck);
 clickable.push({ object: garbageTruck, type: "garbageTruck", name: "Garbage Truck" });
 
-/* Garbage Truck Route — SIRF ROADS PAR (X=-1200,0,1200 & Z=-1200,0,1200) */
+/* Route along actual roads (X = -1200, 0, 1200 ; Z = -1200, 0, 1200) */
 const garbageRoute = [
-  /* City ke andar roads par ghoomta hai */
-  [-1200, -1200],
-  [1200, -1200],
-  [1200, 0],
-  [1200, 1200],
-  [0, 1200],
-  [-1200, 1200],
+  [-1200, -1200], [0, -1200], [1200, -1200],
+  [1200, 0], [1200, 1200],
+  [0, 1200], [-1200, 1200],
   [-1200, 0],
   [-1200, -1200],
-  /* Waste Management Zone (3200, 2400) tak outer roads se */
-  [-2400, -1200],
-  [2400, -1200],
-  [2400, 1200],
-  [2400, 2400],
-  [3200, 2400],
-  /* Wapas city mein */
-  [2400, 2400],
-  [2400, 1200],
-  [1200, 1200],
-  [1200, 0],
-  [1200, -1200],
-  [-1200, -1200]
+  [-2400, -1200], [-2400, 0], [-2400, 1200], [-2400, 2400],
+  [0, 2400], [1200, 2400],
+  [2400, 2400], [2400, 1200],
+  [2400, 0], [2400, -1200],
+  [1200, -1200], [0, -1200], [-1200, -1200],
+  [-2400, -1200], [-2400, -2400],
+  [-1200, -2400], [0, -2400],
+  [1200, -2400], [2400, -2400],
+  [3600, -3600], [3600, -2400],
+  [3600, -1200], [3600, 0],
+  [3600, 1200], [3600, 2400], [3600, 3600],
+  [2400, 3600],
+  [1200, 2400], [0, 1200], [-1200, 0], [-1200, -1200]
 ];
 
 /* === Fertilizer Trucks === */
@@ -1466,7 +1623,7 @@ const fertTruck2 = fertTruck2Obj.truck;
 scene.add(fertTruck2);
 clickable.push({ object: fertTruck2, type: "fertTruck", name: "Fertilizer Truck 2" });
 
-/* Fertilizer Route 1 — SIRF ROADS PAR (Farm se Fertilizer Zone tak) */
+/* Fertilizer Route 1 — Farm → Fertilizer Zone (all on roads) */
 const fertRoute1 = [
   [1800, -1200],
   [1200, -1200],
@@ -1478,35 +1635,44 @@ const fertRoute1 = [
   [-2400, 0],
   [-2400, -1200],
   [-2400, -2400],
-  [-3200, -2400],
-  [-2400, -2400],
-  [-2400, -1200],
-  [-1200, -1200],
+  [-3600, -2400],
+  [-3600, -3600],
+  [-2400, -3600],
+  [-1200, -3600],
+  [0, -3600],
+  [1200, -3600],
+  [1200, -2400],
   [1200, -1200],
   [1800, -1200]
 ];
 
-/* Fertilizer Route 2 — SIRF ROADS PAR (Fertilizer Zone se Power Supply tak) */
+/* Fertilizer Route 2 — Fertilizer Zone → Power Supply → City */
 const fertRoute2 = [
-  [-3200, -2400],
-  [-2400, -2400],
+  [-3600, -3600],
+  [-3600, -2400],
+  [-3600, -1200],
   [-2400, -1200],
   [-1200, -1200],
-  [0, -1200],
-  [1200, -1200],
-  [1800, -1200],
-  [1800, 0],
-  [1800, 1200],
-  [1200, 1200],
-  [0, 1200],
+  [-1200, 0],
   [-1200, 1200],
-  [-2400, 1200],
+  [-1200, 2400],
   [-2400, 2400],
-  [-3200, 2400],
-  [-3200, 1200],
-  [-3200, 0],
-  [-3200, -1200],
-  [-3200, -2400]
+  [-3600, 2400],
+  [-3600, 3600],
+  [-2400, 3600],
+  [-1200, 3600],
+  [0, 3600],
+  [1200, 3600],
+  [1200, 2400],
+  [1200, 1200],
+  [1200, 0],
+  [1200, -1200],
+  [0, -1200],
+  [-1200, -1200],
+  [-2400, -1200],
+  [-3600, -1200],
+  [-3600, -2400],
+  [-3600, -3600]
 ];
 
 let garbageRouteIdx = 0;
@@ -1514,9 +1680,6 @@ let garbageProgress = 0;
 let fert1Idx = 0, fert1Prog = 0;
 let fert2Idx = 0, fert2Prog = 0;
 
-/* ═══════════════════════════════════════════
-   TRUCK MOVEMENT FUNCTION
-   ═══════════════════════════════════════════ */
 function moveTruck(truck, route, state, delta, speed){
   const from = route[state.idx];
   const to = route[(state.idx + 1) % route.length];
@@ -1539,7 +1702,7 @@ function moveTruck(truck, route, state, delta, speed){
 }
 
 /* ═══════════════════════════════════════════
-   CARS
+   CARS — separate lanes (one side go, one side come)
    ═══════════════════════════════════════════ */
 const cityCars = [];
 const carColors = [
@@ -1616,8 +1779,14 @@ function makeCar(colorHex){
   return g;
 }
 
-const outerRoute = [[-2400, -1200], [2400, -1200], [2400, 1200], [-2400, 1200]];
+/* 
+  Clean two-way roads:
+  - Outer loop: cars go one side (right lane) one direction, other side (left lane) opposite
+  - Inner loop: same
+*/
+const outerRoute = [[-3600, -2400], [3600, -2400], [3600, 2400], [-3600, 2400]];
 const innerRoute = [[-1200, -1200], [1200, -1200], [1200, 1200], [-1200, 1200]];
+const midRoute   = [[-2400, -1200], [2400, -1200], [2400, 1200], [-2400, 1200]];
 
 function routePoint(route, progress){
   const scaled = progress * route.length;
@@ -1651,10 +1820,18 @@ function spawnCityCar(route, progress, dir, speed, laneOffset){
   });
 }
 
-for(let i=0; i<6; i++) spawnCityCar(outerRoute, i/6, 1, .35, 22);
-for(let i=0; i<6; i++) spawnCityCar(outerRoute, i/6 + 0.5, -1, .35, -22);
-for(let i=0; i<4; i++) spawnCityCar(innerRoute, i/4, 1, .3, 18);
-for(let i=0; i<4; i++) spawnCityCar(innerRoute, i/4 + 0.5, -1, .3, -18);
+/* Two-way traffic with proper lane offsets (right side of road each direction) */
+/* Outer loop — 8 cars going one way (right lane), 8 opposite (right lane) */
+for(let i=0; i<8; i++) spawnCityCar(outerRoute, i/8, 1, .38, -25);
+for(let i=0; i<8; i++) spawnCityCar(outerRoute, i/8 + 0.5, -1, .38, 25);
+
+/* Mid loop */
+for(let i=0; i<6; i++) spawnCityCar(midRoute, i/6, 1, .35, -22);
+for(let i=0; i<6; i++) spawnCityCar(midRoute, i/6 + 0.5, -1, .35, 22);
+
+/* Inner loop */
+for(let i=0; i<5; i++) spawnCityCar(innerRoute, i/5, 1, .32, -20);
+for(let i=0; i<5; i++) spawnCityCar(innerRoute, i/5 + 0.5, -1, .32, 20);
 
 /* ═══════════════════════════════════════════
    PEOPLE
@@ -1717,9 +1894,11 @@ spawnPeople(600, -600, 12, 180);
 spawnPeople(-600, 600, 14, 200);
 spawnPeople(600, 600, 10, 180);
 spawnPeople(1800, -600, 8, 240);
-spawnPeople(0, 1800, 12, 220);
-spawnPeople(1800, 1200, 6, 160);
+spawnPeople(600, 1800, 12, 220);
+spawnPeople(1800, 1750, 6, 160);
 spawnPeople(0, 0, 6, 130);
+spawnPeople(-900, -300, 6, 120);
+spawnPeople(900, 300, 6, 120);
 
 /* ═══════════════════════════════════════════
    CAMERA LOCATIONS
@@ -1777,7 +1956,7 @@ const LOCATIONS = {
   },
   marriageHall: {
     label: "Marriage Hall", icon: "💒", type: "EVENT VENUE",
-    position: [500, 5, 1800], camHeight: 380, camDistance: 380,
+    position: [600, 5, 1800], camHeight: 380, camDistance: 380,
     info: "Grand marriage hall.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
@@ -1787,8 +1966,8 @@ const LOCATIONS = {
   },
   carWash: {
     label: "Car Wash · Gas Station", icon: "🚗", type: "AUTOMOTIVE",
-    position: [1800, 5, 1700], camHeight: 380, camDistance: 380,
-    info: "Gas station + car wash (SEPARATE from farm).",
+    position: [1800, 5, 1750], camHeight: 420, camDistance: 420,
+    info: "Big gas station + car wash.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
       { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
@@ -1797,7 +1976,7 @@ const LOCATIONS = {
   },
   powerSupply: {
     label: "Power Supply Zone", icon: "⚡", type: "RENEWABLE",
-    position: [-3200, 5, 2400], camHeight: 800, camDistance: 900,
+    position: [-3600, 5, 3600], camHeight: 800, camDistance: 900,
     info: "16 turbines, 10 solar arrays, 10 batteries.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
@@ -1807,8 +1986,8 @@ const LOCATIONS = {
   },
   filtration: {
     label: "Filtration System", icon: "💧", type: "WATER TREATMENT",
-    position: [3200, 5, -2400], camHeight: 420, camDistance: 380,
-    info: "Filtration machine inside glass box, 4 cameras inside + 1 top + 1 inside machine.",
+    position: [3600, 5, -3600], camHeight: 420, camDistance: 380,
+    info: "Filtration machine inside glass box.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
       { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
@@ -1818,8 +1997,8 @@ const LOCATIONS = {
   },
   fertilizer: {
     label: "AI Fertilizer System", icon: "🌱", type: "FERTILIZER MANAGEMENT",
-    position: [-3200, 5, -2400], camHeight: 450, camDistance: 480,
-    info: "AI captures fertilization events. Trucks collect waste → Fertilizer office → process → deliver. Full log available.",
+    position: [-3600, 5, -3600], camHeight: 450, camDistance: 480,
+    info: "AI fertilizer management.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
       { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
@@ -1828,7 +2007,7 @@ const LOCATIONS = {
   },
   wasteManagement: {
     label: "Waste Management", icon: "♻", type: "MUNICIPAL",
-    position: [3200, 5, 2400], camHeight: 450, camDistance: 480,
+    position: [3600, 5, 3600], camHeight: 450, camDistance: 480,
     info: "Waste management facility.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
@@ -2102,11 +2281,11 @@ renderer.domElement.addEventListener("click", (e) => {
         case "battery": type = "BATTERY"; text = "Energy storage."; break;
         case "shop": type = "SHOP"; text = "Dagashiya snack shop."; break;
         case "marriageHall": type = "EVENT VENUE"; text = "Marriage hall."; break;
-        case "gasStation": type = "AUTOMOTIVE"; text = "Gas station + car wash."; break;
+        case "gasStation": type = "AUTOMOTIVE"; text = "Gas station + car wash (bigger)."; break;
         case "sewageCompany": type = "INDUSTRIAL"; text = "Water treatment."; break;
-        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste, driving through the city on roads."; break;
-        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck transporting fertilizer materials on roads."; break;
-        case "filtrationBox": type = "FILTRATION"; text = "Filtration box with 4 cameras inside + Top + Inside Machine."; break;
+        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste, driving on roads."; break;
+        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck driving on roads."; break;
+        case "filtrationBox": type = "FILTRATION"; text = "Filtration box with cameras inside."; break;
         case "filtrationMachine": type = "FILTRATION MACHINE"; text = "Skid filtration system inside the box."; break;
       }
       showPanel(title, type, text);
@@ -2143,6 +2322,7 @@ function setDN(night){
   roadMaterial.color.setHex(night ? 0x080a0c : 0x20272a);
   roadLaneMaterial.color.setHex(night ? 0x060809 : 0x1a2023);
   curbMaterial.color.setHex(night ? 0x1e262a : 0x697578);
+  sidewalkMat.color.setHex(night ? 0x30363a : 0x8a8f94);
   streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 6.0 : 0.9; });
   batteryRings.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.5; });
 }
@@ -2424,17 +2604,15 @@ function animate(){
   updateCameras(t);
   updateTL(t);
 
-  /* ══ Truck Movements (ONLY on roads) ══ */
   if(!window._garbageState) window._garbageState = {idx: 0, prog: 0};
-  moveTruck(garbageTruck, garbageRoute, window._garbageState, delta, 0.20);
+  moveTruck(garbageTruck, garbageRoute, window._garbageState, delta, 0.22);
 
   if(!window._fert1State) window._fert1State = {idx: 0, prog: 0};
-  moveTruck(fertTruck1, fertRoute1, window._fert1State, delta, 0.18);
+  moveTruck(fertTruck1, fertRoute1, window._fert1State, delta, 0.20);
 
   if(!window._fert2State) window._fert2State = {idx: 0, prog: 0};
-  moveTruck(fertTruck2, fertRoute2, window._fert2State, delta, 0.17);
+  moveTruck(fertTruck2, fertRoute2, window._fert2State, delta, 0.18);
 
-  /* Truck warning lights */
   const blink = (Math.floor(t * 2) % 2 === 0) ? 3 : 0.5;
   if(garbageWarn) garbageWarn.material.emissiveIntensity = blink;
   if(fertTruck1Obj.warn) fertTruck1Obj.warn.material.emissiveIntensity = blink;
