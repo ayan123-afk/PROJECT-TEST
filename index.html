@@ -59,7 +59,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Supply Zone / Smart Buildings Arena / Traffic Manager
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Zone / Smart Arena / Shops
 </div>
 
 <script type="importmap">
@@ -528,17 +528,35 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
+   DAGASHIYA SHOP HELPER — reusable
+========================================================= */
+function loadDagashiyaShop(x, z, scale=1, rotationY=0, nearName="Area"){
+  loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", gltf => {
+    const shop = gltf.scene;
+    prepareModel(shop, 22 * scale);
+    shop.position.set(x, 5, z);
+    shop.rotation.y = rotationY;
+    scene.add(shop);
+    clickable.push({
+      object: shop,
+      type: "shop",
+      name: "Dagashiya Snack Shop",
+      near: nearName
+    });
+  }, undefined, error => {
+    console.error("dagashiya shop load error:", error);
+  });
+}
+
+/* =========================================================
    ██████  POWER SUPPLY SMART CITY ZONE  ██████
-   (Solar Park + Antennas + Wind Farm — all together)
 ========================================================= */
 const powerSupplyZone = new THREE.Group();
 powerSupplyZone.position.set(-1500, 0, 900);
 scene.add(powerSupplyZone);
 
-/* --- Zone sign --- */
 createBoard("POWER SUPPLY SMART CITY", -1500, 5, 1450, 320, 18);
 
-/* --- Large zone ground pad --- */
 const powerZonePad = new THREE.Mesh(
   new THREE.BoxGeometry(1400, .8, 1100),
   material(0x1d3a2e, .92)
@@ -547,7 +565,6 @@ powerZonePad.position.set(0, 4.2, 0);
 powerZonePad.receiveShadow = true;
 powerSupplyZone.add(powerZonePad);
 
-/* --- Glowing zone border --- */
 const powerZoneBorderMat = new THREE.MeshStandardMaterial({
   color:0x63e7ff,
   emissive:0x16cfff,
@@ -601,7 +618,6 @@ antAreaRing.rotation.x = Math.PI/2;
 antAreaRing.position.y = 7.5;
 antennaArea.add(antAreaRing);
 
-/* Antenna 1: old_antenna.glb */
 loader.load("./old_antenna.glb", gltf => {
   const oldAnt = gltf.scene;
   prepareModel(oldAnt, 300);
@@ -610,7 +626,6 @@ loader.load("./old_antenna.glb", gltf => {
   clickable.push({ object: oldAnt, type: "antenna", name: "Old Antenna" });
 }, undefined, error => { console.error("old_antenna.glb load error:", error); });
 
-/* Antenna 2: antena.glb */
 loader.load("./antena.glb", gltf => {
   const ant = gltf.scene;
   prepareModel(ant, 190);
@@ -619,7 +634,6 @@ loader.load("./antena.glb", gltf => {
   clickable.push({ object: ant, type: "antenna", name: "Antenna" });
 }, undefined, error => { console.error("antena.glb load error:", error); });
 
-/* Antenna 3: antena.glb (2nd copy) */
 loader.load("./antena.glb", gltf => {
   const ant2 = gltf.scene;
   prepareModel(ant2, 170);
@@ -629,7 +643,7 @@ loader.load("./antena.glb", gltf => {
 }, undefined, error => { console.error("antena.glb load error:", error); });
 
 /* =========================================================
-   WIND FARM (inside Power Supply Zone)
+   WIND FARM
 ========================================================= */
 const windFarmGroup = new THREE.Group();
 windFarmGroup.position.set(-350, 0, 0);
@@ -675,13 +689,12 @@ windPositions.forEach((pos, i) => {
 });
 
 /* =========================================================
-   SOLAR ENERGY PARK (inside Power Supply Zone — big area)
+   SOLAR ENERGY PARK
 ========================================================= */
 const solarPark = new THREE.Group();
 solarPark.position.set(400, 0, 0);
 powerSupplyZone.add(solarPark);
 
-/* --- Large solar ground --- */
 const solarGround = new THREE.Mesh(
   new THREE.BoxGeometry(620, .8, 1050),
   material(0x2a4536, .92)
@@ -690,7 +703,6 @@ solarGround.position.y = 5;
 solarGround.receiveShadow = true;
 solarPark.add(solarGround);
 
-/* --- Solar border glow --- */
 const solarBorderMaterial = new THREE.MeshStandardMaterial({
   color:0x63e7ff,
   emissive:0x16cfff,
@@ -773,7 +785,6 @@ function createLargeSolarArray(x, z, width, depth, rows=3, cols=5){
   solarFieldPanels.push(group);
   return group;
 }
-/* More solar arrays filling the larger area */
 createLargeSolarArray(-155, -380, 280, 180, 3, 5);
 createLargeSolarArray(160, -380, 280, 180, 3, 5);
 createLargeSolarArray(-155, -150, 280, 180, 3, 5);
@@ -844,7 +855,6 @@ for(let x=-32; x<=32; x+=16){
   solarPark.add(batteryLight);
 }
 
-/* Solar beams */
 const solarBeams = [];
 for(let i=0; i<16; i++){
   const beam = new THREE.Mesh(
@@ -859,7 +869,7 @@ for(let i=0; i<16; i++){
 }
 
 /* =========================================================
-   POWER HUB (central distribution point)
+   POWER HUB
 ========================================================= */
 const powerHub = new THREE.Mesh(
   new THREE.CylinderGeometry(20, 26, 6, 32),
@@ -869,13 +879,12 @@ powerHub.position.set(0, 6, 0);
 powerSupplyZone.add(powerHub);
 
 /* =========================================================
-   SMART BUILDINGS ARENA — IMPROVED UI
+   SMART BUILDINGS ARENA
 ========================================================= */
 const smartArena = new THREE.Group();
 smartArena.position.set(1550, 0, -650);
 scene.add(smartArena);
 
-/* --- Arena floor (raised platform) --- */
 const arenaPad = new THREE.Mesh(
   new THREE.BoxGeometry(800, 2, 600),
   material(0x2c4a3a, .9)
@@ -884,7 +893,6 @@ arenaPad.position.y = 5;
 arenaPad.receiveShadow = true;
 smartArena.add(arenaPad);
 
-/* --- Arena inner circular hub --- */
 const arenaHub = new THREE.Mesh(
   new THREE.CylinderGeometry(70, 80, 1.5, 40),
   material(0x1a3a44, .4, .3)
@@ -892,7 +900,6 @@ const arenaHub = new THREE.Mesh(
 arenaHub.position.y = 6.5;
 smartArena.add(arenaHub);
 
-/* --- Glowing arena border --- */
 const arenaBorderMat = new THREE.MeshStandardMaterial({
   color:0x63e7ff,
   emissive:0x16cfff,
@@ -913,7 +920,6 @@ const arenaBorderRight = arenaBorderLeft.clone();
 arenaBorderRight.position.x = 400;
 smartArena.add(arenaBorderRight);
 
-/* --- Corner light towers --- */
 for(const cx of [-380, 380]){
   for(const cz of [-280, 280]){
     const tower = new THREE.Mesh(
@@ -931,10 +937,8 @@ for(const cx of [-380, 380]){
   }
 }
 
-/* --- Arena sign --- */
 createBoard("SMART BUILDINGS ARENA", 1550, 5, -980, 240, 16);
 
-/* --- Center holographic display --- */
 const holoDisplay = new THREE.Mesh(
   new THREE.CylinderGeometry(28, 28, 1, 32),
   new THREE.MeshStandardMaterial({ color:0x04151d, emissive:0x20d9ff, emissiveIntensity:2 })
@@ -950,7 +954,7 @@ holoRing.position.set(0, 9.2, 0);
 smartArena.add(holoRing);
 
 /* =========================================================
-   SMART BUILDINGS (main 4, enhanced UI)
+   SMART BUILDINGS (main 4)
 ========================================================= */
 const smartBuildings = [];
 
@@ -1057,14 +1061,13 @@ function createCodedSmartBuilding(name, x, z, width, depth, height, color){
   return group;
 }
 
-/* Main 4 smart buildings — placed around the arena perimeter */
 createCodedSmartBuilding("Smart Energy Tower", -230, -150, 100, 80, 185, 0x245d72);
 createCodedSmartBuilding("Green Technology Tower", 230, -150, 90, 75, 155, 0x356b57);
 createCodedSmartBuilding("Digital Innovation Center", -230, 150, 105, 82, 195, 0x31547c);
 createCodedSmartBuilding("Smart Research Center", 230, 150, 98, 78, 165, 0x674d68);
 
 /* =========================================================
-   SMALL BUILDINGS (added inside arena, around the hub)
+   SMALL BUILDINGS
 ========================================================= */
 const smallBuildings = [];
 
@@ -1072,7 +1075,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   const group = new THREE.Group();
   group.position.set(x, 6, z);
 
-  /* main body */
   const main = new THREE.Mesh(
     new THREE.BoxGeometry(width, height, depth),
     buildingMaterial(color)
@@ -1082,7 +1084,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   main.receiveShadow = true;
   group.add(main);
 
-  /* window strips */
   for(let y=6; y<height-3; y+=6){
     const win = new THREE.Mesh(
       new THREE.BoxGeometry(width*.75, 2.5, .15),
@@ -1104,7 +1105,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
     group.add(win4);
   }
 
-  /* rooftop solar */
   const roofSolar = new THREE.Mesh(
     new THREE.BoxGeometry(width*.7, .35, depth*.7),
     rooftopSolarMaterial
@@ -1113,7 +1113,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   roofSolar.rotation.x = -0.2;
   group.add(roofSolar);
 
-  /* rooftop cap */
   const cap = new THREE.Mesh(
     new THREE.BoxGeometry(width*.5, .8, depth*.5),
     material(0x4d6b75, .3, .5)
@@ -1121,7 +1120,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   cap.position.y = height + 1.5;
   group.add(cap);
 
-  /* roof beacon light */
   const light = new THREE.Mesh(
     new THREE.SphereGeometry(.9, 10, 10),
     new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x22dfff, emissiveIntensity:2.5 })
@@ -1129,7 +1127,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   light.position.y = height + 3;
   group.add(light);
 
-  /* entrance */
   const door = new THREE.Mesh(
     new THREE.BoxGeometry(width*.22, height*.15, .6),
     material(0x0a2732, .25, .4)
@@ -1137,7 +1134,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   door.position.set(0, height*.075, depth/2+.3);
   group.add(door);
 
-  /* foundation */
   const foundation = new THREE.Mesh(
     new THREE.BoxGeometry(width+6, 1, depth+6),
     material(0x26383c, .7, .2)
@@ -1152,7 +1148,6 @@ function createSmallBuilding(x, z, width, depth, height, color, name){
   return group;
 }
 
-/* 12 small buildings arranged in a ring around the hub */
 const smallPositions = [
   { x: -80, z: -80, w: 28, d: 24, h: 40 },
   { x:   0, z: -90, w: 32, d: 26, h: 48 },
@@ -1200,6 +1195,42 @@ loader.load("./simple_farm_free.glb", gltf => {
 }, undefined, error => { console.error("Farm GLB Error:", error); });
 
 createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
+
+/* =========================================================
+   DAGASHIYA SHOPS — 2 at every major location
+========================================================= */
+
+/* --- SCHOOL: 2 shops --- */
+loadDagashiyaShop(-640, -95, 1.0, 0, "School");
+loadDagashiyaShop(-740, -95, 1.0, 0, "School");
+
+/* --- HOSPITAL: 2 shops --- */
+loadDagashiyaShop(200, -95, 1.0, 0, "Hospital");
+loadDagashiyaShop(300, -95, 1.0, 0, "Hospital");
+
+/* --- SOCIETY: 2 shops --- */
+loadDagashiyaShop(-310, 285, 1.0, 0, "Society");
+loadDagashiyaShop(-210, 285, 1.0, 0, "Society");
+
+/* --- BANK: 2 shops --- */
+loadDagashiyaShop(300, 285, 1.0, 0, "Bank");
+loadDagashiyaShop(400, 285, 1.0, 0, "Bank");
+
+/* --- FARM: 2 shops (at the farm entrance) --- */
+loadDagashiyaShop(1000, -330, 1.0, 0, "Farm");
+loadDagashiyaShop(1000, -380, 1.0, 0, "Farm");
+
+/* --- POWER SUPPLY SMART CITY ZONE: 2 shops --- */
+loadDagashiyaShop(-1900, 1350, 1.2, 0, "Power Supply Zone");
+loadDagashiyaShop(-1100, 1350, 1.2, 0, "Power Supply Zone");
+
+/* --- SMART BUILDINGS ARENA: 2 shops --- */
+loadDagashiyaShop(1550, -300, 1.2, 0, "Smart Arena");
+loadDagashiyaShop(1550, -1000, 1.2, 0, "Smart Arena");
+
+/* --- TRAFFIC CONTROLLER: 2 shops --- */
+loadDagashiyaShop(-100, 600, 1.0, 0, "Traffic Manager");
+loadDagashiyaShop(100, 600, 1.0, 0, "Traffic Manager");
 
 /* =========================================================
    CAR SYSTEM
@@ -1362,7 +1393,7 @@ renderer.domElement.addEventListener("click", event => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
-  /* Power Supply Zone click (whole zone) */
+  /* Power Supply Zone click */
   const powerHits = raycaster.intersectObject(powerSupplyZone, true);
   if(powerHits.length){
     showPanel(
@@ -1378,23 +1409,23 @@ renderer.domElement.addEventListener("click", event => {
     if(!hit.length) continue;
     if(item.type==="school"){
       showPanel("BSS Smart School", "EDUCATION ZONE",
-        "A future-ready Beaconhouse educational facility with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network.");
+        "A future-ready Beaconhouse educational facility with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. Two Dagashiya snack shops serve students nearby.");
     }
     if(item.type==="hospital"){
       showPanel("BSS Smart Hospital", "HEALTHCARE ZONE",
-        "A modern smart healthcare facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park.");
+        "A modern smart healthcare facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park. Two Dagashiya snack shops serve visitors nearby.");
     }
     if(item.type==="society"){
       showPanel("BSS Smart Society", "RESIDENTIAL ZONE",
-        "A connected residential community with organized housing, smart roads, controlled access and clean renewable electricity from the city's underground solar-energy network.");
+        "A connected residential community with organized housing, smart roads, controlled access and clean renewable electricity from the city's underground solar-energy network. Two Dagashiya snack shops serve residents nearby.");
     }
     if(item.type==="bank"){
       showPanel("Smart City State Bank", "FINANCIAL ZONE",
-        "A smart banking facility providing secure digital financial services while receiving renewable electricity from the centralized Solar Energy Park.");
+        "A smart banking facility providing secure digital financial services while receiving renewable electricity from the centralized Solar Energy Park. Two Dagashiya snack shops serve customers nearby.");
     }
     if(item.type==="farm"){
       showPanel("Smart Eco Farm", "SUSTAINABLE AGRICULTURE ZONE",
-        "A sustainable smart farming facility combining modern agriculture, renewable wind energy, intelligent infrastructure and environmental sustainability.");
+        "A sustainable smart farming facility combining modern agriculture, renewable wind energy, intelligent infrastructure and environmental sustainability. Two Dagashiya snack shops serve farm workers nearby.");
     }
     if(item.type==="smartBuilding"){
       showPanel(item.name, "SMART BUILDING",
@@ -1408,13 +1439,20 @@ renderer.domElement.addEventListener("click", event => {
       showPanel(item.name, "COMMUNICATION ANTENNA",
         "A communication antenna model loaded from a GLB file. It is part of the Power Supply Smart City zone, connected to the Solar Park and Wind Farm through the underground power grid.");
     }
+    if(item.type==="shop"){
+      showPanel(
+        "Dagashiya Snack Shop",
+        "JAPANESE OLD SNACK SHOP · NEAR " + item.near.toUpperCase(),
+        "A traditional Japanese Dagashiya (old snack shop) placed near " + item.near + ". This charming little shop brings character to the smart city and serves residents, students, patients, and visitors in the surrounding area."
+      );
+    }
     return;
   }
 
   const managerHits = raycaster.intersectObject(controller, true);
   if(managerHits.length){
     showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION ZONE",
-      "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow.");
+      "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow. Two Dagashiya snack shops are located nearby.");
     return;
   }
 });
@@ -1601,7 +1639,6 @@ function animate(){
   updateCars();
   updateTrafficLights(elapsed);
 
-  /* Wind turbines */
   turbines.forEach(blades => { blades.rotation.z = elapsed*2.4; });
 
   radar.rotation.z = elapsed*1.7;
@@ -1609,33 +1646,25 @@ function animate(){
   controllerRing.rotation.z = elapsed*.5;
   warningLights.forEach(light => { light.material.emissiveIntensity = 1.5 + Math.sin(elapsed*6)*1.5; });
 
-  /* Solar arrays subtle movement */
   solarFieldPanels.forEach((group,index) => { group.rotation.z = Math.sin(elapsed*.18+index)*.006; });
   solarBeams.forEach((beam,index) => { beam.material.opacity = .035 + Math.sin(elapsed*1.5+index)*.018; });
 
-  /* Smart buildings beacons */
   smartBuildings.forEach((building,index) => {
     building.beacon.material.emissiveIntensity = 2 + Math.sin(elapsed*3+index)*.8;
   });
 
-  /* Small buildings light pulses */
   smallBuildings.forEach((b, index) => {
     b.light.material.emissiveIntensity = 2 + Math.sin(elapsed*4 + index*0.7)*1.0;
   });
 
   solarScreen.material.emissiveIntensity = 2 + Math.sin(elapsed*2.5)*.5;
 
-  /* Antenna area ring */
   antAreaRing.rotation.z = elapsed * 0.6;
   antAreaRing.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
 
-  /* Zone border glow */
   powerZoneBorderMat.emissiveIntensity = 1.4 + Math.sin(elapsed*2.2)*0.5;
-
-  /* Arena border glow */
   arenaBorderMat.emissiveIntensity = 1.6 + Math.sin(elapsed*2.8)*0.5;
 
-  /* Holographic display */
   holoRing.rotation.z = elapsed * 0.9;
   holoDisplay.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
 
