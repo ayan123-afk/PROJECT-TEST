@@ -209,8 +209,7 @@ controls.minDistance = 200;
 controls.maxDistance = 6000;
 controls.target.set(0, 5, 0);
 
-/* Fog for depth */
-scene.fog = new THREE.Fog(0xa9dcf4, 3000, 9000);
+scene.fog = new THREE.Fog(0xa9dcf4, 3500, 10000);
 
 /* ═══════════════════════════════════════════
    LIGHTS
@@ -247,7 +246,7 @@ ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
 /* ═══════════════════════════════════════════
-   ROADS — 5x5 GRID (FULL COVERAGE)
+   ROADS — 5x5 GRID
    ═══════════════════════════════════════════ */
 const ROAD_W = 90;
 const ROAD_HALF = ROAD_W / 2;
@@ -377,7 +376,6 @@ const roadXs = [-2400, -1200, 0, 1200, 2400];
 roadZs.forEach(z => makeRoadE(0, z, ROAD_LEN));
 roadXs.forEach(x => makeRoadN(x, 0, ROAD_LEN));
 
-/* Sidewalks */
 function sidewalkE(x, z, len){
   const s = new THREE.Mesh(
     new THREE.BoxGeometry(len, .3, 8),
@@ -660,11 +658,9 @@ function tree(x, z, s=1){
     const l = new THREE.Mesh(treeGeo2, Math.random() > 0.5 ? treeLeafMat : treeLeafMat2);
     l.position.y = 22; g.add(l);
   } else if(roll < 0.75){
-    /* Round tree */
     const l = new THREE.Mesh(treeGeo3, Math.random() > 0.5 ? treeLeafMat : treeLeafMat3);
     l.position.y = 22; l.scale.set(1, 1.1, 1); g.add(l);
   } else {
-    /* Double cone tree */
     const l1 = new THREE.Mesh(treeGeo2, treeLeafMat); l1.position.y = 20; l1.scale.setScalar(0.85); g.add(l1);
     const l2 = new THREE.Mesh(treeGeo2, treeLeafMat2); l2.position.y = 28; l2.scale.setScalar(0.7); g.add(l2);
   }
@@ -695,7 +691,6 @@ function flower(x, z){
   scene.add(g);
 }
 
-/* Bush */
 function bush(x, z, s=1){
   const g = new THREE.Group();
   g.position.set(x, 5, z); g.scale.setScalar(s);
@@ -715,7 +710,6 @@ function bush(x, z, s=1){
   scene.add(g);
 }
 
-/* Rock */
 function rock(x, z, s=1){
   const g = new THREE.Group();
   g.position.set(x, 5, z); g.scale.setScalar(s);
@@ -736,7 +730,6 @@ function rock(x, z, s=1){
   scene.add(g);
 }
 
-/* Grass tuft */
 function grassTuft(x, z){
   const g = new THREE.Group();
   g.position.set(x, 5, z);
@@ -757,7 +750,6 @@ function grassTuft(x, z){
   scene.add(g);
 }
 
-/* Natural pond */
 function pond(x, z, r){
   const waterMat = new THREE.MeshStandardMaterial({
     color: 0x2d8fb5, roughness: .15, metalness: .4,
@@ -769,7 +761,6 @@ function pond(x, z, r){
   p.position.set(x, 5.1, z);
   scene.add(p);
 
-  /* Sand/dirt ring around pond */
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(r, r + 12, 24),
     mat(0x8a7a5a, .95)
@@ -778,7 +769,6 @@ function pond(x, z, r){
   ring.position.set(x, 5.05, z);
   scene.add(ring);
 
-  /* Some grass tufts around pond */
   for(let i = 0; i < 12; i++){
     const a = (i / 12) * Math.PI * 2;
     const rr = r + 15 + Math.random() * 15;
@@ -787,11 +777,173 @@ function pond(x, z, r){
 }
 
 /* ═══════════════════════════════════════════
-   NATURE PLACEMENT — fill the entire city with green
+   CITY BUILDINGS (tall buildings everywhere)
    ═══════════════════════════════════════════ */
-/* Helper: check if position is too close to a road */
+const buildingWindowsMat = new THREE.MeshStandardMaterial({
+  color: 0x223344, emissive: 0x88ccff, emissiveIntensity: 0.6,
+  metalness: .5, roughness: .3
+});
+const buildingWindowsMat2 = new THREE.MeshStandardMaterial({
+  color: 0x334455, emissive: 0x66aaff, emissiveIntensity: 0.5,
+  metalness: .4, roughness: .35
+});
+
+function cityBuilding(x, z, w, h, d, color){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+
+  /* Main building body */
+  const bMat = mat(color, .55, .35);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), bMat);
+  body.position.y = h/2;
+  g.add(body);
+
+  /* Roof cap */
+  const roof = new THREE.Mesh(
+    new THREE.BoxGeometry(w + 4, 3, d + 4),
+    mat(0x3a4448, .6, .3)
+  );
+  roof.position.y = h + 1.5;
+  g.add(roof);
+
+  /* Windows grid on 4 sides */
+  const winMat = Math.random() > 0.5 ? buildingWindowsMat : buildingWindowsMat2;
+  const floors = Math.max(3, Math.floor(h / 20));
+  const colsF = Math.max(3, Math.floor(w / 14));
+  const colsS = Math.max(3, Math.floor(d / 14));
+
+  for(let f = 0; f < floors; f++){
+    const wy = 8 + f * (h - 12) / floors;
+
+    /* Front & back (z sides) */
+    for(let c = 0; c < colsF; c++){
+      const wx = x + (c - (colsF-1)/2) * (w / colsF) * 0.85;
+      const wf = new THREE.Mesh(new THREE.BoxGeometry(4.5, 6, 0.5), winMat);
+      wf.position.set(wx - x, wy, d/2 + 0.3);
+      g.add(wf);
+      const wb = new THREE.Mesh(new THREE.BoxGeometry(4.5, 6, 0.5), winMat);
+      wb.position.set(wx - x, wy, -d/2 - 0.3);
+      g.add(wb);
+    }
+
+    /* Left & right (x sides) */
+    for(let c = 0; c < colsS; c++){
+      const wz = z + (c - (colsS-1)/2) * (d / colsS) * 0.85;
+      const wl = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6, 4.5), winMat);
+      wl.position.set(-w/2 - 0.3, wy, wz - z);
+      g.add(wl);
+      const wr = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6, 4.5), winMat);
+      wr.position.set(w/2 + 0.3, wy, wz - z);
+      g.add(wr);
+    }
+  }
+
+  /* Antenna on top (some buildings) */
+  if(Math.random() > 0.5){
+    const antH = 20 + Math.random() * 30;
+    const ant = new THREE.Mesh(
+      new THREE.CylinderGeometry(.6, .8, antH, 6),
+      mat(0x555a5e, .5, .7)
+    );
+    ant.position.y = h + 3 + antH/2;
+    g.add(ant);
+
+    const redLight = new THREE.Mesh(
+      new THREE.SphereGeometry(1.5, 8, 8),
+      new THREE.MeshStandardMaterial({
+        color: 0xff2222, emissive: 0xff2222, emissiveIntensity: 3
+      })
+    );
+    redLight.position.y = h + 3 + antH;
+    g.add(redLight);
+  }
+
+  scene.add(g);
+  return g;
+}
+
+/* Places for tall buildings around the city */
+const cityBuildingData = [
+  /* Bank area — tall buildings nearby */
+  {x: 900, z: 900, w: 90, h: 220, d: 90, c: 0x7a8288},
+  {x: 300, z: 900, w: 80, h: 180, d: 80, c: 0x6b7278},
+  {x: 900, z: 300, w: 85, h: 240, d: 85, c: 0x808890},
+  {x: 1400, z: 900, w: 95, h: 200, d: 95, c: 0x6e767c},
+  {x: 900, z: 1400, w: 80, h: 190, d: 80, c: 0x7e878d},
+
+  /* Society area — buildings nearby */
+  {x: -900, z: 900, w: 90, h: 190, d: 90, c: 0x767e84},
+  {x: -300, z: 900, w: 85, h: 210, d: 85, c: 0x727a80},
+  {x: -900, z: 300, w: 80, h: 170, d: 80, c: 0x7a8288},
+  {x: -1400, z: 900, w: 95, h: 230, d: 95, c: 0x6b7278},
+  {x: -900, z: 1400, w: 85, h: 200, d: 85, c: 0x808890},
+
+  /* School area */
+  {x: -900, z: -900, w: 80, h: 150, d: 80, c: 0x7a8288},
+  {x: -300, z: -900, w: 75, h: 170, d: 75, c: 0x6e767c},
+  {x: -900, z: -300, w: 85, h: 190, d: 85, c: 0x767e84},
+  {x: -1400, z: -900, w: 90, h: 210, d: 90, c: 0x727a80},
+  {x: -900, z: -1400, w: 80, h: 180, d: 80, c: 0x7e878d},
+
+  /* Hospital area */
+  {x: 900, z: -900, w: 80, h: 160, d: 80, c: 0x808890},
+  {x: 300, z: -900, w: 75, h: 180, d: 75, c: 0x7a8288},
+  {x: 900, z: -300, w: 85, h: 200, d: 85, c: 0x6b7278},
+  {x: 1400, z: -900, w: 90, h: 220, d: 90, c: 0x767e84},
+  {x: 900, z: -1400, w: 80, h: 190, d: 80, c: 0x727a80},
+
+  /* Farm area — tall buildings nearby */
+  {x: 2100, z: -900, w: 90, h: 200, d: 90, c: 0x6e767c},
+  {x: 2100, z: -300, w: 85, h: 220, d: 85, c: 0x7a8288},
+  {x: 2500, z: -900, w: 95, h: 240, d: 95, c: 0x808890},
+  {x: 2100, z: 300, w: 80, h: 180, d: 80, c: 0x727a80},
+
+  /* Marriage hall area */
+  {x: 900, z: 2100, w: 90, h: 210, d: 90, c: 0x767e84},
+  {x: 300, z: 2100, w: 85, h: 190, d: 85, c: 0x7a8288},
+  {x: 1500, z: 2100, w: 95, h: 230, d: 95, c: 0x6b7278},
+  {x: 900, z: 2700, w: 80, h: 200, d: 80, c: 0x6e767c},
+
+  /* Gas station area */
+  {x: 2500, z: 1500, w: 90, h: 220, d: 90, c: 0x808890},
+  {x: 2500, z: 2100, w: 85, h: 200, d: 85, c: 0x727a80},
+  {x: 2100, z: 2500, w: 90, h: 240, d: 90, c: 0x7a8288},
+
+  /* Sewage area */
+  {x: 2500, z: 900, w: 85, h: 180, d: 85, c: 0x767e84},
+  {x: 2500, z: 300, w: 80, h: 210, d: 80, c: 0x6e767c},
+  {x: 2500, z: -300, w: 90, h: 230, d: 90, c: 0x7e878d},
+
+  /* Outer ring tall towers */
+  {x: -3300, z: 0, w: 110, h: 260, d: 110, c: 0x6a7278},
+  {x: 3300, z: 0, w: 115, h: 280, d: 115, c: 0x767e84},
+  {x: 0, z: -3300, w: 120, h: 270, d: 120, c: 0x727a80},
+  {x: 0, z: 3300, w: 118, h: 250, d: 118, c: 0x7a8288},
+
+  /* Far outer buildings */
+  {x: -3300, z: -1500, w: 100, h: 220, d: 100, c: 0x808890},
+  {x: 3300, z: -1500, w: 105, h: 240, d: 105, c: 0x6e767c},
+  {x: -3300, z: 1500, w: 100, h: 230, d: 100, c: 0x767e84},
+  {x: 3300, z: 1500, w: 105, h: 260, d: 105, c: 0x6a7278},
+  {x: -1500, z: -3300, w: 100, h: 210, d: 100, c: 0x727a80},
+  {x: 1500, z: -3300, w: 105, h: 250, d: 105, c: 0x7a8288},
+  {x: -1500, z: 3300, w: 100, h: 240, d: 100, c: 0x808890},
+  {x: 1500, z: 3300, w: 105, h: 220, d: 105, c: 0x6e767c},
+
+  /* Extra scattered tall buildings */
+  {x: -1800, z: -1800, w: 90, h: 200, d: 90, c: 0x767e84},
+  {x: 1800, z: -1800, w: 95, h: 230, d: 95, c: 0x727a80},
+  {x: -1800, z: 1800, w: 90, h: 210, d: 90, c: 0x7a8288},
+  {x: 1800, z: 1800, w: 95, h: 240, d: 95, c: 0x6b7278},
+  {x: -2100, z: 0, w: 85, h: 190, d: 85, c: 0x808890},
+  {x: 2100, z: 0, w: 85, h: 200, d: 85, c: 0x767e84},
+  {x: 0, z: -2100, w: 90, h: 220, d: 90, c: 0x727a80},
+  {x: 0, z: 2100, w: 90, h: 210, d: 90, c: 0x7e878d},
+];
+
+/* Check position is free (not on road, not on existing place) */
 function isOnRoad(x, z){
-  const roadClear = 75;
+  const roadClear = 80;
   for(const rz of roadZs){
     if(Math.abs(z - rz) < roadClear) return true;
   }
@@ -801,33 +953,79 @@ function isOnRoad(x, z){
   return false;
 }
 
-/* Check if position overlaps any building */
-const buildingFootprints = [
-  {x: -600, z: -600, r: 250},
-  {x: 600, z: -600, r: 230},
-  {x: -600, z: 600, r: 320},
-  {x: 600, z: 600, r: 290},
+const occupiedSpots = [
+  {x: -600, z: -600, r: 260},
+  {x: 600, z: -600, r: 250},
+  {x: -600, z: 600, r: 330},
+  {x: 600, z: 600, r: 300},
   {x: 1800, z: -600, r: 400},
   {x: 600, z: 1800, r: 290},
   {x: 1800, z: 1750, r: 320},
   {x: 1800, z: 600, r: 290},
   {x: 0, z: 0, r: 130},
+  {x: -3600, z: 3600, r: 900},
+  {x: 3600, z: -3600, r: 600},
+  {x: -3600, z: -3600, r: 600},
+  {x: 3600, z: 3600, r: 600},
 ];
 
+function isFreeSpot(x, z, r){
+  for(const s of occupiedSpots){
+    const dx = x - s.x;
+    const dz = z - s.z;
+    const minDist = (s.r + r);
+    if(dx*dx + dz*dz < minDist * minDist) return false;
+  }
+  return true;
+}
+
+/* Place all city buildings */
+cityBuildingData.forEach(b => {
+  if(!isOnRoad(b.x, b.z) && isFreeSpot(b.x, b.z, Math.max(b.w, b.d) / 2)){
+    cityBuilding(b.x, b.z, b.w, b.h, b.d, b.c);
+    occupiedSpots.push({x: b.x, z: b.z, r: Math.max(b.w, b.d) / 2 + 20});
+  }
+});
+
+/* Small filled blocks between tall buildings */
+const smallBlockData = [
+  {x: -1700, z: -900, w: 55, h: 90, d: 55, c: 0x7a8288},
+  {x: -1500, z: -600, w: 50, h: 80, d: 50, c: 0x6b7278},
+  {x: -1700, z: 0, w: 55, h: 95, d: 55, c: 0x808890},
+  {x: 1700, z: -900, w: 55, h: 90, d: 55, c: 0x6e767c},
+  {x: 1500, z: -600, w: 50, h: 85, d: 50, c: 0x767e84},
+  {x: 1700, z: 0, w: 55, h: 100, d: 55, c: 0x727a80},
+  {x: -1700, z: 900, w: 55, h: 85, d: 55, c: 0x7e878d},
+  {x: 1700, z: 900, w: 55, h: 95, d: 55, c: 0x6a7278},
+  {x: -1500, z: 1500, w: 50, h: 90, d: 50, c: 0x7a8288},
+  {x: 1500, z: 1500, w: 50, h: 85, d: 50, c: 0x767e84},
+  {x: -900, z: -1700, w: 55, h: 90, d: 55, c: 0x6e767c},
+  {x: 900, z: -1700, w: 55, h: 95, d: 55, c: 0x808890},
+  {x: -900, z: 1700, w: 55, h: 85, d: 55, c: 0x727a80},
+  {x: 900, z: 1700, w: 55, h: 90, d: 55, c: 0x7a8288},
+];
+smallBlockData.forEach(b => {
+  if(!isOnRoad(b.x, b.z) && isFreeSpot(b.x, b.z, 40)){
+    cityBuilding(b.x, b.z, b.w, b.h, b.d, b.c);
+    occupiedSpots.push({x: b.x, z: b.z, r: 40});
+  }
+});
+
+/* ═══════════════════════════════════════════
+   NATURE FILLER — trees around tall buildings
+   ═══════════════════════════════════════════ */
 function isOnBuilding(x, z){
-  for(const b of buildingFootprints){
-    const dx = x - b.x;
-    const dz = z - b.z;
-    if(dx*dx + dz*dz < b.r * b.r) return true;
+  for(const s of occupiedSpots){
+    const dx = x - s.x;
+    const dz = z - s.z;
+    if(dx*dx + dz*dz < s.r * s.r) return true;
   }
   return false;
 }
-
 function isFree(x, z){
   return !isOnRoad(x, z) && !isOnBuilding(x, z);
 }
 
-/* Scatter trees everywhere (natural forest feel) */
 let treeCount = 0;
 for(let i = 0; i < 900; i++){
   const x = (Math.random() - 0.5) * 9000;
@@ -838,7 +1036,6 @@ for(let i = 0; i < 900; i++){
   }
 }
 
-/* Scatter bushes */
 for(let i = 0; i < 500; i++){
   const x = (Math.random() - 0.5) * 9000;
   const z = (Math.random() - 0.5) * 9000;
@@ -847,7 +1044,6 @@ for(let i = 0; i < 500; i++){
   }
 }
 
-/* Scatter rocks */
 for(let i = 0; i < 250; i++){
   const x = (Math.random() - 0.5) * 9000;
   const z = (Math.random() - 0.5) * 9000;
@@ -856,7 +1052,6 @@ for(let i = 0; i < 250; i++){
   }
 }
 
-/* Grass tufts everywhere */
 for(let i = 0; i < 800; i++){
   const x = (Math.random() - 0.5) * 9000;
   const z = (Math.random() - 0.5) * 9000;
@@ -865,7 +1060,6 @@ for(let i = 0; i < 800; i++){
   }
 }
 
-/* Flowers in clusters */
 const flowerClusters = [
   [-600, -400, 12], [600, -400, 12],
   [-600, 400, 12], [600, 400, 12],
@@ -889,7 +1083,6 @@ flowerClusters.forEach(cluster => {
   }
 });
 
-/* Natural ponds scattered around */
 pond(-1500, -2200, 90);
 pond(2200, 1500, 110);
 pond(-2600, 1700, 80);
@@ -1541,7 +1734,7 @@ fertLogBack.position.set(0, 30, 401);
 fertZone.add(fertLogBack);
 
 /* ═══════════════════════════════════════════
-   WASTE MANAGEMENT ZONE
+   WASTE MANAGEMENT ZONE — with code-built waste containers & trucks
    ═══════════════════════════════════════════ */
 const wasteZone = new THREE.Group();
 wasteZone.position.set(3600, 0, 3600);
@@ -1566,6 +1759,277 @@ const wbB = wbF.clone(); wbB.position.z = 475; wasteZone.add(wbB);
 const wbL = new THREE.Mesh(new THREE.BoxGeometry(5, 1.4, 950), wasteBorderMat);
 wbL.position.set(-475, 6.5, 0); wasteZone.add(wbL);
 const wbR = wbL.clone(); wbR.position.x = 475; wasteZone.add(wbR);
+
+/* Corner pillars */
+for(const cx of [-475, 475]){
+  for(const cz of [-475, 475]){
+    const p = new THREE.Mesh(
+      new THREE.CylinderGeometry(4, 5, 30, 10),
+      wasteBorderMat
+    );
+    p.position.set(cx, 20, cz);
+    wasteZone.add(p);
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(3.5, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0x8affb3, emissive: 0x2ecc71, emissiveIntensity: 3
+      })
+    );
+    cap.position.set(cx, 37, cz);
+    wasteZone.add(cap);
+  }
+}
+
+/* Waste containers (code-built) — dumpsters */
+function wasteDumpster(x, z, color){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  const c = color || 0x2ecc71;
+
+  /* Body */
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(38, 22, 26),
+    mat(c, .5, .5)
+  );
+  body.position.y = 11;
+  g.add(body);
+
+  /* Lid (slightly open) */
+  const lid = new THREE.Mesh(
+    new THREE.BoxGeometry(40, 2, 28),
+    mat(0x1a1a1a, .6, .3)
+  );
+  lid.position.set(0, 23, -3);
+  lid.rotation.x = -0.15;
+  g.add(lid);
+
+  /* Green glow strip */
+  const glowMat = new THREE.MeshStandardMaterial({
+    color: 0x2ecc71, emissive: 0x2ecc71, emissiveIntensity: 2.5
+  });
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(38, 1.5, 26.5), glowMat);
+  glow.position.y = 22;
+  g.add(glow);
+
+  /* Wheels */
+  const wMat = mat(0x0c1012, .6, .1);
+  const wGeo = new THREE.CylinderGeometry(3, 3, 2, 10);
+  for(const wx of [-12, 12]){
+    for(const wz of [-8, 8]){
+      const w = new THREE.Mesh(wGeo, wMat);
+      w.rotation.z = Math.PI/2;
+      w.position.set(wx, 3, wz);
+      g.add(w);
+    }
+  }
+
+  /* Waste symbol (small triangle on side) */
+  const symbolCanvas = document.createElement("canvas");
+  symbolCanvas.width = 256;
+  symbolCanvas.height = 256;
+  const sCtx = symbolCanvas.getContext("2d");
+  sCtx.fillStyle = "rgba(0,0,0,0)";
+  sCtx.fillRect(0, 0, 256, 256);
+  sCtx.strokeStyle = "#ffffff";
+  sCtx.lineWidth = 14;
+  sCtx.lineJoin = "round";
+  sCtx.beginPath();
+  sCtx.moveTo(128, 50);
+  sCtx.lineTo(220, 210);
+  sCtx.lineTo(36, 210);
+  sCtx.closePath();
+  sCtx.stroke();
+  sCtx.fillStyle = "#ffffff";
+  sCtx.font = "bold 80px Arial";
+  sCtx.textAlign = "center";
+  sCtx.textBaseline = "middle";
+  sCtx.fillText("♻", 128, 165);
+  const symbolTex = new THREE.CanvasTexture(symbolCanvas);
+  symbolTex.colorSpace = THREE.SRGBColorSpace;
+  const sMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.MeshBasicMaterial({ map: symbolTex, transparent: true, side: THREE.DoubleSide })
+  );
+  sMesh.position.set(0, 11, 13.5);
+  g.add(sMesh);
+
+  wasteZone.add(g);
+  clickable.push({ object: g, type: "wasteBin", name: "Waste Container" });
+}
+
+/* Waste trucks parked */
+function wasteTruck(x, z, rotation){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  g.rotation.y = rotation;
+
+  /* Container body */
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(95, 60, 42),
+    mat(0x2ecc71, .5, .4)
+  );
+  body.position.y = 42;
+  g.add(body);
+
+  /* Cabin */
+  const cabin = new THREE.Mesh(
+    new THREE.BoxGeometry(35, 40, 42),
+    mat(0x1a8a4e, .5, .4)
+  );
+  cabin.position.set(62, 32, 0);
+  g.add(cabin);
+
+  /* Windshield */
+  const win = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 18, 32),
+    new THREE.MeshStandardMaterial({
+      color: 0x8be8ff, transparent: true, opacity: .7,
+      roughness: .1, metalness: .3
+    })
+  );
+  win.position.set(80, 38, 0);
+  g.add(win);
+
+  /* Wheels */
+  const wMat = mat(0x0c1012, .6, .1);
+  const wGeo = new THREE.CylinderGeometry(11, 11, 7, 12);
+  for(const wx of [-32, 32, 55]){
+    for(const wz of [-18, 18]){
+      const w = new THREE.Mesh(wGeo, wMat);
+      w.rotation.x = Math.PI/2;
+      w.position.set(wx, 11, wz);
+      g.add(w);
+    }
+  }
+
+  /* Chassis */
+  const chassis = new THREE.Mesh(new THREE.BoxGeometry(120, 7, 40), darkMaterial);
+  chassis.position.set(10, 16, 0);
+  g.add(chassis);
+
+  /* "WASTE" text on sides */
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024; canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(0, 0, 1024, 256);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 130px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("WASTE", 512, 128);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const tMat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
+
+  const t1 = new THREE.Mesh(new THREE.PlaneGeometry(90, 42), tMat);
+  t1.position.set(0, 42, 21.5);
+  g.add(t1);
+  const t2 = new THREE.Mesh(new THREE.PlaneGeometry(90, 42), tMat);
+  t2.position.set(0, 42, -21.5);
+  t2.rotation.y = Math.PI;
+  g.add(t2);
+
+  /* Warning light */
+  const warn = new THREE.Mesh(
+    new THREE.SphereGeometry(2.5, 10, 10),
+    new THREE.MeshStandardMaterial({
+      color: 0xff8a00, emissive: 0xff8a00, emissiveIntensity: 3
+    })
+  );
+  warn.position.set(0, 75, 0);
+  g.add(warn);
+
+  wasteZone.add(g);
+  clickable.push({ object: g, type: "wasteTruck", name: "Waste Truck" });
+  return warn;
+}
+
+/* Add waste containers in 3 rows */
+for(let row = 0; row < 3; row++){
+  for(let col = 0; col < 4; col++){
+    wasteDumpster(-280 + col * 190, -300 + row * 220);
+  }
+}
+
+/* Parked waste trucks */
+wasteTruck(-300, 350, 0);
+wasteTruck(0, 350, 0);
+wasteTruck(300, 350, 0);
+
+/* Recycling machine (center) */
+const recycleMachine = new THREE.Mesh(
+  new THREE.BoxGeometry(120, 100, 120),
+  mat(0x1a8a4e, .4, .5)
+);
+recycleMachine.position.set(0, 55, 0);
+wasteZone.add(recycleMachine);
+
+const recycleTop = new THREE.Mesh(
+  new THREE.BoxGeometry(100, 20, 100),
+  new THREE.MeshStandardMaterial({
+    color: 0x0a5a2e, emissive: 0x2ecc71, emissiveIntensity: 1.5,
+    metalness: .5, roughness: .2
+  })
+);
+recycleTop.position.set(0, 115, 0);
+wasteZone.add(recycleTop);
+
+/* Glow ring around machine */
+const recycleRing = new THREE.Mesh(
+  new THREE.TorusGeometry(80, 2, 8, 32),
+  new THREE.MeshStandardMaterial({
+    color: 0x2ecc71, emissive: 0x2ecc71, emissiveIntensity: 2.5
+  })
+);
+recycleRing.rotation.x = Math.PI/2;
+recycleRing.position.set(0, 10, 0);
+wasteZone.add(recycleRing);
+
+/* Waste log screen */
+const wasteLogCanvas = document.createElement("canvas");
+wasteLogCanvas.width = 1024;
+wasteLogCanvas.height = 512;
+const wlCtx = wasteLogCanvas.getContext("2d");
+wlCtx.fillStyle = "rgba(10,40,20,0.95)";
+wlCtx.fillRect(0, 0, 1024, 512);
+wlCtx.strokeStyle = "#2ecc71";
+wlCtx.lineWidth = 10;
+wlCtx.strokeRect(10, 10, 1004, 492);
+wlCtx.fillStyle = "#2ecc71";
+wlCtx.font = "bold 60px Arial";
+wlCtx.textAlign = "center";
+wlCtx.textBaseline = "middle";
+wlCtx.fillText("WASTE LOG", 512, 60);
+wlCtx.fillStyle = "#8affb3";
+wlCtx.font = "bold 36px Arial";
+wlCtx.textAlign = "left";
+wlCtx.fillText("Batch #W-2045", 80, 140);
+wlCtx.fillText("Collected: 156 kg", 80, 190);
+wlCtx.fillText("Recycled: 98 kg", 80, 240);
+wlCtx.fillText("Disposed: 58 kg", 80, 290);
+wlCtx.fillText("Truck: WM-07, WM-08", 80, 340);
+wlCtx.fillStyle = "#6aff9d";
+wlCtx.fillText("✓ PROCESSED TODAY", 80, 400);
+const wasteLogTex = new THREE.CanvasTexture(wasteLogCanvas);
+wasteLogTex.colorSpace = THREE.SRGBColorSpace;
+
+const wasteLogBoard = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 100),
+  new THREE.MeshBasicMaterial({ map: wasteLogTex, side: THREE.DoubleSide })
+);
+wasteLogBoard.position.set(0, 50, 476);
+wasteZone.add(wasteLogBoard);
+
+const wasteLogBack = new THREE.Mesh(
+  new THREE.BoxGeometry(210, 110, 3),
+  mat(0x0a3a1e, .5, .4)
+);
+wasteLogBack.position.set(0, 50, 478);
+wasteZone.add(wasteLogBack);
+
+/* Waste zone sign */
+board("WASTE MANAGEMENT", 3600, 5, 4500, 380, 18, 0x2ecc71);
 
 /* ═══════════════════════════════════════════
    TRUCKS
@@ -2048,7 +2512,7 @@ const LOCATIONS = {
   wasteManagement: {
     label: "Waste Management", icon: "♻", type: "MUNICIPAL",
     position: [3600, 5, 3600], camHeight: 450, camDistance: 480,
-    info: "Waste management facility.",
+    info: "Waste management facility with containers, trucks & recycling machine.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
       { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 },
@@ -2321,12 +2785,14 @@ renderer.domElement.addEventListener("click", (e) => {
         case "battery": type = "BATTERY"; text = "Energy storage."; break;
         case "shop": type = "SHOP"; text = "Dagashiya snack shop."; break;
         case "marriageHall": type = "EVENT VENUE"; text = "Marriage hall."; break;
-        case "gasStation": type = "AUTOMOTIVE"; text = "Gas station + car wash (bigger)."; break;
+        case "gasStation": type = "AUTOMOTIVE"; text = "Gas station + car wash."; break;
         case "sewageCompany": type = "INDUSTRIAL"; text = "Water treatment."; break;
-        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste, driving on roads."; break;
-        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck driving on roads."; break;
+        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste."; break;
+        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck."; break;
         case "filtrationBox": type = "FILTRATION"; text = "Filtration box with cameras inside."; break;
-        case "filtrationMachine": type = "FILTRATION MACHINE"; text = "Skid filtration system inside the box."; break;
+        case "filtrationMachine": type = "FILTRATION MACHINE"; text = "Skid filtration system."; break;
+        case "wasteBin": type = "WASTE"; text = "Waste container for recycling."; break;
+        case "wasteTruck": type = "WASTE TRUCK"; text = "Truck for waste collection."; break;
       }
       showPanel(title, type, text);
       return;
@@ -2347,14 +2813,14 @@ function setDN(night){
   isNight = night;
   if(night){
     scene.background = NIGHT_BG.clone();
-    scene.fog = new THREE.Fog(0x050810, 3000, 9000);
+    scene.fog = new THREE.Fog(0x050810, 3500, 10000);
     ambient.intensity = 0.35;
     sun.intensity = 0.1;
     dayNightBtn.textContent = "🌙 NIGHT";
     dayNightBtn.classList.add("night");
   } else {
     scene.background = DAY_BG.clone();
-    scene.fog = new THREE.Fog(0xa9dcf4, 3000, 9000);
+    scene.fog = new THREE.Fog(0xa9dcf4, 3500, 10000);
     ambient.intensity = 3.7;
     sun.intensity = 3.5;
     dayNightBtn.textContent = "☀ DAY";
