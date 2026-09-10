@@ -179,7 +179,8 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
   }
 }
 </script>
-     <script type="module">
+
+<script type="module">
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -679,10 +680,12 @@ bld("./low_poly_hospital.glb", 280, [600, -600], "hospital", "Smart Hospital", 0
 bld("./low_poly_night_city_building_skyline.glb", 400, [-600, 600], "society", "Smart Society", 0x16a085);
 bld("./us_bank_tower.glb", 360, [600, 600], "bank", "State Bank", 0x8e44ad);
 bld("./simple_farm_free.glb", 520, [1800, -600], "farm", "Smart Eco Farm", 0x27ae60);
-bld("./great_hall.glb", 360, [0, 1800], "marriageHall", "Marriage Hall", 0xd4a017);
 
-/* Gas Station — SEPARATE PLACE (not with farm) */
-bld("./gas_station.glb", 300, [1800, 1200], "gasStation", "Gas Station · Car Wash", 0xc0392b);
+/* Marriage Hall — X=0 road se hataya, ab X=500 par */
+bld("./great_hall.glb", 360, [500, 1800], "marriageHall", "Marriage Hall", 0xd4a017);
+
+/* Gas Station — Z=1200 road se peeche, ab Z=1700 par */
+bld("./gas_station.glb", 300, [1800, 1700], "gasStation", "Gas Station · Car Wash", 0xc0392b);
 
 bld("./brutalist_building.glb", 360, [1800, 600], "sewageCompany", "Sewage & Filtration Co.", 0x34495e);
 
@@ -692,8 +695,8 @@ board("BSS SMART HOSPITAL", 600, 5, -950, 200, 14, 0xc0392b);
 board("BSS SMART SOCIETY", -600, 5, 950, 200, 14, 0x16a085);
 board("SMART CITY STATE BANK", 600, 5, 950, 200, 14, 0x8e44ad);
 board("SMART ECO FARM", 1800, 5, -950, 200, 14, 0x27ae60);
-board("MARRIAGE HALL", 0, 5, 2200, 220, 16, 0xd4a017);
-board("CAR WASH · GAS STATION", 1800, 5, 1500, 200, 14, 0xc0392b);
+board("MARRIAGE HALL", 500, 5, 2200, 220, 16, 0xd4a017);
+board("CAR WASH · GAS STATION", 1800, 5, 2050, 200, 14, 0xc0392b);
 board("SEWAGE & FILTRATION CO.", 1800, 5, 300, 240, 16, 0x34495e);
 board("AI TRAFFIC CONTROLLER", 0, 5, 250, 190, 14);
 
@@ -1162,15 +1165,13 @@ cameras.push({ group: insideCamGroup, led: null, inside: true, name: "Inside Mac
 
 /* ═══════════════════════════════════════════
    ██████ AI FERTILIZER SYSTEM ██████
-   New zone — separate location
    ═══════════════════════════════════════════ */
 const fertZone = new THREE.Group();
-fertZone.position.set(-3200, 0, -2400);   /* was wasteZone — moved wasteZone elsewhere */
+fertZone.position.set(-3200, 0, -2400);
 scene.add(fertZone);
 
 board("AI FERTILIZER SYSTEM", -3200, 5, -1600, 420, 22, 0x8e44ad);
 
-/* Fertilizer ground pad */
 const fertPad = new THREE.Mesh(
   new THREE.BoxGeometry(950, 1, 950),
   mat(0x2a1e3a, .95)
@@ -1178,7 +1179,6 @@ const fertPad = new THREE.Mesh(
 fertPad.position.y = 4.2;
 fertZone.add(fertPad);
 
-/* Purple glowing border */
 const fertBorderMat = new THREE.MeshStandardMaterial({
   color: 0xb266ff, emissive: 0xb266ff, emissiveIntensity: 2.2,
   metalness: .6, roughness: .2
@@ -1190,7 +1190,6 @@ const ftL = new THREE.Mesh(new THREE.BoxGeometry(6, 1.8, 950), fertBorderMat);
 ftL.position.set(-475, 6.5, 0); fertZone.add(ftL);
 const ftR = ftL.clone(); ftR.position.x = 475; fertZone.add(ftR);
 
-/* Corner pillars */
 for(const cx of [-475, 475]){
   for(const cz of [-475, 475]){
     const p = new THREE.Mesh(
@@ -1210,7 +1209,6 @@ for(const cx of [-475, 475]){
   }
 }
 
-/* Fertilizer Management Office (central tower) */
 const fertOffice = new THREE.Mesh(
   new THREE.BoxGeometry(60, 80, 60),
   mat(0x4a2c6b, .3, .4)
@@ -1218,7 +1216,6 @@ const fertOffice = new THREE.Mesh(
 fertOffice.position.set(0, 45, 0);
 fertZone.add(fertOffice);
 
-/* Office upper glass */
 const fertOfficeUpper = new THREE.Mesh(
   new THREE.BoxGeometry(50, 24, 50),
   new THREE.MeshStandardMaterial({
@@ -1232,7 +1229,6 @@ const fertOfficeUpper = new THREE.Mesh(
 fertOfficeUpper.position.set(0, 97, 0);
 fertZone.add(fertOfficeUpper);
 
-/* Glowing roof beacon */
 const fertBeacon = new THREE.Mesh(
   new THREE.SphereGeometry(5, 14, 14),
   new THREE.MeshStandardMaterial({
@@ -1242,7 +1238,6 @@ const fertBeacon = new THREE.Mesh(
 fertBeacon.position.set(0, 118, 0);
 fertZone.add(fertBeacon);
 
-/* AI Display screen on office */
 const fertScreen = new THREE.Mesh(
   new THREE.BoxGeometry(30, 12, .5),
   new THREE.MeshStandardMaterial({
@@ -1252,7 +1247,6 @@ const fertScreen = new THREE.Mesh(
 fertScreen.position.set(0, 60, -30.5);
 fertZone.add(fertScreen);
 
-/* 4 Collection Tanks (for fertilizer intake) */
 for(const cx of [-200, -100, 100, 200]){
   const tank = new THREE.Mesh(
     new THREE.CylinderGeometry(22, 26, 60, 16),
@@ -1278,7 +1272,6 @@ for(const cx of [-200, -100, 100, 200]){
   fertZone.add(light);
 }
 
-/* Fertilizer Log Display board */
 const fertLogCanvas = document.createElement("canvas");
 fertLogCanvas.width = 1024;
 fertLogCanvas.height = 512;
@@ -1313,7 +1306,6 @@ const fertLogBoard = new THREE.Mesh(
 fertLogBoard.position.set(0, 30, 400);
 fertZone.add(fertLogBoard);
 
-/* Backing board */
 const fertLogBack = new THREE.Mesh(
   new THREE.BoxGeometry(85, 45, 2),
   mat(0x2a1e3a, .5, .4)
@@ -1321,14 +1313,13 @@ const fertLogBack = new THREE.Mesh(
 fertLogBack.position.set(0, 30, 401);
 fertZone.add(fertLogBack);
 
-/* Sign board */
 board("AI FERTILIZER SYSTEM", -3200, 5, -1600, 420, 22, 0x8e44ad);
 
 /* ═══════════════════════════════════════════
-   WASTE MANAGEMENT ZONE — MOVED to different place
+   WASTE MANAGEMENT ZONE
    ═══════════════════════════════════════════ */
 const wasteZone = new THREE.Group();
-wasteZone.position.set(3200, 0, 2400);   /* NEW LOCATION */
+wasteZone.position.set(3200, 0, 2400);
 scene.add(wasteZone);
 
 board("WASTE MANAGEMENT", 3200, 5, 3300, 380, 18, 0x2ecc71);
@@ -1352,10 +1343,9 @@ wbL.position.set(-475, 6.5, 0); wasteZone.add(wbL);
 const wbR = wbL.clone(); wbR.position.x = 475; wasteZone.add(wbR);
 
 /* ═══════════════════════════════════════════
-   TRUCKS — all animated
+   TRUCKS — all animated, ONLY on roads
    ═══════════════════════════════════════════ */
 
-/* --- Function to build a truck --- */
 function buildTruck(color1, color2, textLabel, textColor){
   const truck = new THREE.Group();
 
@@ -1394,7 +1384,6 @@ function buildTruck(color1, color2, textLabel, textColor){
   const chassis = new THREE.Mesh(new THREE.BoxGeometry(135, 8, 42), darkMaterial);
   chassis.position.set(16, 18, 0); truck.add(chassis);
 
-  /* Text on both sides */
   const canvas = document.createElement("canvas");
   canvas.width = 1400; canvas.height = 280;
   const ctx = canvas.getContext("2d");
@@ -1421,7 +1410,6 @@ function buildTruck(color1, color2, textLabel, textColor){
   t2.position.set(0, 45, -22.5);
   t2.rotation.y = Math.PI; truck.add(t2);
 
-  /* Warning light */
   const warn = new THREE.Mesh(
     new THREE.SphereGeometry(3, 10, 10),
     new THREE.MeshStandardMaterial({
@@ -1434,24 +1422,40 @@ function buildTruck(color1, color2, textLabel, textColor){
   return { truck, warn };
 }
 
-/* === Garbage Truck (moves through city) === */
+/* === Garbage Truck === */
 const gTruckObj = buildTruck(0x3498db, 0x2980b9, "WASTE|MANAGEMENT", "#3498db");
 const garbageTruck = gTruckObj.truck;
 const garbageWarn = gTruckObj.warn;
 scene.add(garbageTruck);
 clickable.push({ object: garbageTruck, type: "garbageTruck", name: "Garbage Truck" });
 
-/* Garbage truck route — through the city */
+/* Garbage Truck Route — SIRF ROADS PAR (X=-1200,0,1200 & Z=-1200,0,1200) */
 const garbageRoute = [
-  [-600, -600], [600, -600], [1800, -600], [1800, -200],
-  [1800, 600], [1800, 1200], [600, 600], [-600, 600],
-  [0, 1800], [-600, 600], [-1800, 0], [-3200, -2400],
-  [-3200, 2400], [0, 1200], [0, 0], [-600, -600]
+  /* City ke andar roads par ghoomta hai */
+  [-1200, -1200],
+  [1200, -1200],
+  [1200, 0],
+  [1200, 1200],
+  [0, 1200],
+  [-1200, 1200],
+  [-1200, 0],
+  [-1200, -1200],
+  /* Waste Management Zone (3200, 2400) tak outer roads se */
+  [-2400, -1200],
+  [2400, -1200],
+  [2400, 1200],
+  [2400, 2400],
+  [3200, 2400],
+  /* Wapas city mein */
+  [2400, 2400],
+  [2400, 1200],
+  [1200, 1200],
+  [1200, 0],
+  [1200, -1200],
+  [-1200, -1200]
 ];
-let garbageRouteIdx = 0;
-let garbageProgress = 0;
 
-/* === Fertilizer Trucks (2 trucks, going to fertilizer zone) === */
+/* === Fertilizer Trucks === */
 const fertTruck1Obj = buildTruck(0xb266ff, 0x7a3b9d, "AI FERTILIZER", "#8e44ad");
 const fertTruck1 = fertTruck1Obj.truck;
 scene.add(fertTruck1);
@@ -1462,43 +1466,51 @@ const fertTruck2 = fertTruck2Obj.truck;
 scene.add(fertTruck2);
 clickable.push({ object: fertTruck2, type: "fertTruck", name: "Fertilizer Truck 2" });
 
-/* Fertilizer route — city to fertilizer zone */
+/* Fertilizer Route 1 — SIRF ROADS PAR (Farm se Fertilizer Zone tak) */
 const fertRoute1 = [
-  [1800, -600],  /* Farm */
-  [1800, 0],
-  [1800, 600],
-  [1200, 600],
-  [600, 600],
-  [-600, 600],
-  [-1200, 0],
-  [-3200, -2400],  /* Fertilizer zone */
-  [-3200, 2400],   /* Power supply area */
-  [-1200, 600],
-  [0, 600],
-  [600, 600],
-  [1200, 600],
-  [1800, 600],
-  [1800, -600]
+  [1800, -1200],
+  [1200, -1200],
+  [1200, 0],
+  [1200, 1200],
+  [0, 1200],
+  [-1200, 1200],
+  [-2400, 1200],
+  [-2400, 0],
+  [-2400, -1200],
+  [-2400, -2400],
+  [-3200, -2400],
+  [-2400, -2400],
+  [-2400, -1200],
+  [-1200, -1200],
+  [1200, -1200],
+  [1800, -1200]
 ];
 
+/* Fertilizer Route 2 — SIRF ROADS PAR (Fertilizer Zone se Power Supply tak) */
 const fertRoute2 = [
-  [-3200, -2400],  /* Fertilizer zone */
+  [-3200, -2400],
+  [-2400, -2400],
+  [-2400, -1200],
   [-1200, -1200],
-  [-600, -600],    /* School */
   [0, -1200],
-  [600, -600],     /* Hospital */
   [1200, -1200],
-  [1800, -600],    /* Farm */
-  [1800, 600],
+  [1800, -1200],
+  [1800, 0],
+  [1800, 1200],
   [1200, 1200],
-  [600, 1200],
   [0, 1200],
-  [-600, 1200],
   [-1200, 1200],
-  [-3200, 2400],   /* Power supply */
+  [-2400, 1200],
+  [-2400, 2400],
+  [-3200, 2400],
+  [-3200, 1200],
+  [-3200, 0],
+  [-3200, -1200],
   [-3200, -2400]
 ];
 
+let garbageRouteIdx = 0;
+let garbageProgress = 0;
 let fert1Idx = 0, fert1Prog = 0;
 let fert2Idx = 0, fert2Prog = 0;
 
@@ -1765,7 +1777,7 @@ const LOCATIONS = {
   },
   marriageHall: {
     label: "Marriage Hall", icon: "💒", type: "EVENT VENUE",
-    position: [0, 5, 1800], camHeight: 380, camDistance: 380,
+    position: [500, 5, 1800], camHeight: 380, camDistance: 380,
     info: "Grand marriage hall.",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
@@ -1775,7 +1787,7 @@ const LOCATIONS = {
   },
   carWash: {
     label: "Car Wash · Gas Station", icon: "🚗", type: "AUTOMOTIVE",
-    position: [1800, 5, 1200], camHeight: 380, camDistance: 380,
+    position: [1800, 5, 1700], camHeight: 380, camDistance: 380,
     info: "Gas station + car wash (SEPARATE from farm).",
     cameras: [
       { name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI },
@@ -2092,8 +2104,8 @@ renderer.domElement.addEventListener("click", (e) => {
         case "marriageHall": type = "EVENT VENUE"; text = "Marriage hall."; break;
         case "gasStation": type = "AUTOMOTIVE"; text = "Gas station + car wash."; break;
         case "sewageCompany": type = "INDUSTRIAL"; text = "Water treatment."; break;
-        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste, driving through the city."; break;
-        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck transporting fertilizer materials."; break;
+        case "garbageTruck": type = "MUNICIPAL"; text = "Truck collecting waste, driving through the city on roads."; break;
+        case "fertTruck": type = "FERTILIZER TRUCK"; text = "AI-managed truck transporting fertilizer materials on roads."; break;
         case "filtrationBox": type = "FILTRATION"; text = "Filtration box with 4 cameras inside + Top + Inside Machine."; break;
         case "filtrationMachine": type = "FILTRATION MACHINE"; text = "Skid filtration system inside the box."; break;
       }
@@ -2146,14 +2158,6 @@ window.showAiReason = function(){
   aiReasonEl.classList.remove("hidden");
   showAiBtn.style.display = "none";
 };
-
-/* Add a small × close button to the main menu header if not present */
-(function(){
-  const header = mainMenu.querySelector(".menuHeader");
-  if(header){
-    /* Already has a × closeBtn */
-  }
-})();
 
 const clock = new THREE.Clock();
 let simSec = 0;
@@ -2420,20 +2424,15 @@ function animate(){
   updateCameras(t);
   updateTL(t);
 
-  /* ══ Truck Movements ══ */
-  moveTruck(garbageTruck, garbageRoute, {idx: garbageRouteIdx, prog: garbageProgress}, delta, 0.15);
-  garbageRouteIdx = garbageRouteIdx;  /* Keep in closure */
-  garbageProgress = garbageProgress;
-
-  /* Use proper state objects */
+  /* ══ Truck Movements (ONLY on roads) ══ */
   if(!window._garbageState) window._garbageState = {idx: 0, prog: 0};
-  moveTruck(garbageTruck, garbageRoute, window._garbageState, delta, 0.15);
+  moveTruck(garbageTruck, garbageRoute, window._garbageState, delta, 0.20);
 
   if(!window._fert1State) window._fert1State = {idx: 0, prog: 0};
-  moveTruck(fertTruck1, fertRoute1, window._fert1State, delta, 0.14);
+  moveTruck(fertTruck1, fertRoute1, window._fert1State, delta, 0.18);
 
   if(!window._fert2State) window._fert2State = {idx: 0, prog: 0};
-  moveTruck(fertTruck2, fertRoute2, window._fert2State, delta, 0.13);
+  moveTruck(fertTruck2, fertRoute2, window._fert2State, delta, 0.17);
 
   /* Truck warning lights */
   const blink = (Math.floor(t * 2) % 2 === 0) ? 3 : 0.5;
@@ -2476,5 +2475,7 @@ window.addEventListener("keydown", (e) => {
 cycleStart = 0;
 setState(0);
 animate();
-
 </script>
+
+</body>
+</html>
