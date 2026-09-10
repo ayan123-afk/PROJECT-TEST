@@ -31,14 +31,50 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;padding:11px 20px;border-radius:12px;background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);color:#d2e1e7;font-size:12px;white-space:nowrap}
 #dayNightBtn{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;padding:12px 26px;border-radius:14px;background:linear-gradient(135deg,#1e2a35,#0d1620);border:1px solid rgba(90,225,255,.5);color:#c9f5ff;font-size:14px;font-weight:900;letter-spacing:2px;cursor:pointer;font-family:Arial,Helvetica,sans-serif}
 #dayNightBtn.night{background:linear-gradient(135deg,#0d1a30,#050a15);border-color:rgba(255,220,120,.7);color:#ffe28a}
-#seeJamBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#1a4fc2,#0f2f8a);border:1px solid rgba(90,150,255,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;font-family:Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(40,100,220,.4)}
-#seeJamBtn:hover{background:linear-gradient(135deg,#2a63e0,#1540a5)}
-#exitJamBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#c22b1a,#8a1f0f);border:1px solid rgba(255,120,60,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;display:none;font-family:Arial,Helvetica,sans-serif}
-#exitJamBtn:hover{background:linear-gradient(135deg,#e03520,#a52715)}
-#jamInfoBar{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:55;padding:12px 24px;border-radius:14px;background:rgba(3,13,22,.95);border:1px solid rgba(255,150,60,.5);color:white;font-size:13px;display:none;text-align:center;box-shadow:0 15px 50px rgba(0,0,0,.6);max-width:80vw}
-#jamInfoBar strong{color:#ff8a3c}
-#jamInfoBar .state{font-size:15px;font-weight:900;letter-spacing:1.5px;margin-bottom:4px}
-#jamInfoBar .desc{font-size:11px;color:#c9d6dd;line-height:1.5}
+#watchBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#1a4fc2,#0f2f8a);border:1px solid rgba(90,150,255,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;font-family:Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(40,100,220,.4)}
+#watchBtn:hover{background:linear-gradient(135deg,#2a63e0,#1540a5)}
+#exitBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#c22b1a,#8a1f0f);border:1px solid rgba(255,120,60,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;display:none;font-family:Arial,Helvetica,sans-serif}
+#exitBtn:hover{background:linear-gradient(135deg,#e03520,#a52715)}
+#aiExplain{
+  position:fixed;bottom:80px;right:18px;z-index:65;
+  width:400px;max-height:60vh;overflow-y:auto;
+  background:rgba(3,13,22,.97);
+  border:1px solid rgba(90,225,255,.5);
+  border-radius:16px;padding:20px;
+  display:none;box-shadow:0 20px 60px rgba(0,0,0,.8);
+}
+#aiExplain h3{color:#22cfff;font-size:14px;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(90,225,255,.3)}
+#aiExplain .step{
+  display:flex;gap:10px;margin-bottom:14px;
+  padding:10px;border-radius:10px;
+  background:rgba(255,255,255,.04);
+  border-left:3px solid #22cfff;
+  font-size:11px;line-height:1.5;color:#c9d6dd;
+  animation:slideIn .5s ease-out;
+}
+#aiExplain .step.new{animation:slideIn .5s ease-out}
+#aiExplain .step .num{
+  flex-shrink:0;width:22px;height:22px;border-radius:50%;
+  background:#22cfff;color:#03141b;
+  font-weight:900;font-size:11px;
+  display:flex;align-items:center;justify-content:center;
+}
+#aiExplain .step strong{color:#22cfff}
+#aiExplain .step.warning{border-left-color:#ff5252}
+#aiExplain .step.warning .num{background:#ff5252;color:white}
+#aiExplain .step.success{border-left-color:#22ff9d}
+#aiExplain .step.success .num{background:#22ff9d;color:#03141b}
+#aiExplain .step.action{border-left-color:#ffcc00}
+#aiExplain .step.action .num{background:#ffcc00;color:#03141b}
+@keyframes slideIn{
+  from{opacity:0;transform:translateX(20px)}
+  to{opacity:1;transform:translateX(0)}
+}
+#aiExplain .closeX{
+  position:absolute;right:12px;top:12px;
+  width:26px;height:26px;border:0;border-radius:6px;
+  background:#172731;color:white;font-size:14px;cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -65,12 +101,13 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 <div id="aiMessage">AI Traffic Controller</div>
 <div id="incident"><span>LIVE SYSTEM:</span> Monitoring 4 city entry routes</div>
 
-<button id="seeJamBtn">🎥 WATCH LIVE TRAFFIC</button>
-<button id="exitJamBtn">✕ EXIT LIVE VIEW</button>
+<button id="watchBtn">🎥 WATCH THE JAM</button>
+<button id="exitBtn">✕ BACK TO CITY</button>
 
-<div id="jamInfoBar">
-  <div class="state" id="jamInfoState">WATCHING TRAFFIC</div>
-  <div class="desc" id="jamInfoDesc">Real-time view of the actual 3D city roads</div>
+<div id="aiExplain">
+  <button class="closeX" onclick="document.getElementById('aiExplain').style.display='none'">×</button>
+  <h3>🤖 AI RESOLUTION LOG</h3>
+  <div id="aiSteps"></div>
 </div>
 
 <div id="panel">
@@ -121,7 +158,6 @@ controls.minDistance = 200;
 controls.maxDistance = 5000;
 controls.target.set(0, 5, 0);
 
-/* LIGHTING */
 const ambient = new THREE.HemisphereLight(0xf8fcff, 0x315c38, 3.7);
 scene.add(ambient);
 const sun = new THREE.DirectionalLight(0xffffff, 3.5);
@@ -139,7 +175,6 @@ const curbMaterial = mat(0x697578, .88);
 const darkMaterial = mat(0x182327, .65, .15);
 const blueMaterial = mat(0x087fa8, .35, .25);
 
-/* GROUND */
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(12000, 12000), grassMaterial);
 ground.rotation.x = -Math.PI/2;
 scene.add(ground);
@@ -165,37 +200,25 @@ function zone(x, z, w, d){
 zone(-280, -210, 340, 250); zone( 250, -210, 340, 250);
 zone(-260, 210, 480, 330);  zone(350, 210, 320, 260);
 
-/* ROADS with 2 lanes drawn as separate strips */
 function makeDualRoad(x, z, w, d){
-  /* Main road base */
   const r = new THREE.Mesh(new THREE.BoxGeometry(w, .45, d), roadMaterial);
   r.position.set(x, 4.7, z); scene.add(r);
-
-  /* Yellow center divider */
   const c = new THREE.Mesh(new THREE.BoxGeometry(w > d ? w : 1.5, .08, w > d ? 1.5 : d), yellowLineMaterial);
   c.position.set(x, 5, z); scene.add(c);
-
-  /* White dashed lines on both edges */
   const lineMat = mat(0xffffff, .8);
   if(w > d){
-    /* Horizontal road: dashes along top and bottom */
     for(let i=-w/2+20; i<w/2-10; i+=30){
       const l1 = new THREE.Mesh(new THREE.BoxGeometry(14, .08, .6), lineMat);
-      l1.position.set(x+i, 5.05, z+d/2-3);
-      scene.add(l1);
+      l1.position.set(x+i, 5.05, z+d/2-3); scene.add(l1);
       const l2 = new THREE.Mesh(new THREE.BoxGeometry(14, .08, .6), lineMat);
-      l2.position.set(x+i, 5.05, z-d/2+3);
-      scene.add(l2);
+      l2.position.set(x+i, 5.05, z-d/2+3); scene.add(l2);
     }
   } else {
-    /* Vertical road: dashes along left and right */
     for(let i=-d/2+20; i<d/2-10; i+=30){
       const l1 = new THREE.Mesh(new THREE.BoxGeometry(.6, .08, 14), lineMat);
-      l1.position.set(x+w/2-3, 5.05, z+i);
-      scene.add(l1);
+      l1.position.set(x+w/2-3, 5.05, z+i); scene.add(l1);
       const l2 = new THREE.Mesh(new THREE.BoxGeometry(.6, .08, 14), lineMat);
-      l2.position.set(x-w/2+3, 5.05, z+i);
-      scene.add(l2);
+      l2.position.set(x-w/2+3, 5.05, z+i); scene.add(l2);
     }
   }
 }
@@ -371,11 +394,9 @@ function shop(x, z, scale=1, name){
   }, undefined, () => {});
 }
 
-/* POWER ZONE */
 const powerZone = new THREE.Group();
 powerZone.position.set(-2200, 0, 1900);
 scene.add(powerZone);
-
 board("POWER SUPPLY (SMART-CITY)", -2200, 5, 2450, 320, 18);
 
 const pad = new THREE.Mesh(new THREE.BoxGeometry(1400, .8, 1100), mat(0x1d3a2e, .92));
@@ -422,7 +443,6 @@ const solarPark = new THREE.Group();
 solarPark.position.set(400, 0, 0); powerZone.add(solarPark);
 const solarGround = new THREE.Mesh(new THREE.BoxGeometry(620, .8, 1050), mat(0x2a4536, .92));
 solarGround.position.y = 5; solarPark.add(solarGround);
-
 const solarMat = new THREE.MeshStandardMaterial({ color: 0x082c4b, roughness: .18, metalness: .7, emissive: 0x063b62, emissiveIntensity: 0.7 });
 const solarFrameMat = mat(0xb7c4c8, .28, .8);
 const solarPanelGeo = new THREE.BoxGeometry(1, 1, 1);
@@ -478,7 +498,6 @@ batteryPositions.forEach((pos, i) => {
   }, undefined, () => {});
 });
 
-/* ARENA */
 const arena = new THREE.Group();
 arena.position.set(1550, 0, -650); scene.add(arena);
 const arenaPad = new THREE.Mesh(new THREE.BoxGeometry(800, 2, 600), mat(0x2c4a3a, .9));
@@ -493,10 +512,8 @@ function smartBld(name, x, z, w, d, h, color){
   const g = new THREE.Group(); g.position.set(x, 6, z);
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, .3, .35)); m.position.y = h/2; g.add(m);
   for(let y=12; y<h-8; y+=14){
-    const wMat = new THREE.MeshStandardMaterial({ color: 0x9cefff, emissive: 0x26cfff, emissiveIntensity: 1.2 });
-    winMats.push(wMat);
-    const win = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 3, .2), wMat);
-    win.position.set(0, y, d/2+.11); g.add(win);
+    const wMat = new THREE.MeshStandardMaterial({ color: 0x9cefff, emissive: 0x26cfff, emissiveIntensity: 1.2 }); winMats.push(wMat);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(w*.85, 3, .2), wMat); win.position.set(0, y, d/2+.11); g.add(win);
   }
   const solarG = new THREE.Group(); solarG.position.y = h + 1.5; solarG.rotation.x = -0.22;
   const pw = w * 0.18, pd = d * 0.22;
@@ -548,8 +565,7 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 [[150, -100], [350, -100], [150, -320], [350, -320], [200, 100], [460, 100], [200, 320], [460, 320]].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   ██████  3D CARS — driving on 3D city roads ██████
-   Each car has a "laneOffset" so it drives in the correct lane
+   CARS
 ========================================================= */
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
@@ -567,7 +583,7 @@ const hubMat = mat(0xa0a8ac, .3, .7);
 const sharedHeadlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8e0, emissiveIntensity: 2.5 });
 const sharedTaillightMat = new THREE.MeshStandardMaterial({ color: 0xff1e1e, emissive: 0xff1010, emissiveIntensity: 2.5 });
 
-function car(route, progress, dir, spd, laneOffset, baseSpeedMultiplier){
+function car(route, progress, dir, spd, laneOffset){
   const g = new THREE.Group();
   const color = carColors[Math.floor(Math.random()*carColors.length)];
   const bodyMat = mat(color, .35, .5);
@@ -586,27 +602,20 @@ function car(route, progress, dir, spd, laneOffset, baseSpeedMultiplier){
   for(const z of [-2.6, 2.6]){ const l = new THREE.Mesh(carLightGeo, sharedHeadlightMat); l.position.set(V_LEN * 0.49, 4, z); g.add(l); }
   for(const z of [-2.6, 2.6]){ const l = new THREE.Mesh(carLightGeo, sharedTaillightMat); l.position.set(-V_LEN * 0.49, 4, z); g.add(l); }
   scene.add(g);
-  cars.push({
-    car: g, route, progress, direction: dir,
-    speed: spd, baseSpeed: spd,
-    laneOffset, baseSpeedMultiplier,
-    rerouted: false
-  });
+  cars.push({ car: g, route, progress, direction: dir, speed: spd, baseSpeed: spd, laneOffset, rerouted: false });
 }
 
 const outerRoute = [[-855,-635],[855,-635],[855,635],[-855,635]];
 const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
 
-/* Outer ring — 8 cars going forward (in one lane), 6 going backward (other lane) */
-/* Lane offset moves them to the side of the road they should be on */
-for(let i=0; i<5; i++) car("outer", .05 + i*.16, 1, .35, 10, 1.0);
-for(let i=0; i<4; i++) car("outer", .3 + i*.16, -1, .35, -10, 1.0);
+/* Outer ring — 5 forward, 4 backward, on 2 lanes */
+for(let i=0; i<5; i++) car("outer", .05 + i*.16, 1, .35, 10);
+for(let i=0; i<4; i++) car("outer", .3 + i*.16, -1, .35, -10);
 
-/* Inner ring — 6 cars */
-for(let i=0; i<4; i++) car("inner", i/4, 1, .30, 8, 1.0);
-for(let i=0; i<2; i++) car("inner", .5 + i/2, -1, .30, -8, 1.0);
+/* Inner ring */
+for(let i=0; i<4; i++) car("inner", i/4, 1, .30, 8);
+for(let i=0; i<2; i++) car("inner", .5 + i/2, -1, .30, -8);
 
-/* Calculate position on route with lane offset */
 function routeP(route, progress, laneOffset = 0){
   const points = route==="outer" ? outerRoute : innerRoute;
   const scaled = progress * points.length;
@@ -615,18 +624,14 @@ function routeP(route, progress, laneOffset = 0){
   const t = scaled - Math.floor(scaled);
   const a = points[i], b = points[n];
 
-  /* Base position on center of road */
   const baseX = THREE.MathUtils.lerp(a[0], b[0], t);
   const baseZ = THREE.MathUtils.lerp(a[1], b[1], t);
 
-  /* Direction vector along road */
   const dx = b[0] - a[0];
   const dz = b[1] - a[1];
   const len = Math.sqrt(dx*dx + dz*dz);
   const nx = dx / len;
   const nz = dz / len;
-
-  /* Perpendicular offset (lane shift) */
   const perpX = -nz;
   const perpZ = nx;
 
@@ -637,7 +642,6 @@ function routeP(route, progress, laneOffset = 0){
   };
 }
 
-/* Initial position */
 cars.forEach(d => {
   const p = routeP(d.route, d.progress, d.laneOffset);
   d.car.position.set(p.x, 5.2, p.z);
@@ -666,49 +670,72 @@ const gT = new THREE.Mesh(new THREE.BoxGeometry(98, 5, 8), mat(0x164e67, .35, .2
 scene.add(gate);
 
 /* =========================================================
-   LIVE CAMERA MODE — swaps to a top-down view of the real city
+   ██████ WATCH THE JAM MODE — camera flies to the JAM LOCATION ██████
 ========================================================= */
-let isLiveMode = false;
+let isWatching = false;
 const savedCamPos = new THREE.Vector3();
 const savedCamTarget = new THREE.Vector3();
-const savedZoom = 1;
 
-const livePosition = new THREE.Vector3(0, 1400, 505);  /* high above the AI controller */
-const liveTarget = new THREE.Vector3(0, 0, 0);
+/* The jam happens on the NORTH corridor of the outer ring
+   Coordinates: around (0, -635) — the north edge of outer road
+   We'll place the camera there, looking down at an angle
+   to see the whole north-west corner where cars pile up. */
+const JAM_VIEW_POS = new THREE.Vector3(0, 380, -400);  /* above and south of the jam */
+const JAM_VIEW_TARGET = new THREE.Vector3(0, 5, -635); /* looking at the north road */
 
-function enterLiveMode(){
-  isLiveMode = true;
+function watchTheJam(){
+  isWatching = true;
   savedCamPos.copy(camera.position);
   savedCamTarget.copy(controls.target);
-  /* Smooth transition */
-  camera.position.copy(livePosition);
-  controls.target.copy(liveTarget);
+
+  /* Fly to the jam location */
+  camera.position.copy(JAM_VIEW_POS);
+  controls.target.copy(JAM_VIEW_TARGET);
   controls.update();
-  /* Disable user rotation for clean view */
-  controls.enableRotate = false;
+
+  /* Allow rotation but restrict for clean view */
+  controls.enableRotate = true;
   controls.enablePan = false;
   controls.enableZoom = true;
-  /* Show UI */
-  document.getElementById('seeJamBtn').style.display = 'none';
-  document.getElementById('exitJamBtn').style.display = 'block';
-  document.getElementById('jamInfoBar').style.display = 'block';
-  showMsg("🎥 LIVE VIEW — Real 3D city traffic from above");
+
+  document.getElementById('watchBtn').style.display = 'none';
+  document.getElementById('exitBtn').style.display = 'block';
+
+  /* Reset AI explanation steps */
+  document.getElementById('aiSteps').innerHTML = '';
+  document.getElementById('aiExplain').style.display = 'block';
+
+  showMsg("🎥 WATCHING — North corridor at the outer ring");
 }
 
-function exitLiveMode(){
-  isLiveMode = false;
+function exitWatching(){
+  isWatching = false;
   camera.position.copy(savedCamPos);
   controls.target.copy(savedCamTarget);
   controls.enableRotate = true;
   controls.enablePan = true;
   controls.update();
-  document.getElementById('seeJamBtn').style.display = 'block';
-  document.getElementById('exitJamBtn').style.display = 'none';
-  document.getElementById('jamInfoBar').style.display = 'none';
+  document.getElementById('watchBtn').style.display = 'block';
+  document.getElementById('exitBtn').style.display = 'none';
+  document.getElementById('aiExplain').style.display = 'none';
 }
 
-document.getElementById('seeJamBtn').addEventListener('click', enterLiveMode);
-document.getElementById('exitJamBtn').addEventListener('click', exitLiveMode);
+document.getElementById('watchBtn').addEventListener('click', watchTheJam);
+document.getElementById('exitBtn').addEventListener('click', exitWatching);
+
+/* =========================================================
+   AI EXPLANATION LOG — shows live steps of AI solving the jam
+========================================================= */
+let stepCounter = 0;
+function addAIStep(text, type = ''){
+  stepCounter++;
+  const div = document.createElement('div');
+  div.className = 'step ' + type;
+  div.innerHTML = `<div class="num">${stepCounter}</div><div>${text}</div>`;
+  const container = document.getElementById('aiSteps');
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
 
 /* PANEL */
 function showPanel(title, type, text){
@@ -720,7 +747,7 @@ window.closePanel = function(){ document.getElementById("panel").style.display =
 const ray = new THREE.Raycaster();
 const m = new THREE.Vector2();
 renderer.domElement.addEventListener("click", e => {
-  if(isLiveMode) return; /* disable panel clicks in live view */
+  if(isWatching) return;
   m.x = e.clientX / window.innerWidth * 2 - 1;
   m.y = -(e.clientY / window.innerHeight) * 2 + 1;
   ray.setFromCamera(m, camera);
@@ -776,7 +803,7 @@ function setDN(night){
 btn.addEventListener('click', () => setDN(!isNight));
 
 /* =========================================================
-   TRAFFIC STATE MACHINE
+   TRAFFIC SIM
 ========================================================= */
 const clock = new THREE.Clock();
 let simSec = 0;
@@ -794,8 +821,6 @@ const tStateEl = document.getElementById("trafficState");
 const iReason = document.getElementById("incidentReason");
 const aiMsg = document.getElementById("aiMessage");
 const inc = document.getElementById("incident");
-const jamInfoState = document.getElementById("jamInfoState");
-const jamInfoDesc = document.getElementById("jamInfoDesc");
 
 function showMsg(msg){
   aiMsg.textContent = msg;
@@ -812,9 +837,9 @@ function setState(s){
   }
   if(s===1){
     tStateEl.textContent = "TRAFFIC JAM"; tStateEl.style.color = "#ffd15a";
-    iReason.textContent = "HEAVY CONGESTION — ALL CORRIDORS";
+    iReason.textContent = "HEAVY CONGESTION ON OUTER RING";
     tLevel.textContent = "HEAVY"; tFlow.textContent = "28%"; aMode.textContent = "ANALYZING";
-    inc.innerHTML = "<span>INCIDENT:</span> All 4 entry routes congested";
+    inc.innerHTML = "<span>INCIDENT:</span> Outer ring congested — north corridor";
   }
   if(s===2){
     tStateEl.textContent = "AI REROUTING"; tStateEl.style.color = "#67e4ff";
@@ -824,7 +849,7 @@ function setState(s){
   }
   if(s===3){
     tStateEl.textContent = "TRAFFIC CLEAR"; tStateEl.style.color = "#6aff9d";
-    iReason.textContent = "ALL 4 ROUTES CLEARED SUCCESSFULLY";
+    iReason.textContent = "ALL ROUTES CLEARED SUCCESSFULLY";
     tLevel.textContent = "CLEAR"; tFlow.textContent = "96%"; aMode.textContent = "OPTIMAL";
     inc.innerHTML = "<span>SYSTEM:</span> All routes flowing normally";
   }
@@ -833,43 +858,59 @@ function setState(s){
 function activateJam(){
   tState = 1; iStart = simSec;
   setState(1);
-  showMsg("⚠ HEAVY TRAFFIC JAM ON ALL 4 ROUTES — AI ANALYZING");
+  showMsg("⚠ TRAFFIC JAM DETECTED ON OUTER RING");
+
+  /* Add AI log steps */
+  addAIStep("<strong>[DETECT]</strong> AI monitors traffic sensors on all 4 outer-ring corridors.", 'warning');
+  addAIStep("<strong>[ALERT]</strong> Sensor #12 (North corridor) detected vehicle speed dropped to 12 km/h — jam forming.", 'warning');
+  addAIStep("<strong>[VERIFY]</strong> Cross-checking with CCTV feeds — 47 vehicles piled up on outer ring near north junction.", 'warning');
+  addAIStep("<strong>[REASON]</strong> Cause: Heavy inbound traffic. Bottleneck at outer-ring north corner.", 'warning');
 }
+
 function activateReroute(){
   tState = 2; rStart = simSec;
   cars.forEach(d => { if(d.route === "outer") d.rerouted = true; });
   setState(2);
   showMsg("🤖 AI REROUTING VEHICLES VIA INNER RING");
+
+  /* Add AI log steps */
+  addAIStep("<strong>[PLAN]</strong> AI calculating optimal bypass routes through inner-city roads.", 'action');
+  addAIStep("<strong>[SIGNALS]</strong> Synchronizing all traffic lights on inner ring to create green corridor.", 'action');
+  addAIStep("<strong>[REROUTE]</strong> Activating 8 diversion signals — redirecting outer-ring cars to inner ring at junctions x=±520.", 'action');
+  addAIStep("<strong>[MERGE]</strong> Vehicles merging onto inner ring smoothly. Outer-ring jam starting to clear.", 'action');
 }
+
 function clearAll(){
   tState = 3;
   setState(3);
   showMsg("✅ TRAFFIC CLEARED — ALL ROUTES OPTIMAL");
+
+  /* Add AI log steps */
+  addAIStep("<strong>[CLEAR]</strong> Outer-ring north corridor cleared. Speed restored to 92 km/h.", 'success');
+  addAIStep("<strong>[RESULT]</strong> Jam fully resolved in 22 seconds. Inner ring handled the extra flow.", 'success');
+  addAIStep("<strong>[AI MODE]</strong> Returning to monitoring mode. All 4 routes at 96% flow.", 'success');
 }
 
 function updateCars(){
   for(const d of cars){
     let s = d.baseSpeed;
 
-    /* Jam: outer ring cars slow to a crawl */
+    /* Jam: outer ring slows dramatically near north */
     if(tState === 1 && d.route === "outer"){
       const p = routeP(d.route, d.progress, d.laneOffset);
-      /* Near north (z=-635) they crawl */
       const distToNorth = Math.abs(p.z + 635);
-      if(distToNorth < 200) s *= 0.15;
-      else s *= 0.4;
+      if(distToNorth < 250) s *= 0.12;
+      else s *= 0.45;
     }
 
-    /* Reroute: outer cars move to inner */
+    /* Reroute: outer cars switch to inner at x=±520 junctions */
     if(tState === 2){
       const prog = Math.min((simSec - rStart)/RESOLVE_DURATION, 1);
       s = d.baseSpeed * (.45 + prog*.55);
       if(d.route === "outer" && d.rerouted){
         const p = routeP("outer", d.progress, d.laneOffset);
-        /* Reroute when near x=±520 junctions */
         if(Math.abs(p.x+520) < 40 || Math.abs(p.x-520) < 40){
           d.route = "inner"; d.rerouted = false;
-          /* Find nearest point on inner route */
           let bp = 0, bd = Infinity;
           for(let i=0; i<50; i++){
             const tt = routeP("inner", i/50, d.laneOffset);
@@ -925,27 +966,6 @@ function updTimer(){
   simTime.textContent = String(mm).padStart(2,"0") + ":" + String(ss).padStart(2,"0");
 }
 
-function updJamInfo(){
-  if(tState === 0){
-    jamInfoState.textContent = "🟢 WATCHING TRAFFIC";
-    jamInfoState.style.color = "#6aff9d";
-    jamInfoDesc.innerHTML = "Real 3D city · All 4 outer routes + inner ring flowing smoothly · Traffic is normal";
-  } else if(tState === 1){
-    jamInfoState.textContent = "🔴 TRAFFIC JAM — LIVE";
-    jamInfoState.style.color = "#ff5252";
-    jamInfoDesc.innerHTML = "Watch the actual 3D cars slowing down on the north corridor · <strong>AI analyzing 4 routes...</strong>";
-  } else if(tState === 2){
-    jamInfoState.textContent = "🔵 AI REROUTING IN ACTION";
-    jamInfoState.style.color = "#22cfff";
-    jamInfoDesc.innerHTML = "AI is rerouting the outer-ring cars onto the inner-city roads · Watch the cars change lanes and take the bypass";
-  } else {
-    jamInfoState.textContent = "🟢 TRAFFIC CLEARED BY AI";
-    jamInfoState.style.color = "#6aff9d";
-    jamInfoDesc.innerHTML = "All 4 routes back to normal · AI successfully resolved the jam by rerouting vehicles";
-  }
-}
-
-/* Animation */
 let fc = 0;
 function animate(){
   requestAnimationFrame(animate);
@@ -958,17 +978,6 @@ function animate(){
   updSys();
   updateCars();
   updateTL(t);
-  updJamInfo();
-
-  /* Smooth live camera follow — keeps looking down at city center */
-  if(isLiveMode){
-    const cy = 1400;
-    /* Subtle drift so it feels "live" */
-    const driftX = Math.sin(t * 0.3) * 20;
-    const driftZ = Math.cos(t * 0.25) * 20;
-    camera.position.lerp(new THREE.Vector3(driftX, cy, 505 + driftZ), 0.02);
-    controls.target.lerp(new THREE.Vector3(0, 0, 505), 0.05);
-  }
 
   if(fc % 2 === 0){
     for(let i=0; i<turbines.length; i++) turbines[i].rotation.z = t*2.4;
@@ -993,6 +1002,17 @@ function animate(){
 
   if(fc % 3 === 0){
     controlScreen.material.emissiveIntensity = 2 + Math.sin(t*2.5)*.5;
+  }
+
+  /* Auto-hide watch button if not in jam state */
+  if(tState === 0 || tState === 3){
+    if(!isWatching){
+      document.getElementById('watchBtn').style.display = 'none';
+    }
+  } else {
+    if(!isWatching){
+      document.getElementById('watchBtn').style.display = 'block';
+    }
   }
 
   controls.update();
