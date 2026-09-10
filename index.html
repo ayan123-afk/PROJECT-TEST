@@ -862,154 +862,186 @@ function cityBuilding(x, z, w, h, d, color){
   return g;
 }
 
-/* Places for tall buildings around the city */
-const cityBuildingData = [
-  /* Bank area — tall buildings nearby */
-  {x: 900, z: 900, w: 90, h: 220, d: 90, c: 0x7a8288},
-  {x: 300, z: 900, w: 80, h: 180, d: 80, c: 0x6b7278},
-  {x: 900, z: 300, w: 85, h: 240, d: 85, c: 0x808890},
-  {x: 1400, z: 900, w: 95, h: 200, d: 95, c: 0x6e767c},
-  {x: 900, z: 1400, w: 80, h: 190, d: 80, c: 0x7e878d},
+/* ═══════════════════════════════════════════
+   SMART PUBLIC SPACES — replaces generic
+   code-built apartment blocks
+   ═══════════════════════════════════════════ */
 
-  /* Society area — buildings nearby */
-  {x: -900, z: 900, w: 90, h: 190, d: 90, c: 0x767e84},
-  {x: -300, z: 900, w: 85, h: 210, d: 85, c: 0x727a80},
-  {x: -900, z: 300, w: 80, h: 170, d: 80, c: 0x7a8288},
-  {x: -1400, z: 900, w: 95, h: 230, d: 95, c: 0x6b7278},
-  {x: -900, z: 1400, w: 85, h: 200, d: 85, c: 0x808890},
-
-  /* School area */
-  {x: -900, z: -900, w: 80, h: 150, d: 80, c: 0x7a8288},
-  {x: -300, z: -900, w: 75, h: 170, d: 75, c: 0x6e767c},
-  {x: -900, z: -300, w: 85, h: 190, d: 85, c: 0x767e84},
-  {x: -1400, z: -900, w: 90, h: 210, d: 90, c: 0x727a80},
-  {x: -900, z: -1400, w: 80, h: 180, d: 80, c: 0x7e878d},
-
-  /* Hospital area */
-  {x: 900, z: -900, w: 80, h: 160, d: 80, c: 0x808890},
-  {x: 300, z: -900, w: 75, h: 180, d: 75, c: 0x7a8288},
-  {x: 900, z: -300, w: 85, h: 200, d: 85, c: 0x6b7278},
-  {x: 1400, z: -900, w: 90, h: 220, d: 90, c: 0x767e84},
-  {x: 900, z: -1400, w: 80, h: 190, d: 80, c: 0x727a80},
-
-  /* Farm area — tall buildings nearby */
-  {x: 2100, z: -900, w: 90, h: 200, d: 90, c: 0x6e767c},
-  {x: 2100, z: -300, w: 85, h: 220, d: 85, c: 0x7a8288},
-  {x: 2500, z: -900, w: 95, h: 240, d: 95, c: 0x808890},
-  {x: 2100, z: 300, w: 80, h: 180, d: 80, c: 0x727a80},
-
-  /* Marriage hall area */
-  {x: 900, z: 2100, w: 90, h: 210, d: 90, c: 0x767e84},
-  {x: 300, z: 2100, w: 85, h: 190, d: 85, c: 0x7a8288},
-  {x: 1500, z: 2100, w: 95, h: 230, d: 95, c: 0x6b7278},
-  {x: 900, z: 2700, w: 80, h: 200, d: 80, c: 0x6e767c},
-
-  /* Gas station area */
-  {x: 2500, z: 1500, w: 90, h: 220, d: 90, c: 0x808890},
-  {x: 2500, z: 2100, w: 85, h: 200, d: 85, c: 0x727a80},
-  {x: 2100, z: 2500, w: 90, h: 240, d: 90, c: 0x7a8288},
-
-  /* Sewage area */
-  {x: 2500, z: 900, w: 85, h: 180, d: 85, c: 0x767e84},
-  {x: 2500, z: 300, w: 80, h: 210, d: 80, c: 0x6e767c},
-  {x: 2500, z: -300, w: 90, h: 230, d: 90, c: 0x7e878d},
-
-  /* Outer ring tall towers */
-  {x: -3300, z: 0, w: 110, h: 260, d: 110, c: 0x6a7278},
-  {x: 3300, z: 0, w: 115, h: 280, d: 115, c: 0x767e84},
-  {x: 0, z: -3300, w: 120, h: 270, d: 120, c: 0x727a80},
-  {x: 0, z: 3300, w: 118, h: 250, d: 118, c: 0x7a8288},
-
-  /* Far outer buildings */
-  {x: -3300, z: -1500, w: 100, h: 220, d: 100, c: 0x808890},
-  {x: 3300, z: -1500, w: 105, h: 240, d: 105, c: 0x6e767c},
-  {x: -3300, z: 1500, w: 100, h: 230, d: 100, c: 0x767e84},
-  {x: 3300, z: 1500, w: 105, h: 260, d: 105, c: 0x6a7278},
-  {x: -1500, z: -3300, w: 100, h: 210, d: 100, c: 0x727a80},
-  {x: 1500, z: -3300, w: 105, h: 250, d: 105, c: 0x7a8288},
-  {x: -1500, z: 3300, w: 100, h: 240, d: 100, c: 0x808890},
-  {x: 1500, z: 3300, w: 105, h: 220, d: 105, c: 0x6e767c},
-
-  /* Extra scattered tall buildings */
-  {x: -1800, z: -1800, w: 90, h: 200, d: 90, c: 0x767e84},
-  {x: 1800, z: -1800, w: 95, h: 230, d: 95, c: 0x727a80},
-  {x: -1800, z: 1800, w: 90, h: 210, d: 90, c: 0x7a8288},
-  {x: 1800, z: 1800, w: 95, h: 240, d: 95, c: 0x6b7278},
-  {x: -2100, z: 0, w: 85, h: 190, d: 85, c: 0x808890},
-  {x: 2100, z: 0, w: 85, h: 200, d: 85, c: 0x767e84},
-  {x: 0, z: -2100, w: 90, h: 220, d: 90, c: 0x727a80},
-  {x: 0, z: 2100, w: 90, h: 210, d: 90, c: 0x7e878d},
-];
-
-/* Check position is free (not on road, not on existing place) */
-function isOnRoad(x, z){
-  const roadClear = 80;
-  for(const rz of roadZs){
-    if(Math.abs(z - rz) < roadClear) return true;
+function plaza(x,z,w,d,labelColor=0x22cfff){
+  const g=new THREE.Group();
+  g.position.set(x,5,z);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(w,1.2,d),mat(0x596166,.88));
+  base.position.y=.6; g.add(base);
+  const inner=new THREE.Mesh(new THREE.BoxGeometry(w-18,.5,d-18),mat(0x777e82,.92));
+  inner.position.y=1.25; g.add(inner);
+  const border=new THREE.MeshStandardMaterial({
+    color:labelColor,emissive:labelColor,emissiveIntensity:1.8,
+    metalness:.55,roughness:.25
+  });
+  for(const p of [
+    [0,1.8,-d/2+5,w,2,4],[0,1.8,d/2-5,w,2,4],
+    [-w/2+5,1.8,0,4,2,d],[w/2-5,1.8,0,4,2,d]
+  ]){
+    const b=new THREE.Mesh(new THREE.BoxGeometry(p[3],p[4],p[5]),border);
+    b.position.set(p[0],p[1],p[2]); g.add(b);
   }
-  for(const rx of roadXs){
-    if(Math.abs(x - rx) < roadClear) return true;
-  }
-  return false;
+  scene.add(g);
+  return g;
 }
 
-const occupiedSpots = [
-  {x: -600, z: -600, r: 260},
-  {x: 600, z: -600, r: 250},
-  {x: -600, z: 600, r: 330},
-  {x: 600, z: 600, r: 300},
-  {x: 1800, z: -600, r: 400},
-  {x: 600, z: 1800, r: 290},
-  {x: 1800, z: 1750, r: 320},
-  {x: 1800, z: 600, r: 290},
-  {x: 0, z: 0, r: 130},
-  {x: -3600, z: 3600, r: 900},
-  {x: 3600, z: -3600, r: 600},
-  {x: -3600, z: -3600, r: 600},
-  {x: 3600, z: 3600, r: 600},
-];
-
-function isFreeSpot(x, z, r){
-  for(const s of occupiedSpots){
-    const dx = x - s.x;
-    const dz = z - s.z;
-    const minDist = (s.r + r);
-    if(dx*dx + dz*dz < minDist * minDist) return false;
+function bench(x,z,rot=0){
+  const g=new THREE.Group(); g.position.set(x,5,z); g.rotation.y=rot;
+  const wood=mat(0x5b4638,.75,.1), metal=mat(0x273238,.45,.35);
+  const seat=new THREE.Mesh(new THREE.BoxGeometry(30,3,7),wood);
+  seat.position.y=7; g.add(seat);
+  const back=new THREE.Mesh(new THREE.BoxGeometry(30,12,3),wood);
+  back.position.set(0,12,-3); g.add(back);
+  for(const xx of [-11,11]){
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(3,7,5),metal);
+    leg.position.set(xx,3.5,0); g.add(leg);
   }
-  return true;
+  scene.add(g);
 }
 
-/* Place all city buildings */
-cityBuildingData.forEach(b => {
-  if(!isOnRoad(b.x, b.z) && isFreeSpot(b.x, b.z, Math.max(b.w, b.d) / 2)){
-    cityBuilding(b.x, b.z, b.w, b.h, b.d, b.c);
-    occupiedSpots.push({x: b.x, z: b.z, r: Math.max(b.w, b.d) / 2 + 20});
+function modernPark(x,z,w,d){
+  plaza(x,z,w,d,0x2ecc71);
+  const path=mat(0xb7b8b8,.95);
+  const p1=new THREE.Mesh(new THREE.BoxGeometry(w-50,1.5,12),path);
+  p1.position.set(x,7,z); scene.add(p1);
+  const p2=new THREE.Mesh(new THREE.BoxGeometry(12,1.5,d-50),path);
+  p2.position.set(x,7,z); scene.add(p2);
+  for(let i=0;i<14;i++){
+    const a=(i/14)*Math.PI*2;
+    const rr=Math.min(w,d)*.34;
+    const tx=x+Math.cos(a)*rr, tz=z+Math.sin(a)*rr;
+    if(isFree(tx,tz)) tree(tx,tz,.85+Math.random()*.25);
   }
-});
+  for(let i=0;i<8;i++){
+    const a=(i/8)*Math.PI*2;
+    const rr=Math.min(w,d)*.23;
+    bench(x+Math.cos(a)*rr,z+Math.sin(a)*rr,a+Math.PI/2);
+  }
+  for(let i=0;i<18;i++){
+    const a=Math.random()*Math.PI*2, rr=Math.random()*Math.min(w,d)*.32;
+    flower(x+Math.cos(a)*rr,z+Math.sin(a)*rr);
+  }
+}
 
-/* Small filled blocks between tall buildings */
-const smallBlockData = [
-  {x: -1700, z: -900, w: 55, h: 90, d: 55, c: 0x7a8288},
-  {x: -1500, z: -600, w: 50, h: 80, d: 50, c: 0x6b7278},
-  {x: -1700, z: 0, w: 55, h: 95, d: 55, c: 0x808890},
-  {x: 1700, z: -900, w: 55, h: 90, d: 55, c: 0x6e767c},
-  {x: 1500, z: -600, w: 50, h: 85, d: 50, c: 0x767e84},
-  {x: 1700, z: 0, w: 55, h: 100, d: 55, c: 0x727a80},
-  {x: -1700, z: 900, w: 55, h: 85, d: 55, c: 0x7e878d},
-  {x: 1700, z: 900, w: 55, h: 95, d: 55, c: 0x6a7278},
-  {x: -1500, z: 1500, w: 50, h: 90, d: 50, c: 0x7a8288},
-  {x: 1500, z: 1500, w: 50, h: 85, d: 50, c: 0x767e84},
-  {x: -900, z: -1700, w: 55, h: 90, d: 55, c: 0x6e767c},
-  {x: 900, z: -1700, w: 55, h: 95, d: 55, c: 0x808890},
-  {x: -900, z: 1700, w: 55, h: 85, d: 55, c: 0x727a80},
-  {x: 900, z: 1700, w: 55, h: 90, d: 55, c: 0x7a8288},
-];
-smallBlockData.forEach(b => {
-  if(!isOnRoad(b.x, b.z) && isFreeSpot(b.x, b.z, 40)){
-    cityBuilding(b.x, b.z, b.w, b.h, b.d, b.c);
-    occupiedSpots.push({x: b.x, z: b.z, r: 40});
+function parkingLot(x,z,w,d,spots=8){
+  const g=new THREE.Group(); g.position.set(x,5,z);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(w,1.1,d),mat(0x30373a,.96));
+  base.position.y=.55; g.add(base);
+  const line=whiteLineMaterial;
+  const cols=Math.max(2,Math.floor(spots/2));
+  const sx=(w-40)/cols;
+  for(let i=0;i<=cols;i++){
+    const l=new THREE.Mesh(new THREE.BoxGeometry(.9,1.4,d-20),line);
+    l.position.set(-w/2+20+i*sx,1.5,0); g.add(l);
   }
-});
+  const entrance=new THREE.Mesh(new THREE.BoxGeometry(w-20,1.2,4),yellowLineMaterial);
+  entrance.position.set(0,1.6,-d/2+8); g.add(entrance);
+  for(let i=0;i<Math.min(spots,12);i++){
+    const px=-w/2+35+(i%cols)*sx;
+    const pz=(i<cols ? -d*.23 : d*.23);
+    const car=makeCar(carColors[(i+3)%carColors.length]);
+    car.scale.setScalar(.55);
+    car.position.set(px,2.2,pz);
+    car.rotation.y=i<cols?0:Math.PI;
+    g.add(car);
+  }
+  scene.add(g);
+}
+
+function busStop(x,z,rot=0){
+  const g=new THREE.Group(); g.position.set(x,5,z); g.rotation.y=rot;
+  const frame=mat(0x173b4a,.35,.5);
+  const glass=new THREE.MeshStandardMaterial({
+    color:0x72ddff,transparent:true,opacity:.28,roughness:.1,metalness:.25
+  });
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(70,4,24),frame);
+  roof.position.y=42; g.add(roof);
+  for(const xx of [-30,30]){
+    const p=new THREE.Mesh(new THREE.BoxGeometry(3,38,3),frame);
+    p.position.set(xx,20,0); g.add(p);
+  }
+  const back=new THREE.Mesh(new THREE.BoxGeometry(64,32,2),glass);
+  back.position.set(0,23,-10); g.add(back);
+  const seat=new THREE.Mesh(new THREE.BoxGeometry(50,3,10),mat(0x3c5660,.6,.3));
+  seat.position.set(0,12,0); g.add(seat);
+  board("SMART BUS",x,5,z+18,60,10,0x087fa8);
+  scene.add(g);
+}
+
+function evStation(x,z,rot=0){
+  const g=new THREE.Group(); g.position.set(x,5,z); g.rotation.y=rot;
+  const base=new THREE.Mesh(new THREE.BoxGeometry(80,1.5,35),mat(0x20272a,.9));
+  base.position.y=.8; g.add(base);
+  for(let i=0;i<3;i++){
+    const charger=new THREE.Mesh(new THREE.BoxGeometry(7,28,7),mat(0x183e4c,.35,.4));
+    charger.position.set(-25+i*25,14,0); g.add(charger);
+    const glow=new THREE.Mesh(new THREE.BoxGeometry(8,5,.8),
+      new THREE.MeshStandardMaterial({color:0x22ff9d,emissive:0x22ff9d,emissiveIntensity:2.5}));
+    glow.position.set(-25+i*25,23,3.6); g.add(glow);
+  }
+  scene.add(g);
+}
+
+function solarPergola(x,z,w=140,d=70){
+  const g=new THREE.Group(); g.position.set(x,5,z);
+  const frame=mat(0x36464d,.4,.55);
+  for(const xx of [-w/2+8,w/2-8]) for(const zz of [-d/2+8,d/2-8]){
+    const p=new THREE.Mesh(new THREE.BoxGeometry(5,55,5),frame);
+    p.position.set(xx,27.5,zz); g.add(p);
+  }
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(w,4,d),
+    new THREE.MeshStandardMaterial({color:0x082c4b,roughness:.18,metalness:.7,emissive:0x063b62,emissiveIntensity:.7}));
+  roof.position.y=56; g.add(roof);
+  scene.add(g);
+}
+
+function playground(x,z){
+  const g=new THREE.Group(); g.position.set(x,5,z);
+  const floor=new THREE.Mesh(new THREE.CylinderGeometry(85,85,2,32),mat(0xd0a15c,.9));
+  floor.position.y=1; g.add(floor);
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(3,3,55,8),mat(0x315d70,.5,.3));
+  pole.position.set(-35,27,0); g.add(pole);
+  const slide=new THREE.Mesh(new THREE.TorusGeometry(25,3,8,20,Math.PI),mat(0x22cfff,.45,.3));
+  slide.rotation.z=Math.PI/2; slide.position.set(20,22,0); g.add(slide);
+  for(const xx of [-45,-20,5,30,55]){
+    const s=new THREE.Mesh(new THREE.BoxGeometry(4,16,4),mat(0x2ecc71,.6));
+    s.position.set(xx,8,35); g.add(s);
+  }
+  scene.add(g);
+}
+
+/* Carefully distributed public spaces — no generic apartment blocks */
+modernPark(-1800,-1800,520,520);
+modernPark(1800,1800,520,520);
+modernPark(-1800,1800,500,500);
+modernPark(1800,-1800,500,500);
+
+parkingLot(-1800,-900,360,190,8);
+parkingLot(1800,900,360,190,8);
+parkingLot(-900,1800,360,190,8);
+parkingLot(900,-1800,360,190,8);
+
+busStop(-1500,-600,0);
+busStop(1500,600,Math.PI);
+busStop(-600,1500,Math.PI/2);
+busStop(600,-1500,-Math.PI/2);
+
+evStation(-1800,-900,0);
+evStation(1800,900,Math.PI);
+evStation(-900,1800,Math.PI/2);
+evStation(900,-1800,-Math.PI/2);
+
+solarPergola(-2100,0,180,90);
+solarPergola(2100,0,180,90);
+solarPergola(0,-2100,180,90);
+solarPergola(0,2100,180,90);
+
+playground(-1800,-900);
+playground(1800,900);
 
 /* ═══════════════════════════════════════════
    NATURE FILLER — trees around tall buildings
