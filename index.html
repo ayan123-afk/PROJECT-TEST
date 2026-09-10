@@ -192,7 +192,6 @@ createBoundary();
 
 /* =========================================================
    ZONES
-   ── School & Hospital are now SIDE-BY-SIDE (equal row) ──
 ========================================================= */
 function createZone(x, z, width, depth){
   const zone = new THREE.Mesh(new THREE.BoxGeometry(width, .35, depth), zoneMaterial);
@@ -206,10 +205,10 @@ function createZone(x, z, width, depth){
   trim.position.set(x, 4.5, z);
   scene.add(trim);
 }
-/* SCHOOL — now directly LEFT of hospital, same row, same size */
-createZone(-60, -210, 340, 250);
-/* HOSPITAL — same row, immediately beside school */
-createZone(290, -210, 340, 250);
+/* SCHOOL — beside hospital (left side) */
+createZone(-370, -210, 340, 250);
+/* HOSPITAL — beside school (right side) */
+createZone(  0, -210, 340, 250);
 /* SOCIETY */
 createZone(-260, 210, 480, 330);
 /* BANK */
@@ -281,10 +280,10 @@ function createSidewalk(x, z, width, depth){
   sidewalk.position.set(x, 5.05, z);
   scene.add(sidewalk);
 }
-createSidewalk(-60, -350, 340, 7);
-createSidewalk(290, -350, 340, 7);
+createSidewalk(-370, -350, 340, 7);
+createSidewalk(   0, -350, 340, 7);
 createSidewalk(-260, 390, 470, 7);
-createSidewalk(350, 355, 310, 7);
+createSidewalk( 350, 355, 310, 7);
 
 /* =========================================================
    SIGN BOARD
@@ -326,8 +325,8 @@ function createBoard(text, x, y, z, width=70, height=10){
   scene.add(group);
   return group;
 }
-createBoard("AMERICAN HIGH SCHOOL", -60, 5, -350, 130, 11);
-createBoard("BSS SMART HOSPITAL", 290, 5, -350, 130, 11);
+createBoard("AMERICAN HIGH SCHOOL", -370, 5, -350, 130, 11);
+createBoard("BSS SMART HOSPITAL",     0, 5, -350, 130, 11);
 createBoard("BSS SMART SOCIETY", -260, 5, 390, 110, 11);
 createBoard("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 createBoard("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
@@ -1253,34 +1252,23 @@ createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
 /* =========================================================
    DAGASHIYA SHOPS
 ========================================================= */
-loadDagashiyaShop(-200, -110, 1.4, 0, "School Canteen");
-loadDagashiyaShop(370, -110, 1.4, 0, "Hospital Canteen");
-loadDagashiyaShop(270, 290, 1.4, 0, "Bank Dagashiya 1");
-loadDagashiyaShop(430, 290, 1.4, 0, "Bank Dagashiya 2");
+loadDagashiyaShop(-520, -110, 1.4, 0, "School Canteen");
+loadDagashiyaShop( 150, -110, 1.4, 0, "Hospital Canteen");
+loadDagashiyaShop( 270,  290, 1.4, 0, "Bank Dagashiya 1");
+loadDagashiyaShop( 430,  290, 1.4, 0, "Bank Dagashiya 2");
 
 /* =========================================================
    ██████  TREES AROUND SCHOOL, HOSPITAL AND BANK  ██████
+   (NO trees inside the school zone — only around hospital & bank)
 ========================================================= */
 
-/* --- Trees around SCHOOL (zone 340x250 at -60,-210) --- */
-const schoolTrees = [
-  [-200, -100], [-160, -100], [ 60, -100], [ 100, -100],
-  [-200, -320], [-160, -320], [ 60, -320], [ 100, -320],
-  [-210, -160], [-210, -260],
-  [ 110, -160], [ 110, -260],
-  [-100, -345], [   0, -345],
-];
-schoolTrees.forEach((pos, i) => {
-  createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
-});
-
-/* --- Trees around HOSPITAL (zone 340x250 at 290,-210) --- */
+/* --- Trees around HOSPITAL (zone 340x250 at 0,-210) --- */
 const hospitalTrees = [
-  [ 160, -100], [ 200, -100], [ 400, -100], [ 440, -100],
-  [ 160, -320], [ 200, -320], [ 400, -320], [ 440, -320],
+  [-100, -100], [ -60, -100], [ 100, -100], [ 140, -100],
+  [-100, -320], [ -60, -320], [ 100, -320], [ 140, -320],
+  [-110, -160], [-110, -260],
   [ 150, -160], [ 150, -260],
-  [ 450, -160], [ 450, -260],
-  [ 240, -345], [ 340, -345],
+  [ -50, -345], [  50, -345],
 ];
 hospitalTrees.forEach((pos, i) => {
   createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
@@ -1297,6 +1285,8 @@ const bankTrees = [
 bankTrees.forEach((pos, i) => {
   createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
 });
+
+/* NO TREES INSIDE THE SCHOOL ZONE — school zone is at -370,-210 */
 
 /* =========================================================
    CAR SYSTEM
@@ -1409,10 +1399,10 @@ function loadBuilding(file, targetSize, position, type){
     clickable.push({ object:building, type });
   }, undefined, error => { console.error(file, error); });
 }
-/* SCHOOL — now beside hospital */
-loadBuilding("./american_high_school.glb", 200, [-60,-210], "school");
-/* HOSPITAL — now beside school */
-loadBuilding("./low_poly_hospital.glb", 180, [290,-210], "hospital");
+/* SCHOOL — in left zone beside hospital */
+loadBuilding("./american_high_school.glb", 200, [-370,-210], "school");
+/* HOSPITAL — in right zone beside school */
+loadBuilding("./low_poly_hospital.glb", 180, [0,-210], "hospital");
 loadBuilding("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 loadBuilding("./us_bank_tower.glb", 260, [350,210], "bank");
 
@@ -1476,7 +1466,7 @@ renderer.domElement.addEventListener("click", event => {
     if(!hit.length) continue;
     if(item.type==="school"){
       showPanel("American High School", "EDUCATION ZONE",
-        "A future-ready American-style high school with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. A School Canteen (Dagashiya-style snack shop) serves students nearby. The campus is surrounded by lush trees.");
+        "A future-ready American-style high school with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. A School Canteen (Dagashiya-style snack shop) serves students nearby.");
     }
     if(item.type==="hospital"){
       showPanel("Low Poly Hospital", "HEALTHCARE ZONE",
