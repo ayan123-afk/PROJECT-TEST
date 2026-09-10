@@ -128,7 +128,7 @@ controls.maxDistance = 3000;
 controls.target.set(0, 5, 0);
 
 /* =========================================================
-   LIGHTING — 2 lights only
+   LIGHTING — ONLY 2 REAL LIGHTS (keeps perf high)
 ========================================================= */
 const ambient = new THREE.HemisphereLight(0xf8fcff, 0x315c38, 3.7);
 scene.add(ambient);
@@ -269,7 +269,7 @@ board("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 board("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
 
 /* =========================================================
-   STREET LIGHTS
+   STREET LIGHTS — emissive glow only (NO point lights!)
 ========================================================= */
 const streetBulbMats = [];
 function sl(x, z){
@@ -459,141 +459,6 @@ function tree(x, z, s=1){
 }
 
 /* =========================================================
-   ██████ PEOPLE (PEDESTRIANS) ██████
-   Low-poly figures: head, body, 2 legs, 2 arms
-   Moving along sidewalks and zones
-========================================================= */
-const people = [];
-
-/* Shared geometries (created once, reused) */
-const headGeo = new THREE.SphereGeometry(1.6, 8, 6);
-const bodyGeo = new THREE.BoxGeometry(2.6, 4.5, 1.6);
-const legGeo = new THREE.BoxGeometry(.9, 3.5, .9);
-const armGeo = new THREE.BoxGeometry(.7, 3.2, .7);
-
-/* Skin colors */
-const skinColors = [0xf2c9a0, 0xd9a373, 0xa06a3c, 0x6b4a2f, 0xffd8b8];
-
-/* Shirt colors */
-const shirtColors = [
-  0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6,
-  0x1abc9c, 0xe67e22, 0x34495e, 0xc0392b, 0x16a085,
-  0xd35400, 0x8e44ad, 0x27ae60, 0x2980b9, 0xd81b60
-];
-
-/* Pants colors */
-const pantsColors = [
-  0x2c3e50, 0x34495e, 0x1a252f, 0x4a4a4a, 0x3d3d3d,
-  0x2a2a3a, 0x1f3a5f, 0x5b2c2c
-];
-
-function createPerson(){
-  const g = new THREE.Group();
-  const skin = skinColors[Math.floor(Math.random()*skinColors.length)];
-  const shirt = shirtColors[Math.floor(Math.random()*shirtColors.length)];
-  const pants = pantsColors[Math.floor(Math.random()*pantsColors.length)];
-
-  const skinMat = mat(skin, .9);
-  const shirtMat = mat(shirt, .85);
-  const pantsMat = mat(pants, .85);
-
-  /* Head */
-  const head = new THREE.Mesh(headGeo, skinMat);
-  head.position.y = 8.5;
-  g.add(head);
-
-  /* Body */
-  const body = new THREE.Mesh(bodyGeo, shirtMat);
-  body.position.y = 5;
-  g.add(body);
-
-  /* Legs (2) */
-  const legL = new THREE.Mesh(legGeo, pantsMat);
-  legL.position.set(-.6, 1.75, 0);
-  g.add(legL);
-  const legR = new THREE.Mesh(legGeo, pantsMat);
-  legR.position.set(.6, 1.75, 0);
-  g.add(legR);
-
-  /* Arms (2) */
-  const armL = new THREE.Mesh(armGeo, shirtMat);
-  armL.position.set(-1.9, 5, 0);
-  g.add(armL);
-  const armR = new THREE.Mesh(armGeo, shirtMat);
-  armR.position.set(1.9, 5, 0);
-  g.add(armR);
-
-  return g;
-}
-
-/* Spawn pedestrians walking around the city */
-function spawnPerson(x, z, direction, speed){
-  const p = createPerson();
-  p.position.set(x, 5, z);
-  p.rotation.y = direction;
-  scene.add(p);
-
-  people.push({
-    obj: p,
-    x: x,
-    z: z,
-    dir: direction,
-    speed: speed,
-    legL: p.children[2],
-    legR: p.children[3],
-    armL: p.children[4],
-    armR: p.children[5],
-    phase: Math.random() * Math.PI * 2
-  });
-}
-
-/* Path definition — people walk along squares/circles */
-const walkPaths = [
-  /* Around the school */
-  { cx: -280, cz: -210, radius: 140, count: 5 },
-  /* Around the hospital */
-  { cx: 250, cz: -210, radius: 140, count: 5 },
-  /* Around the society */
-  { cx: -260, cz: 210, radius: 180, count: 6 },
-  /* Around the bank */
-  { cx: 350, cz: 210, radius: 120, count: 4 },
-  /* Around the AI controller */
-  { cx: 0, cz: 505, radius: 70, count: 3 },
-  /* Around the farm */
-  { cx: 1160, cz: 0, radius: 220, count: 4 },
-];
-
-walkPaths.forEach(wp => {
-  for(let i=0; i<wp.count; i++){
-    const angle = (i / wp.count) * Math.PI * 2 + Math.random() * 0.4;
-    const px = wp.cx + Math.cos(angle) * wp.radius;
-    const pz = wp.cz + Math.sin(angle) * wp.radius;
-    /* Face the direction of travel (tangent to circle) */
-    const dir = Math.atan2(Math.cos(angle), -Math.sin(angle));
-    spawnPerson(px, pz, dir, 0.015 + Math.random() * 0.012);
-  }
-});
-
-/* Also some pedestrians standing near canteens (idle) */
-[
-  [-430, -85], [-415, -80], [400, -85], [415, -80],
-  [270, 265], [285, 270], [430, 265], [445, 270]
-].forEach((pos, i) => {
-  const p = createPerson();
-  p.position.set(pos[0], 5, pos[1]);
-  p.rotation.y = Math.random() * Math.PI * 2;
-  scene.add(p);
-  /* Idle people don't move — just a slight sway */
-  people.push({
-    obj: p, x: pos[0], z: pos[1], dir: 0, speed: 0,
-    legL: p.children[2], legR: p.children[3],
-    armL: p.children[4], armR: p.children[5],
-    phase: Math.random() * Math.PI * 2,
-    idle: true
-  });
-});
-
-/* =========================================================
    DAGASHIYA SHOP
 ========================================================= */
 function shop(x, z, scale=1, name){
@@ -666,7 +531,7 @@ loader.load("./antena.glb", g => {
   clickable.push({ object: a, type: "antenna", name: "Antenna 2" });
 }, undefined, () => {});
 
-/* Wind turbines */
+/* Wind turbines — 24 */
 const turbines = [];
 const turbTowerMat = mat(0xeeeeee, .4, .3);
 const turbTowerGeo = new THREE.CylinderGeometry(.9, 1.4, 55, 6);
@@ -775,7 +640,9 @@ const controlScreen = new THREE.Mesh(
 controlScreen.position.set(0, 36, -11.3);
 solarPark.add(controlScreen);
 
-/* 10 batteries */
+/* =========================================================
+   10 BATTERIES (inside power zone)
+========================================================= */
 const batteryRings = [];
 const batteryPositions = [
   [-380, 620], [-230, 620], [-80, 620], [70, 620], [220, 620],
@@ -790,6 +657,8 @@ batteryPositions.forEach((pos, i) => {
     b.position.set(pos[0], 6, pos[1]);
     b.rotation.y = Math.PI/2;
     powerZone.add(b);
+
+    /* Ring with own material so we can change emissive at night */
     const rMat = new THREE.MeshStandardMaterial({
       color: 0x22ff9d, emissive: 0x22ff9d, emissiveIntensity: 1.5
     });
@@ -798,6 +667,7 @@ batteryPositions.forEach((pos, i) => {
     r.position.set(pos[0], 7, pos[1]);
     powerZone.add(r);
     batteryRings.push(rMat);
+
     clickable.push({ object: b, type: "battery", name: "Battery " + (i+1) });
   }, undefined, () => {});
 });
@@ -931,7 +801,7 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 ].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   CARS
+   ██████ CARS — enhanced design, NO spotlights ██████
 ========================================================= */
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
@@ -957,6 +827,7 @@ const carGlassMat = new THREE.MeshStandardMaterial({
 const wheelMat = mat(0x0c1012, .6, .1);
 const hubMat = mat(0xa0a8ac, .3, .7);
 
+/* Shared emissive materials for all cars (updates once at night) */
 const sharedHeadlightMat = new THREE.MeshStandardMaterial({
   color: 0xffffff,
   emissive: 0xfff8e0,
@@ -1021,11 +892,14 @@ function car(route, progress, dir, spd){
     g.add(hub);
   }
 
+  /* Headlights — shared material */
   for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, sharedHeadlightMat);
     l.position.set(V_LEN * 0.49, 4, z);
     g.add(l);
   }
+
+  /* Taillights — shared material */
   for(const z of [-2.6, 2.6]){
     const l = new THREE.Mesh(carLightGeo, sharedTaillightMat);
     l.position.set(-V_LEN * 0.49, 4, z);
@@ -1119,21 +993,21 @@ renderer.domElement.addEventListener("click", e => {
   const p = ray.intersectObject(powerZone, true);
   if(p.length){
     showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE",
-      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, 10 Smart Batteries, and workers on-site. Batteries charge in the day and power the city lights at night.");
+      "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Batteries charge in the day and power the city lights at night.");
     return;
   }
   for(const it of clickable){
     if(!ray.intersectObject(it.object, true).length) continue;
-    if(it.type === "school") showPanel("American High School", "EDUCATION", "Modern high school with smart learning. Students and teachers walk around the campus.");
-    else if(it.type === "hospital") showPanel("Low Poly Hospital", "HEALTHCARE", "Smart hospital with renewable energy. Visitors and staff move around the area.");
-    else if(it.type === "society") showPanel("BSS Smart Society", "RESIDENTIAL", "Connected residential community. Residents walk along the paths.");
-    else if(it.type === "bank") showPanel("Smart City State Bank", "FINANCIAL", "Smart banking facility. Customers walk in and out.");
-    else if(it.type === "farm") showPanel("Smart Eco Farm", "AGRICULTURE", "Sustainable smart farming. Workers tend to the fields.");
-    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with rooftop solar panels and people around.");
+    if(it.type === "school") showPanel("American High School", "EDUCATION", "Modern high school with smart learning.");
+    else if(it.type === "hospital") showPanel("Low Poly Hospital", "HEALTHCARE", "Smart hospital with renewable energy.");
+    else if(it.type === "society") showPanel("BSS Smart Society", "RESIDENTIAL", "Connected residential community.");
+    else if(it.type === "bank") showPanel("Smart City State Bank", "FINANCIAL", "Smart banking facility.");
+    else if(it.type === "farm") showPanel("Smart Eco Farm", "AGRICULTURE", "Sustainable smart farming.");
+    else if(it.type === "smartBuilding") showPanel(it.name, "SMART BUILDING", "High-efficiency building with rooftop solar panels.");
     else if(it.type === "smallBuilding") showPanel(it.name, "SMART SUPPORT", "Compact smart support building with rooftop solar.");
     else if(it.type === "antenna") showPanel(it.name, "ANTENNA", "Communication antenna.");
     else if(it.type === "battery") showPanel(it.name, "BATTERY", "Stores energy and powers city lights at night.");
-    else if(it.type === "shop") showPanel(it.name, "SHOP", "Dagashiya snack shop with people around.");
+    else if(it.type === "shop") showPanel(it.name, "SHOP", "Dagashiya snack shop.");
     return;
   }
   if(ray.intersectObject(controller, true).length){
@@ -1143,7 +1017,7 @@ renderer.domElement.addEventListener("click", e => {
 });
 
 /* =========================================================
-   DAY / NIGHT
+   DAY / NIGHT — battery-powered city glow
 ========================================================= */
 let isNight = false;
 const btn = document.getElementById("dayNightBtn");
@@ -1163,19 +1037,32 @@ function setDN(night){
     btn.textContent = "☀ DAY";
     btn.classList.remove("night");
   }
+
+  /* Grass + road colors */
   grassMaterial.color.setHex(night ? 0x14241a : 0x4d8f50);
   grassDarkMaterial.color.setHex(night ? 0x0a1810 : 0x28633a);
   zoneMaterial.color.setHex(night ? 0x1f3824 : 0x72ad58);
   roadMaterial.color.setHex(night ? 0x080a0c : 0x20272a);
   curbMaterial.color.setHex(night ? 0x1e262a : 0x697578);
 
+  /* Street lights glow (battery powered) */
   streetBulbMats.forEach(m => { m.emissiveIntensity = night ? 6.0 : 0.9; });
+
+  /* Battery rings glow strongly at night */
   batteryRings.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.5; });
+
+  /* Vehicle headlights */
   sharedHeadlightMat.emissiveIntensity = night ? 5.0 : 2.5;
   sharedTaillightMat.emissiveIntensity = night ? 4.0 : 2.5;
+
+  /* Window glow */
   winMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 1.2; });
+
+  /* Building beacons */
   smartBeaconMats.forEach(m => { m.emissiveIntensity = night ? 5.0 : 3.2; });
   smallBeaconMats.forEach(m => { m.emissiveIntensity = night ? 4.0 : 2.5; });
+
+  /* AI screens */
   aiScreenMats.forEach(m => { m.emissiveIntensity = night ? 4.5 : 2.4; });
 }
 btn.addEventListener("click", () => setDN(!isNight));
@@ -1374,45 +1261,17 @@ function updateTL(t){
   }
 }
 
-/* =========================================================
-   ██████ UPDATE PEOPLE — walk around paths ██████
-========================================================= */
-function updatePeople(t){
-  for(const p of people){
-    if(p.idle){
-      /* Idle — gentle sway */
-      p.obj.rotation.y += Math.sin(t * 2 + p.phase) * 0.005;
-      /* Arms sway */
-      const sway = Math.sin(t * 3 + p.phase) * 0.15;
-      p.armL.rotation.x = sway;
-      p.armR.rotation.x = -sway;
-      continue;
-    }
+function updSys(){
+  if(tState===0 && simSec >= INCIDENT) activateIncident();
+  if(tState===1 && simSec - iStart >= CONSTRUCT) activateReroute();
+  if(tState===2 && simSec - rStart >= RESOLVE) clearAll();
+}
 
-    /* Walking — legs move in opposite phase */
-    const speed = p.speed * 60;
-    const legSwing = Math.sin(t * 8 + p.phase) * 0.5;
-    p.legL.rotation.x = legSwing;
-    p.legR.rotation.x = -legSwing;
-    p.armL.rotation.x = -legSwing * 0.8;
-    p.armR.rotation.x = legSwing * 0.8;
-
-    /* Move along circle path */
-    /* Recompute position based on time (circular motion) */
-    /* Simple forward movement — walk in a direction */
-    p.x += Math.cos(p.dir) * p.speed;
-    p.z -= Math.sin(p.dir) * p.speed;
-    /* Rotate slightly to give a wavy path */
-    p.dir += Math.sin(t + p.phase) * 0.005;
-    /* Wrap around */
-    if(p.x > 900) p.x = -900;
-    if(p.x < -900) p.x = 900;
-    if(p.z > 700) p.z = -700;
-    if(p.z < -700) p.z = 700;
-
-    p.obj.position.set(p.x, 5, p.z);
-    p.obj.rotation.y = p.dir;
-  }
+function updTimer(){
+  const tt = Math.floor(simSec);
+  const mm = Math.floor(tt/60);
+  const ss = tt%60;
+  simTime.textContent = String(mm).padStart(2,"0") + ":" + String(ss).padStart(2,"0");
 }
 
 /* =========================================================
@@ -1430,7 +1289,6 @@ function animate(){
   updSys();
   updateCars();
   updateTL(t);
-  updatePeople(t);
 
   if(fc % 2 === 0){
     for(let i=0; i<turbines.length; i++) turbines[i].rotation.z = t*2.4;
