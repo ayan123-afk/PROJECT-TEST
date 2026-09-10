@@ -31,104 +31,21 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;padding:11px 20px;border-radius:12px;background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);color:#d2e1e7;font-size:12px;white-space:nowrap}
 #dayNightBtn{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;padding:12px 26px;border-radius:14px;background:linear-gradient(135deg,#1e2a35,#0d1620);border:1px solid rgba(90,225,255,.5);color:#c9f5ff;font-size:14px;font-weight:900;letter-spacing:2px;cursor:pointer;font-family:Arial,Helvetica,sans-serif}
 #dayNightBtn.night{background:linear-gradient(135deg,#0d1a30,#050a15);border-color:rgba(255,220,120,.7);color:#ffe28a}
-
-/* AI REASON panel */
-#aiReason{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  z-index:65;width:620px;max-width:90vw;
-  background:rgba(3,13,22,.96);
-  border:1px solid rgba(90,225,255,.55);
-  border-radius:16px;padding:16px 22px;
-  display:none;box-shadow:0 20px 60px rgba(0,0,0,.8);
-  transition:opacity .3s, transform .3s;
-}
-#aiReason.hidden{
-  opacity:0;
-  pointer-events:none;
-  transform:translateX(-50%) translateY(20px);
-}
-#aiReason .title{
-  color:#22cfff;font-size:13px;letter-spacing:2px;
-  margin-bottom:10px;font-weight:900;
-  display:flex;align-items:center;gap:8px;
-  padding-right:30px;
-}
-#aiReason .title .dot{
-  width:10px;height:10px;border-radius:50%;
-  background:#22cfff;box-shadow:0 0 10px #22cfff;
-  animation:pulse 1.5s infinite;
-}
-@keyframes pulse{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.5;transform:scale(1.3)}
-}
-#aiReason .reason{
-  color:#ffffff;font-size:14px;line-height:1.6;
-  margin-bottom:8px;
-}
+#aiReason{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:65;width:620px;max-width:90vw;background:rgba(3,13,22,.96);border:1px solid rgba(90,225,255,.55);border-radius:16px;padding:16px 22px;display:none;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+#aiReason.hidden{opacity:0;pointer-events:none}
+#aiReason .title{color:#22cfff;font-size:13px;letter-spacing:2px;margin-bottom:10px;font-weight:900;display:flex;align-items:center;gap:8px;padding-right:30px}
+#aiReason .title .dot{width:10px;height:10px;border-radius:50%;background:#22cfff;box-shadow:0 0 10px #22cfff;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+#aiReason .reason{color:#ffffff;font-size:14px;line-height:1.6;margin-bottom:8px}
 #aiReason .reason strong{color:#22cfff}
-#aiReason .result{
-  color:#6aff9d;font-size:12px;line-height:1.5;
-  padding-top:8px;border-top:1px solid rgba(90,225,255,.2);
-}
+#aiReason .result{color:#6aff9d;font-size:12px;line-height:1.5;padding-top:8px;border-top:1px solid rgba(90,225,255,.2)}
 #aiReason .result strong{color:#6aff9d}
-
-/* × close button on AI reason panel */
-#aiReason .closeReason{
-  position:absolute;top:10px;right:10px;
-  width:26px;height:26px;border:0;border-radius:6px;
-  background:rgba(255,255,255,.1);
-  color:#c9d6dd;font-size:15px;line-height:1;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:.2s;
-}
-#aiReason .closeReason:hover{
-  background:#c22b1a;color:white;
-}
-
-/* SHOW AI LOG button — appears when panel is hidden */
-#showAiBtn{
-  position:fixed;bottom:80px;right:18px;z-index:66;
-  padding:10px 18px;border-radius:12px;
-  background:linear-gradient(135deg,#1a4fc2,#0f2f8a);
-  border:1px solid rgba(90,150,255,.7);
-  color:white;font-weight:900;letter-spacing:1px;
-  font-size:11px;cursor:pointer;display:none;
-  font-family:Arial,Helvetica,sans-serif;
-  box-shadow:0 10px 30px rgba(40,100,220,.4);
-  align-items:center;gap:6px;
-}
-#showAiBtn:hover{background:linear-gradient(135deg,#2a63e0,#1540a5)}
-#showAiBtn .eye{
-  display:inline-block;
-  width:14px;height:14px;border-radius:50%;
-  background:#c9f5ff;position:relative;
-}
-#showAiBtn .eye::after{
-  content:'';position:absolute;
-  width:6px;height:6px;border-radius:50%;
-  background:#03141b;
-  top:4px;left:4px;
-}
-
-/* Countdown timer bar */
-#cycleBar{
-  position:fixed;top:120px;left:50%;transform:translateX(-50%);
-  z-index:55;width:280px;padding:8px 14px;
-  border-radius:12px;background:rgba(3,13,22,.85);
-  border:1px solid rgba(90,225,255,.3);
-  font-size:10px;color:#c9d6dd;
-  display:none;text-align:center;
-}
-#cycleBar .bar{
-  height:4px;margin-top:6px;border-radius:2px;
-  background:rgba(255,255,255,.1);
-  overflow:hidden;
-}
-#cycleBar .fill{
-  height:100%;background:linear-gradient(90deg,#22cfff,#6aff9d);
-  width:0%;transition:width .2s;
-}
+#aiReason .closeReason{position:absolute;top:10px;right:10px;width:26px;height:26px;border:0;border-radius:6px;background:rgba(255,255,255,.1);color:#c9d6dd;font-size:15px;cursor:pointer}
+#aiReason .closeReason:hover{background:#c22b1a;color:white}
+#showAiBtn{position:fixed;bottom:80px;right:18px;z-index:66;padding:10px 18px;border-radius:12px;background:linear-gradient(135deg,#1a4fc2,#0f2f8a);border:1px solid rgba(90,150,255,.7);color:white;font-weight:900;letter-spacing:1px;font-size:11px;cursor:pointer;display:none;font-family:Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(40,100,220,.4)}
+#cycleBar{position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:55;width:280px;padding:8px 14px;border-radius:12px;background:rgba(3,13,22,.85);border:1px solid rgba(90,225,255,.3);font-size:10px;color:#c9d6dd;display:none;text-align:center}
+#cycleBar .bar{height:4px;margin-top:6px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
+#cycleBar .fill{height:100%;background:linear-gradient(90deg,#22cfff,#6aff9d);width:0%;transition:width .2s}
 #cycleBar .label{color:#22cfff;font-weight:900;letter-spacing:1px}
 </style>
 </head>
@@ -162,15 +79,13 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 </div>
 
 <div id="aiReason">
-  <button class="closeReason" onclick="hideAiReason()" title="Hide panel">×</button>
+  <button class="closeReason" onclick="hideAiReason()">×</button>
   <div class="title"><span class="dot"></span><span id="aiReasonTitle">AI ACTION LOG</span></div>
   <div class="reason" id="aiReasonText"></div>
   <div class="result" id="aiResultText"></div>
 </div>
 
-<button id="showAiBtn" onclick="showAiReason()" title="Show AI log">
-  <span class="eye"></span> SHOW AI LOG
-</button>
+<button id="showAiBtn" onclick="showAiReason()">👁 SHOW AI LOG</button>
 
 <div id="panel">
   <button class="close" onclick="closePanel()">×</button>
@@ -282,29 +197,32 @@ function sw(x, z, w, d){
 sw(-280, -350, 340, 7); sw( 250, -350, 340, 7);
 sw(-260, 390, 470, 7);  sw( 350, 355, 310, 7);
 
-function board(text, x, y, z, w=70, h=10){
+function board(text, x, y, z, w=70, h=10, color=null){
   const g = new THREE.Group();
   g.position.set(x, y, z);
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(.5, .7, 13, 6), darkMaterial);
   pole.position.y = 6.5; g.add(pole);
-  const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .7), blueMaterial);
+  const bMat = color ? new THREE.MeshStandardMaterial({ color, roughness: .35, metalness: .25 }) : blueMaterial;
+  const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .7), bMat);
   b.position.y = 10; g.add(b);
   const c = document.createElement("canvas");
-  c.width = 800; c.height = 220;
+  c.width = 1000; c.height = 260;
   const ctx = c.getContext("2d");
-  ctx.fillStyle = "#075c7b"; ctx.fillRect(0, 0, 800, 220);
-  ctx.strokeStyle = "#78e9ff"; ctx.lineWidth = 8;
-  ctx.strokeRect(6, 6, 788, 208);
+  ctx.fillStyle = color ? "#" + color.toString(16).padStart(6, '0') : "#075c7b";
+  ctx.fillRect(0, 0, 1000, 260);
+  ctx.strokeStyle = "#78e9ff"; ctx.lineWidth = 10;
+  ctx.strokeRect(8, 8, 984, 244);
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 56px Arial";
+  ctx.font = "bold 68px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, 400, 110);
+  ctx.fillText(text, 500, 130);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   const s = new THREE.Mesh(new THREE.PlaneGeometry(w-1, h-.8), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
   s.position.set(0, 10, .37); g.add(s);
   scene.add(g);
+  return g;
 }
 board("AMERICAN HIGH SCHOOL", -280, 5, -350, 130, 11);
 board("BSS SMART HOSPITAL", 250, 5, -350, 130, 11);
@@ -521,6 +439,7 @@ batteryPositions.forEach((pos, i) => {
   }, undefined, () => {});
 });
 
+/* ARENA */
 const arena = new THREE.Group();
 arena.position.set(1550, 0, -650); scene.add(arena);
 const arenaPad = new THREE.Mesh(new THREE.BoxGeometry(800, 2, 600), mat(0x2c4a3a, .9));
@@ -575,9 +494,260 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 
 [[150, -100], [350, -100], [150, -320], [350, -320], [200, 100], [460, 100], [200, 320], [460, 320]].forEach(p => tree(p[0], p[1], 1));
 
-/* =========================================================
-   CARS
-========================================================= */
+/* ═══════════════════════════════════════════════════════════
+   ██████  NEW BUILDINGS  ██████
+   Marriage Hall, Gas Station/Car Wash, Sewage Company,
+   Waste Truck, Garbage, Filtration Box + 5 Cameras
+═══════════════════════════════════════════════════════════ */
+
+/* 1. MARRIAGE HALL — placed between society and bank zones */
+board("MARRIAGE HALL", -100, 5, 390, 180, 14, 0xd4a017);
+loader.load("./great_hall.glb", g => {
+  const h = g.scene;
+  prep(h, 200);
+  h.position.set(-100, 5, 250);
+  scene.add(h);
+  clickable.push({ object: h, type: "marriageHall", name: "Marriage Hall" });
+}, undefined, () => console.log("great_hall.glb missing"));
+
+/* 2. GAS STATION + CAR WASH — near hospital main road */
+board("CAR WASH", 550, 5, 355, 100, 12, 0xc0392b);
+loader.load("./gas_station.glb", g => {
+  const s = g.scene;
+  prep(s, 180);
+  s.position.set(550, 5, 210);
+  scene.add(s);
+  clickable.push({ object: s, type: "gasStation", name: "Gas Station · Car Wash" });
+}, undefined, () => console.log("gas_station.glb missing"));
+
+/* 3. SEWAGE & FILTRATION COMPANY — near farm */
+board("SEWAGE & FILTRATION CO.", 1160, 5, 500, 200, 14, 0x2c3e50);
+loader.load("./brutalist_building.glb", g => {
+  const b = g.scene;
+  prep(b, 240);
+  b.position.set(1160, 5, 450);
+  scene.add(b);
+  clickable.push({ object: b, type: "sewageCompany", name: "Sewage & Filtration Company" });
+}, undefined, () => console.log("brutalist_building.glb missing"));
+
+/* 4. WASTE MANAGEMENT TRUCK — built with code, near farm */
+const wasteTruck = new THREE.Group();
+wasteTruck.position.set(920, 5, 450);
+scene.add(wasteTruck);
+
+/* Truck cargo box */
+const truckBoxMat = mat(0x2ecc71, .4, .3);
+const truckBody = new THREE.Mesh(new THREE.BoxGeometry(70, 50, 32), truckBoxMat);
+truckBody.position.y = 35;
+wasteTruck.add(truckBody);
+
+/* Truck cabin */
+const cabinMat = mat(0x16a085, .4, .4);
+const cabin = new THREE.Mesh(new THREE.BoxGeometry(28, 32, 30), cabinMat);
+cabin.position.set(48, 26, 0);
+wasteTruck.add(cabin);
+
+/* Windows on cabin */
+const cabinGlassMat = new THREE.MeshStandardMaterial({ color: 0x8be8ff, transparent: true, opacity: .7, roughness: .1, metalness: .3 });
+const cabinWin = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 22), cabinGlassMat);
+cabinWin.position.set(62, 32, 0);
+wasteTruck.add(cabinWin);
+
+/* Truck wheels */
+const truckWheelMat = mat(0x0c1012, .6, .1);
+const truckWheelGeo = new THREE.CylinderGeometry(9, 9, 6, 12);
+for(const wx of [-25, 25, 45]){
+  for(const wz of [-15, 15]){
+    const wheel = new THREE.Mesh(truckWheelGeo, truckWheelMat);
+    wheel.rotation.x = Math.PI/2;
+    wheel.position.set(wx, 9, wz);
+    wasteTruck.add(wheel);
+  }
+}
+
+/* Truck chassis */
+const chassis = new THREE.Mesh(new THREE.BoxGeometry(95, 6, 28), darkMaterial);
+chassis.position.set(10, 14, 0);
+wasteTruck.add(chassis);
+
+/* Waste Management System text on truck side */
+function truckTextPanel(){
+  const canvas = document.createElement("canvas");
+  canvas.width = 1000;
+  canvas.height = 200;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(0, 0, 1000, 200);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 90px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("WASTE", 500, 60);
+  ctx.fillText("MANAGEMENT", 500, 140);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
+}
+const textPanelMat = truckTextPanel();
+const textPanel1 = new THREE.Mesh(new THREE.PlaneGeometry(65, 30), textPanelMat);
+textPanel1.position.set(0, 35, 16.2);
+wasteTruck.add(textPanel1);
+const textPanel2 = new THREE.Mesh(new THREE.PlaneGeometry(65, 30), textPanelMat);
+textPanel2.position.set(0, 35, -16.2);
+textPanel2.rotation.y = Math.PI;
+wasteTruck.add(textPanel2);
+
+clickable.push({ object: wasteTruck, type: "wasteTruck", name: "Waste Management Truck" });
+
+/* 5. GARBAGE CONTAINERS — placed near school, hospital, society, bank */
+const trashPositions = [
+  /* Near school */
+  [-430, -300, 0.7], [-350, -300, 0.7],
+  /* Near hospital */
+  [400, -300, 0.7], [320, -300, 0.7],
+  /* Near society */
+  [-430, 300, 0.7], [-350, 300, 0.7],
+  /* Near bank */
+  [500, 300, 0.7], [420, 300, 0.7],
+  /* Near farm / waste truck */
+  [920, 400, 0.8], [980, 400, 0.8]
+];
+trashPositions.forEach((pos, i) => {
+  loader.load("./trash_pack.glb", g => {
+    const t = g.scene.clone();
+    prep(t, 20 * pos[2]);
+    t.position.set(pos[0], 5, pos[1]);
+    t.rotation.y = Math.random() * Math.PI * 2;
+    scene.add(t);
+    clickable.push({ object: t, type: "trash", name: "Garbage Container " + (i+1) });
+  }, undefined, () => {});
+});
+
+/* 6. FILTRATION MACHINE BOX — in Power Supply Zone with 5 cameras */
+const filtBox = new THREE.Group();
+filtBox.position.set(-2200 + -400, 5, 1900 + 400);  /* inside power supply zone */
+scene.add(filtBox);
+
+/* Main box container */
+const filtBoxMat = mat(0x2c3e50, .6, .3);
+const filtBoxShell = new THREE.Mesh(new THREE.BoxGeometry(90, 55, 90), filtBoxMat);
+filtBoxShell.position.y = 27.5;
+filtBox.add(filtBoxShell);
+
+/* Inner floor */
+const filtFloor = new THREE.Mesh(new THREE.BoxGeometry(80, 3, 80), mat(0x1a252f, .8));
+filtFloor.position.y = 3;
+filtBox.add(filtFloor);
+
+/* Load filtration machine inside */
+loader.load("./skid_filtration_system.glb", g => {
+  const m = g.scene;
+  prep(m, 60);
+  m.position.set(0, 5, 0);
+  filtBox.add(m);
+  clickable.push({ object: m, type: "filtrationMachine", name: "Filtration Machine (Locked)" });
+}, undefined, () => console.log("skid_filtration_system.glb missing"));
+
+/* Small animated water flow particles inside */
+const waterParticles = [];
+for(let i=0; i<20; i++){
+  const p = new THREE.Mesh(
+    new THREE.SphereGeometry(.6, 6, 6),
+    new THREE.MeshStandardMaterial({ color: 0x22cfff, emissive: 0x22cfff, emissiveIntensity: 2 })
+  );
+  p.position.set(
+    (Math.random() - .5) * 60,
+    10 + Math.random() * 30,
+    (Math.random() - .5) * 60
+  );
+  filtBox.add(p);
+  waterParticles.push({ mesh: p, speed: .3 + Math.random() * .5 });
+}
+
+/* Top hatch — glowing */
+const topHatch = new THREE.Mesh(
+  new THREE.BoxGeometry(60, 2, 60),
+  new THREE.MeshStandardMaterial({ color: 0x22cfff, emissive: 0x22cfff, emissiveIntensity: 2.5, transparent: true, opacity: .4 })
+);
+topHatch.position.y = 56;
+filtBox.add(topHatch);
+
+/* ═══════════════════════════════════════════════════════════
+   5 CAMERAS around the Filtration Machine
+   CAM 1 = North, CAM 2 = South, CAM 3 = East, CAM 4 = West, CAM 5 = Top
+═══════════════════════════════════════════════════════════ */
+function createCamera(x, y, z, label, rotationY = 0){
+  const camGroup = new THREE.Group();
+  camGroup.position.set(x, y, z);
+  camGroup.rotation.y = rotationY;
+  filtBox.add(camGroup);
+
+  /* Camera body */
+  const camBody = new THREE.Mesh(
+    new THREE.BoxGeometry(3, 2.5, 4),
+    mat(0x111111, .4, .6)
+  );
+  camGroup.add(camBody);
+
+  /* Lens */
+  const lens = new THREE.Mesh(
+    new THREE.CylinderGeometry(.8, .8, .5, 12),
+    new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x22cfff, emissiveIntensity: 1.5, metalness: .9, roughness: .1 })
+  );
+  lens.rotation.x = Math.PI/2;
+  lens.position.set(0, 0, 2.2);
+  camGroup.add(lens);
+
+  /* LED indicator (blinking) */
+  const led = new THREE.Mesh(
+    new THREE.SphereGeometry(.3, 8, 8),
+    new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 2 })
+  );
+  led.position.set(1, 1, 1.8);
+  camGroup.add(led);
+
+  /* Floating label above */
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "rgba(3,13,22,0.95)";
+  ctx.fillRect(0, 0, 256, 64);
+  ctx.strokeStyle = "#22cfff";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(3, 3, 250, 58);
+  ctx.fillStyle = "#22cfff";
+  ctx.font = "bold 32px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, 128, 32);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const labelMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(14, 3.5),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
+  );
+  labelMesh.position.set(0, 4, 0);
+  camGroup.add(labelMesh);
+
+  return { group: camGroup, led, labelMesh };
+}
+
+const cameras = [
+  createCamera(0, 45, -48, "CAM 1", 0),          /* North - facing south */
+  createCamera(0, 45, 48, "CAM 2", Math.PI),     /* South - facing north */
+  createCamera(48, 45, 0, "CAM 3", -Math.PI/2),  /* East - facing west */
+  createCamera(-48, 45, 0, "CAM 4", Math.PI/2),  /* West - facing east */
+  createCamera(0, 60, 0, "TOP CAM", 0)           /* Top - facing down */
+];
+cameras[4].group.rotation.x = Math.PI/2;
+
+/* Filtration machine info panel click */
+filtBoxShell.userData.isFilterBox = true;
+clickable.push({ object: filtBox, type: "filtrationBox", name: "Filtration System Box" });
+
+/* ═══════════════════════════════════════════════════════════ */
+
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
 const V_LEN = 22, V_WID = 8, V_HGT = 5;
@@ -620,11 +790,7 @@ const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
 function car(route, progress, dir, spd, laneOffset){
   const g = makeCar(carColors[Math.floor(Math.random()*carColors.length)]);
   scene.add(g);
-  cars.push({
-    car: g, route, progress, direction: dir,
-    speed: spd, baseSpeed: spd, laneOffset,
-    rerouted: false
-  });
+  cars.push({ car: g, route, progress, direction: dir, speed: spd, baseSpeed: spd, laneOffset, rerouted: false });
 }
 
 for(let i=0; i<6; i++) car("outer", .02 + i*.14, 1, .40, 10);
@@ -640,21 +806,14 @@ function routeP(route, progress, laneOffset = 0){
   const n = (i+1) % points.length;
   const t = scaled - Math.floor(scaled);
   const a = points[i], b = points[n];
-
   const baseX = THREE.MathUtils.lerp(a[0], b[0], t);
   const baseZ = THREE.MathUtils.lerp(a[1], b[1], t);
-
   const dx = b[0] - a[0];
   const dz = b[1] - a[1];
   const len = Math.sqrt(dx*dx + dz*dz);
   const nx = dx / len, nz = dz / len;
   const perpX = -nz, perpZ = nx;
-
-  return {
-    x: baseX + perpX * laneOffset,
-    z: baseZ + perpZ * laneOffset,
-    ax:a[0], az:a[1], bx:b[0], bz:b[1]
-  };
+  return { x: baseX + perpX * laneOffset, z: baseZ + perpZ * laneOffset, ax:a[0], az:a[1], bx:b[0], bz:b[1] };
 }
 
 cars.forEach(d => {
@@ -677,32 +836,63 @@ bld("./low_poly_hospital.glb", 180, [250,-210], "hospital");
 bld("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 bld("./us_bank_tower.glb", 260, [350,210], "bank");
 
-const gate = new THREE.Group();
-gate.position.set(-260, 5, 390);
-const gL = new THREE.Mesh(new THREE.BoxGeometry(8, 18, 8), mat(0x315d70, .4, .2)); gL.position.set(-45, 9, 0); gate.add(gL);
-const gR = gL.clone(); gR.position.x = 45; gate.add(gR);
-const gT = new THREE.Mesh(new THREE.BoxGeometry(98, 5, 8), mat(0x164e67, .35, .25)); gT.position.y = 16; gate.add(gT);
-scene.add(gate);
+/* ═══════════════════════════════════════════════════════════
+   MARRIAGE HALL PEOPLE — 10 people walking near the hall
+═══════════════════════════════════════════════════════════ */
+const weddingPeople = [];
+const skinColors = [0xf2c9a0, 0xd9a373, 0xa06a3c, 0x6b4a2f, 0xffd8b8];
+const shirtColors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf1c40f, 0x9b59b6, 0x1abc9c, 0xe67e22, 0x34495e, 0xc0392b, 0x16a085, 0xd35400, 0x8e44ad, 0x27ae60, 0x2980b9, 0xd81b60];
+const pantsColors = [0x2c3e50, 0x34495e, 0x1a252f, 0x4a4a4a, 0x3d3d3d];
 
-/* =========================================================
-   AI REASON — SHOW / HIDE
-========================================================= */
-const aiReasonEl = document.getElementById("aiReason");
-const showAiBtn = document.getElementById("showAiBtn");
+/* Simple walking person */
+function makePerson(){
+  const g = new THREE.Group();
+  const skin = skinColors[Math.floor(Math.random()*skinColors.length)];
+  const shirt = shirtColors[Math.floor(Math.random()*shirtColors.length)];
+  const pants = pantsColors[Math.floor(Math.random()*pantsColors.length)];
+  const skinMat = mat(skin, .9);
+  const shirtMat = mat(shirt, .85);
+  const pantsMat = mat(pants, .85);
 
-window.hideAiReason = function(){
-  aiReasonEl.classList.add("hidden");
-  showAiBtn.style.display = "flex";
-};
+  const head = new THREE.Mesh(new THREE.SphereGeometry(1.6, 6, 5), skinMat);
+  head.position.y = 8.5; g.add(head);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.6, 4.5, 1.6), shirtMat);
+  body.position.y = 5; g.add(body);
+  const legL = new THREE.Mesh(new THREE.BoxGeometry(.9, 3.5, .9), pantsMat);
+  legL.position.set(-.6, 1.75, 0); g.add(legL);
+  const legR = new THREE.Mesh(new THREE.BoxGeometry(.9, 3.5, .9), pantsMat);
+  legR.position.set(.6, 1.75, 0); g.add(legR);
+  const armL = new THREE.Mesh(new THREE.BoxGeometry(.7, 3.2, .7), shirtMat);
+  armL.position.set(-1.9, 5, 0); g.add(armL);
+  const armR = new THREE.Mesh(new THREE.BoxGeometry(.7, 3.2, .7), shirtMat);
+  armR.position.set(1.9, 5, 0); g.add(armR);
+  return { g, legL, legR, armL, armR };
+}
 
-window.showAiReason = function(){
-  aiReasonEl.classList.remove("hidden");
-  showAiBtn.style.display = "none";
-};
+/* Spawn 10 people around the Marriage Hall */
+for(let i=0; i<10; i++){
+  const p = makePerson();
+  const angle = (i / 10) * Math.PI * 2;
+  const r = 55 + Math.random() * 30;
+  p.g.position.set(
+    -100 + Math.cos(angle) * r,
+    5,
+    250 + Math.sin(angle) * r
+  );
+  p.g.rotation.y = angle + Math.PI;
+  scene.add(p.g);
+  weddingPeople.push({
+    obj: p.g, legL: p.legL, legR: p.legR, armL: p.armL, armR: p.armR,
+    walkAngle: angle, walkRadius: r, centerX: -100, centerZ: 250,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.008 + Math.random() * 0.008
+  });
+}
 
-/* =========================================================
-   PANEL
-========================================================= */
+/* Camera LED blink state */
+let camBlink = 0;
+
+/* Panel */
 function showPanel(title, type, text){
   document.getElementById("panelContent").innerHTML = `<h2>${title}</h2><div class="type">${type}</div><p>${text}</p>`;
   document.getElementById("panel").style.display = "block";
@@ -716,7 +906,7 @@ renderer.domElement.addEventListener("click", e => {
   m.y = -(e.clientY / window.innerHeight) * 2 + 1;
   ray.setFromCamera(m, camera);
   const p = ray.intersectObject(powerZone, true);
-  if(p.length){ showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE", "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries."); return; }
+  if(p.length){ showPanel("Power Supply Smart City", "RENEWABLE ENERGY ZONE", "Contains 12 solar arrays, 24 wind turbines, 3 antennas, and 10 Smart Batteries. Also hosts the Filtration Machine Box with 5 surveillance cameras."); return; }
   for(const it of clickable){
     if(!ray.intersectObject(it.object, true).length) continue;
     if(it.type === "school") showPanel("American High School", "EDUCATION", "Modern high school.");
@@ -729,16 +919,21 @@ renderer.domElement.addEventListener("click", e => {
     else if(it.type === "antenna") showPanel(it.name, "ANTENNA", "Communication antenna.");
     else if(it.type === "battery") showPanel(it.name, "BATTERY", "Energy storage.");
     else if(it.type === "shop") showPanel(it.name, "SHOP", "Dagashiya shop.");
+    else if(it.type === "marriageHall") showPanel("Marriage Hall", "EVENT VENUE", "A grand marriage hall for weddings and celebrations. Decorated entrance with 10 guests walking around.");
+    else if(it.type === "gasStation") showPanel("Gas Station · Car Wash", "AUTOMOTIVE SERVICE", "Full-service gas station with an automated car wash facility. Open 24/7.");
+    else if(it.type === "sewageCompany") showPanel("Sewage & Filtration Company", "WATER TREATMENT", "Industrial water treatment and sewage processing facility. Filters all city wastewater before release.");
+    else if(it.type === "wasteTruck") showPanel("Waste Management Truck", "MUNICIPAL SERVICE", "Collects garbage from all city zones. Sorts recyclables and delivers them to the Sewage & Filtration Company.");
+    else if(it.type === "trash") showPanel(it.name, "GARBAGE CONTAINER", "Smart waste bin with sensors. Alerts the waste truck when full.");
+    else if(it.type === "filtrationBox") showPanel("Filtration System Box", "SECURED FACILITY · LOCKED", "A locked box containing the skid filtration machine. Under 24/7 surveillance by 5 cameras (CAM 1, 2, 3, 4, TOP). The machine cannot be moved.");
+    else if(it.type === "filtrationMachine") showPanel("Filtration Machine", "LOCKED · IN OPERATION", "Water filtration skid system. Processes 200 L/min. Monitored by 5 surveillance cameras.");
     return;
   }
   if(ray.intersectObject(controller, true).length){
-    showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION ZONE", "Monitors 4 entry routes. When congestion builds up at the center intersection, AI synchronizes signals and reroutes vehicles via inner-city roads.");
+    showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION ZONE", "Monitors all 4 city entry routes.");
   }
 });
 
-/* =========================================================
-   DAY / NIGHT
-========================================================= */
+/* DAY / NIGHT */
 let isNight = false;
 const btn = document.getElementById("dayNightBtn");
 function setDN(night){
@@ -768,22 +963,20 @@ function setDN(night){
 }
 btn.addEventListener('click', () => setDN(!isNight));
 
-/* =========================================================
-   TRAFFIC SIM — 1 MINUTE CYCLE
-   Every 60s: NORMAL (25s) → JAM (20s) → REROUTE (22s) → CLEAR (loops back)
-========================================================= */
+const aiReasonEl = document.getElementById("aiReason");
+const showAiBtn = document.getElementById("showAiBtn");
+window.hideAiReason = function(){ aiReasonEl.classList.add("hidden"); showAiBtn.style.display = "flex"; };
+window.showAiReason = function(){ aiReasonEl.classList.remove("hidden"); showAiBtn.style.display = "none"; };
+
+/* TRAFFIC SIM — 1 MINUTE CYCLE */
 const clock = new THREE.Clock();
 let simSec = 0;
 let tState = 0;
-const CYCLE_TIME = 60;        /* every 1 minute, repeat the traffic event */
-const NORMAL_DURATION = 25;   /* 25s of normal traffic */
-const JAM_DURATION = 20;      /* 20s of jam */
-const REROUTE_DURATION = 15;  /* 15s of AI rerouting */
-
-let cycleStart = 0;
-let jamStart = 0;
-let rerouteStart = 0;
-let clearShown = false;
+const CYCLE_TIME = 60;
+const NORMAL_DURATION = 25;
+const JAM_DURATION = 20;
+const REROUTE_DURATION = 15;
+let cycleStart = 0, jamStart = 0, rerouteStart = 0;
 
 const simTime = document.getElementById("simulationTime");
 const tLevel = document.getElementById("trafficLevel");
@@ -813,9 +1006,7 @@ function setState(s){
     tLevel.textContent = "NORMAL"; tFlow.textContent = "92%"; aMode.textContent = "MONITORING";
     inc.innerHTML = "<span>LIVE:</span> Traffic flowing normally";
     aiReasonEl.style.display = "none";
-    if(showAiBtn.style.display === "flex"){
-      aiReasonEl.classList.add("hidden");
-    }
+    if(showAiBtn.style.display === "flex") aiReasonEl.classList.add("hidden");
   }
   if(s===1){
     tStateEl.textContent = "TRAFFIC JAM"; tStateEl.style.color = "#ffd15a";
@@ -826,8 +1017,8 @@ function setState(s){
     aiReasonEl.classList.remove("hidden");
     showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🔴 PROBLEM DETECTED";
-    aiReasonText.innerHTML = `<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads at the same time. Queue building up on each road.`;
-    aiResultText.innerHTML = `AI is <strong>reading the queue on all 4 roads</strong> to figure out the best fix.`;
+    aiReasonText.innerHTML = `<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads. Queue building up.`;
+    aiResultText.innerHTML = `AI is <strong>reading the queue</strong> to figure out the best fix.`;
   }
   if(s===2){
     tStateEl.textContent = "AI REROUTING"; tStateEl.style.color = "#67e4ff";
@@ -838,8 +1029,8 @@ function setState(s){
     aiReasonEl.classList.remove("hidden");
     showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🔵 AI IS ACTING";
-    aiReasonText.innerHTML = `<strong>AI DID THIS:</strong> AI <strong>flipped signals to green</strong> on inner-city roads and <strong>redirected half the cars</strong> to those roads before they reach the intersection.`;
-    aiResultText.innerHTML = `Result: <strong>less cars at the intersection → jam starts clearing.</strong>`;
+    aiReasonText.innerHTML = `<strong>AI DID THIS:</strong> AI <strong>flipped signals to green</strong> on inner-city roads and <strong>redirected half the cars</strong> to those roads.`;
+    aiResultText.innerHTML = `Result: <strong>less cars at intersection → jam starts clearing.</strong>`;
   }
   if(s===3){
     tStateEl.textContent = "TRAFFIC CLEAR"; tStateEl.style.color = "#6aff9d";
@@ -851,7 +1042,7 @@ function setState(s){
     showAiBtn.style.display = "none";
     aiReasonTitle.textContent = "🟢 RESOLVED BY AI";
     aiReasonText.innerHTML = `<strong>AI RESOLVED IT</strong> by splitting the traffic between outer and inner roads.`;
-    aiResultText.innerHTML = `Jam cleared in <strong>15 seconds</strong>. AI is back to monitoring.`;
+    aiResultText.innerHTML = `Jam cleared in <strong>15 seconds</strong>.`;
   }
 }
 
@@ -859,54 +1050,37 @@ function updateCycleTimer(){
   const now = simSec - cycleStart;
   const pct = Math.min((now / CYCLE_TIME) * 100, 100);
   cycleFill.style.width = pct + "%";
-
   if(tState === 0){
     cycleLabel.textContent = "🚦 TRAFFIC EVENT IN " + Math.max(0, Math.ceil(CYCLE_TIME - now)) + "s";
     cycleBar.style.display = "block";
   } else if(tState === 1){
     cycleLabel.textContent = "🔴 JAM ACTIVE — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION - now)) + "s";
-    cycleBar.style.display = "block";
   } else if(tState === 2){
     cycleLabel.textContent = "🔵 AI REROUTING — " + Math.max(0, Math.ceil(NORMAL_DURATION + JAM_DURATION + REROUTE_DURATION - now)) + "s";
-    cycleBar.style.display = "block";
   } else {
     cycleLabel.textContent = "🟢 RESOLVED";
-    cycleBar.style.display = "block";
   }
 }
 
 function updateCycle(){
   const now = simSec - cycleStart;
-
   if(tState === 0){
-    /* Wait for cycle time to pass */
     if(now >= CYCLE_TIME){
-      /* Start jam */
-      tState = 1;
-      jamStart = simSec;
-      setState(1);
-      showMsg("⚠ CARS QUEUING AT INTERSECTION");
+      tState = 1; jamStart = simSec;
+      setState(1); showMsg("⚠ CARS QUEUING AT INTERSECTION");
     }
   } else if(tState === 1){
     if(simSec - jamStart >= JAM_DURATION){
-      tState = 2;
-      rerouteStart = simSec;
-      setState(2);
-      showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
+      tState = 2; rerouteStart = simSec;
+      setState(2); showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
     }
   } else if(tState === 2){
     if(simSec - rerouteStart >= REROUTE_DURATION){
-      tState = 3;
-      setState(3);
-      showMsg("✅ JAM CLEARED BY AI");
+      tState = 3; setState(3); showMsg("✅ JAM CLEARED BY AI");
     }
   } else if(tState === 3){
-    /* Wait 10s of clear display then loop */
     if(simSec - rerouteStart >= REROUTE_DURATION + 10){
-      /* Restart cycle */
-      tState = 0;
-      cycleStart = simSec;
-      setState(0);
+      tState = 0; cycleStart = simSec; setState(0);
     }
   }
 }
@@ -914,25 +1088,20 @@ function updateCycle(){
 function updateCars(){
   for(const d of cars){
     let s = d.baseSpeed;
-
     if(tState === 1){
       const p = routeP(d.route, d.progress, d.laneOffset);
       if(d.route === "outer"){
         const distToNorth = Math.abs(p.z + 635);
         if(distToNorth < 300) s *= 0.3;
         else s *= 0.6;
-      } else {
-        s *= 0.7;
-      }
+      } else s *= 0.7;
     }
-
     if(tState === 2){
       if(d.route === "outer" && !d.rerouted){
         const p = routeP(d.route, d.progress, d.laneOffset);
         if(Math.abs(p.x - 520) < 60 || Math.abs(p.x + 520) < 60){
           if(Math.random() < 0.04){
-            d.route = "inner";
-            d.rerouted = true;
+            d.route = "inner"; d.rerouted = true;
             let bp = 0, bd = Infinity;
             for(let i=0; i<50; i++){
               const tt = routeP("inner", i/50, d.laneOffset);
@@ -944,11 +1113,9 @@ function updateCars(){
         }
       }
     }
-
     d.progress += (s / 1400) * d.direction;
     if(d.progress > 1) d.progress -= 1;
     if(d.progress < 0) d.progress += 1;
-
     const p = routeP(d.route, d.progress, d.laneOffset);
     d.car.position.set(p.x, 5.2, p.z);
     const dx = p.bx-p.ax, dz = p.bz-p.az;
@@ -983,6 +1150,49 @@ function updTimer(){
   simTime.textContent = String(mm).padStart(2,"0") + ":" + String(ss).padStart(2,"0");
 }
 
+/* UPDATE WEDDING PEOPLE — walk in circle */
+function updateWeddingPeople(t){
+  for(const p of weddingPeople){
+    p.walkAngle += p.speed * 0.02;
+    const nx = p.centerX + Math.cos(p.walkAngle) * p.walkRadius;
+    const nz = p.centerZ + Math.sin(p.walkAngle) * p.walkRadius;
+    p.obj.position.x = nx;
+    p.obj.position.z = nz;
+    const dx = nx - p.obj.position.x;
+    const dz = nz - p.obj.position.z;
+    p.obj.rotation.y = Math.atan2(dx, dz);
+    const swing = Math.sin(t * 6 + p.phase) * 0.4;
+    p.legL.rotation.x = swing;
+    p.legR.rotation.x = -swing;
+    p.armL.rotation.x = -swing * 0.7;
+    p.armR.rotation.x = swing * 0.7;
+  }
+}
+
+/* UPDATE CAMERAS — LED blinking + small rotation scanning */
+function updateCameras(t){
+  camBlink += 0.05;
+  for(const c of cameras){
+    /* LED blink */
+    c.led.material.emissiveIntensity = (Math.floor(camBlink * 20) % 2 === 0) ? 2.5 : 0.3;
+    /* Subtle label bob */
+    c.labelMesh.position.y = 4 + Math.sin(t * 2) * 0.3;
+  }
+}
+
+/* UPDATE WATER PARTICLES in filtration box */
+function updateWaterParticles(t){
+  for(const wp of waterParticles){
+    wp.mesh.position.y += wp.speed * 0.15;
+    if(wp.mesh.position.y > 50){
+      wp.mesh.position.y = 10;
+      wp.mesh.position.x = (Math.random() - .5) * 60;
+      wp.mesh.position.z = (Math.random() - .5) * 60;
+    }
+    wp.mesh.material.emissiveIntensity = 1.5 + Math.sin(t * 4) * 0.5;
+  }
+}
+
 let fc = 0;
 function animate(){
   requestAnimationFrame(animate);
@@ -991,11 +1201,11 @@ function animate(){
   simSec += delta;
   fc++;
 
-  updTimer();
-  updateCycle();
-  updateCycleTimer();
-  updateCars();
-  updateTL(t);
+  updTimer(); updateCycle(); updateCycleTimer();
+  updateCars(); updateTL(t);
+  updateWeddingPeople(t);
+  updateCameras(t);
+  updateWaterParticles(t);
 
   if(fc % 2 === 0){
     for(let i=0; i<turbines.length; i++) turbines[i].rotation.z = t*2.4;
