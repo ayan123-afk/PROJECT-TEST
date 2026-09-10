@@ -6,11 +6,15 @@
 <title>BSS WORLD — 3D Smart City</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 body{
     overflow:hidden;
-    background:#9fd4ef;
+    background:#a9dcf4;
     font-family:Arial,Helvetica,sans-serif;
     color:white;
 }
@@ -20,23 +24,23 @@ body{
     top:18px;
     left:18px;
     z-index:50;
-    padding:18px 24px;
-    border:1px solid rgba(80,220,255,.45);
-    border-radius:16px;
+    padding:19px 25px;
+    border:1px solid rgba(75,220,255,.45);
+    border-radius:17px;
     background:rgba(3,13,22,.90);
     backdrop-filter:blur(16px);
-    box-shadow:0 15px 50px rgba(0,0,0,.32);
+    box-shadow:0 15px 55px rgba(0,0,0,.3);
 }
 
 #ui .title{
-    font-size:27px;
+    font-size:28px;
     font-weight:900;
     letter-spacing:5px;
 }
 
 #ui .sub{
     margin-top:7px;
-    color:#73e5ff;
+    color:#70e4ff;
     font-size:12px;
     letter-spacing:1.4px;
 }
@@ -46,13 +50,12 @@ body{
     top:18px;
     right:18px;
     z-index:50;
-    width:310px;
+    width:315px;
     padding:18px;
-    border-radius:16px;
+    border-radius:17px;
     background:rgba(3,13,22,.92);
     border:1px solid rgba(70,220,255,.35);
     backdrop-filter:blur(16px);
-    box-shadow:0 15px 50px rgba(0,0,0,.32);
 }
 
 #trafficStatus .heading{
@@ -96,16 +99,15 @@ body{
 #aiMessage{
     position:fixed;
     left:50%;
-    top:95px;
+    top:100px;
     transform:translateX(-50%);
     z-index:55;
-    padding:11px 22px;
+    padding:12px 24px;
     border-radius:12px;
-    background:rgba(3,14,22,.94);
-    border:1px solid rgba(90,225,255,.35);
+    background:rgba(3,14,22,.95);
+    border:1px solid rgba(90,225,255,.4);
     color:#c9f5ff;
     font-size:12px;
-    letter-spacing:.5px;
     opacity:0;
     transition:.4s;
 }
@@ -118,7 +120,7 @@ body{
     position:fixed;
     right:18px;
     top:185px;
-    width:370px;
+    width:380px;
     display:none;
     z-index:60;
     padding:25px;
@@ -174,27 +176,6 @@ body{
     color:#d2e1e7;
     font-size:12px;
     white-space:nowrap;
-}
-
-@media(max-width:700px){
-
-    #ui{
-        transform:scale(.78);
-        transform-origin:top left;
-    }
-
-    #trafficStatus{
-        transform:scale(.75);
-        transform-origin:top right;
-    }
-
-    #panel{
-        width:310px;
-    }
-
-    #hint{
-        font-size:10px;
-    }
 }
 </style>
 </head>
@@ -258,7 +239,7 @@ body{
 <div id="hint">
     Drag = Rotate &nbsp; | &nbsp;
     Wheel = Zoom &nbsp; | &nbsp;
-    Click Buildings / Society
+    Click School / Hospital / Society / Bank
 </div>
 
 
@@ -292,13 +273,13 @@ import {
 const scene = new THREE.Scene();
 
 scene.background =
-    new THREE.Color(0x9fd4ef);
+    new THREE.Color(0xa9dcf4);
 
 scene.fog =
     new THREE.Fog(
-        0x9fd4ef,
-        500,
-        1300
+        0xa9dcf4,
+        650,
+        1600
     );
 
 
@@ -312,13 +293,13 @@ const camera =
         window.innerWidth /
         window.innerHeight,
         .1,
-        1800
+        2200
     );
 
 camera.position.set(
-    330,
-    245,
-    350
+    500,
+    360,
+    520
 );
 
 
@@ -356,7 +337,7 @@ renderer.toneMapping =
     THREE.ACESFilmicToneMapping;
 
 renderer.toneMappingExposure =
-    1.25;
+    1.3;
 
 document.body.appendChild(
     renderer.domElement
@@ -377,26 +358,26 @@ controls.enableDamping = true;
 
 controls.dampingFactor = .055;
 
-controls.minDistance = 65;
+controls.minDistance = 80;
 
-controls.maxDistance = 780;
+controls.maxDistance = 1100;
 
 controls.target.set(
     0,
     5,
-    10
+    0
 );
 
 
 /* =========================================================
-   DAY LIGHT
+   BRIGHT DAY LIGHT
 ========================================================= */
 
 const ambient =
     new THREE.HemisphereLight(
-        0xeaf9ff,
-        0x6a8b62,
-        3.2
+        0xf2fbff,
+        0x73916b,
+        3.6
     );
 
 scene.add(ambient);
@@ -405,13 +386,13 @@ scene.add(ambient);
 const sun =
     new THREE.DirectionalLight(
         0xffffff,
-        5.2
+        5.5
     );
 
 sun.position.set(
-    -220,
-    360,
-    180
+    -300,
+    500,
+    250
 );
 
 sun.castShadow = true;
@@ -420,13 +401,13 @@ sun.shadow.mapSize.width = 2048;
 
 sun.shadow.mapSize.height = 2048;
 
-sun.shadow.camera.left = -500;
+sun.shadow.camera.left = -700;
 
-sun.shadow.camera.right = 500;
+sun.shadow.camera.right = 700;
 
-sun.shadow.camera.top = 500;
+sun.shadow.camera.top = 700;
 
-sun.shadow.camera.bottom = -500;
+sun.shadow.camera.bottom = -700;
 
 scene.add(sun);
 
@@ -450,57 +431,53 @@ function material(
 }
 
 
-/* =========================================================
-   MATERIALS
-========================================================= */
-
 const groundMaterial =
     material(
-        0x3f7046,
+        0x477a4b,
         .95
     );
 
 const roadMaterial =
     material(
-        0x20262b,
-        .95
+        0x22282c,
+        .96
     );
 
 const roadLineMaterial =
     material(
-        0xf2f5f5,
-        .7
+        0xf5f7f7,
+        .65
     );
 
 const curbMaterial =
     material(
         0x9aa5a8,
-        .9
+        .88
     );
 
 const whiteMaterial =
     material(
-        0xf2f5f5,
+        0xf4f7f8,
         .65
     );
 
 const blueMaterial =
     material(
-        0x087ca5,
+        0x087fa8,
         .35,
         .25
     );
 
 
 /* =========================================================
-   GROUND
+   HUGE GROUND
 ========================================================= */
 
 const ground =
     new THREE.Mesh(
         new THREE.PlaneGeometry(
-            1000,
-            1000
+            1500,
+            1500
         ),
         groundMaterial
     );
@@ -514,15 +491,15 @@ scene.add(ground);
 
 
 /* =========================================================
-   CITY PLATFORM
+   HUGE CITY PLATFORM
 ========================================================= */
 
 const city =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            430,
+            650,
             1,
-            340
+            500
         ),
         groundMaterial
     );
@@ -539,7 +516,7 @@ scene.add(city);
 
 
 /* =========================================================
-   ROAD
+   ROAD FUNCTION
 ========================================================= */
 
 function createRoad(
@@ -573,24 +550,24 @@ function createRoad(
     if(width > depth){
 
         for(
-            let i=-width/2+8;
+            let i=-width/2+10;
             i<width/2;
-            i+=17
+            i+=22
         ){
 
             const line =
                 new THREE.Mesh(
                     new THREE.BoxGeometry(
-                        9,
+                        12,
                         .08,
-                        .38
+                        .42
                     ),
                     roadLineMaterial
                 );
 
             line.position.set(
                 x+i,
-                1.5,
+                1.51,
                 z
             );
 
@@ -601,24 +578,24 @@ function createRoad(
     else{
 
         for(
-            let i=-depth/2+8;
+            let i=-depth/2+10;
             i<depth/2;
-            i+=17
+            i+=22
         ){
 
             const line =
                 new THREE.Mesh(
                     new THREE.BoxGeometry(
-                        .38,
+                        .42,
                         .08,
-                        9
+                        12
                     ),
                     roadLineMaterial
                 );
 
             line.position.set(
                 x,
-                1.5,
+                1.51,
                 z+i
             );
 
@@ -636,70 +613,89 @@ function createRoad(
 
 createRoad(
     0,
-    -185,
-    460,
-    24
+    -270,
+    690,
+    28
 );
 
 createRoad(
     0,
-    185,
-    460,
-    24
+    270,
+    690,
+    28
 );
 
 createRoad(
-    -225,
+    -345,
     0,
-    24,
-    360
+    28,
+    530
 );
 
 createRoad(
-    225,
+    345,
     0,
-    24,
-    360
+    28,
+    530
 );
 
 
 /* =========================================================
-   INTERNAL ROADS
+   INTERNAL CITY ROADS
 ========================================================= */
 
 createRoad(
     0,
-    -90,
-    420,
-    13
+    -150,
+    640,
+    15
 );
 
 createRoad(
     0,
     0,
-    420,
-    14
+    640,
+    16
 );
 
 createRoad(
     0,
-    90,
-    420,
-    13
-);
-
-createRoad(
-    80,
-    0,
-    14,
-    350
-);
-
-createRoad(
-    -125,
-    60,
     150,
-    11
+    640,
+    15
+);
+
+createRoad(
+    -165,
+    0,
+    15,
+    500
+);
+
+createRoad(
+    55,
+    0,
+    15,
+    500
+);
+
+createRoad(
+    250,
+    0,
+    15,
+    500
+);
+
+
+/* =========================================================
+   SOCIETY ROAD
+========================================================= */
+
+createRoad(
+    -190,
+    215,
+    260,
+    14
 );
 
 
@@ -726,7 +722,7 @@ function createCurb(
 
     curb.position.set(
         x,
-        1.48,
+        1.5,
         z
     );
 
@@ -736,35 +732,35 @@ function createCurb(
 
 createCurb(
     0,
-    -82,
-    420,
+    -140,
+    640,
     1.5
 );
 
 createCurb(
     0,
-    -98,
-    420,
+    -160,
+    640,
     1.5
 );
 
 createCurb(
     0,
-    82,
-    420,
+    140,
+    640,
     1.5
 );
 
 createCurb(
     0,
-    98,
-    420,
+    160,
+    640,
     1.5
 );
 
 
 /* =========================================================
-   LARGE 3D BOARD
+   LARGE FIXED 3D BOARD
 ========================================================= */
 
 function createBoard(
@@ -772,8 +768,8 @@ function createBoard(
     x,
     y,
     z,
-    width=45,
-    height=7
+    width=65,
+    height=9
 ){
 
     const group =
@@ -789,19 +785,20 @@ function createBoard(
     const pole =
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .45,
-                .6,
-                11,
+                .5,
+                .7,
+                13,
                 12
             ),
             material(
                 0x303a40,
-                .55,
-                .2
+                .5,
+                .25
             )
         );
 
-    pole.position.y = 5.5;
+    pole.position.y =
+        6.5;
 
     pole.castShadow = true;
 
@@ -811,18 +808,19 @@ function createBoard(
     const spike =
         new THREE.Mesh(
             new THREE.ConeGeometry(
-                .8,
-                3,
+                .9,
+                3.2,
                 8
             ),
             material(
-                0x4a5960,
+                0x4b5960,
                 .5,
                 .25
             )
         );
 
-    spike.position.y = 12.5;
+    spike.position.y =
+        14.6;
 
     group.add(spike);
 
@@ -832,12 +830,13 @@ function createBoard(
             new THREE.BoxGeometry(
                 width,
                 height,
-                .65
+                .7
             ),
             blueMaterial
         );
 
-    board.position.y = 8.5;
+    board.position.y =
+        10;
 
     board.castShadow = true;
 
@@ -849,50 +848,56 @@ function createBoard(
             "canvas"
         );
 
-    canvas.width = 2000;
+    canvas.width = 2200;
 
-    canvas.height = 500;
+    canvas.height = 600;
+
 
     const ctx =
         canvas.getContext("2d");
 
 
-    ctx.fillStyle = "#075c7b";
+    ctx.fillStyle =
+        "#075c7b";
 
     ctx.fillRect(
         0,
         0,
-        2000,
-        500
+        2200,
+        600
     );
 
 
-    ctx.strokeStyle = "#72e6ff";
+    ctx.strokeStyle =
+        "#78e9ff";
 
-    ctx.lineWidth = 14;
+    ctx.lineWidth = 16;
 
     ctx.strokeRect(
         12,
         12,
-        1976,
-        476
+        2176,
+        576
     );
 
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle =
+        "#ffffff";
 
     ctx.font =
-        "bold 125px Arial";
+        "bold 145px Arial";
 
-    ctx.textAlign = "center";
+    ctx.textAlign =
+        "center";
 
-    ctx.textBaseline = "middle";
+    ctx.textBaseline =
+        "middle";
 
 
     ctx.fillText(
         text,
-        1000,
-        250
+        1100,
+        300
     );
 
 
@@ -909,7 +914,7 @@ function createBoard(
         new THREE.Mesh(
             new THREE.PlaneGeometry(
                 width-1,
-                height-.7
+                height-.8
             ),
             new THREE.MeshBasicMaterial({
                 map:texture,
@@ -919,8 +924,8 @@ function createBoard(
 
     sign.position.set(
         0,
-        8.5,
-        .34
+        10,
+        .37
     );
 
     group.add(sign);
@@ -933,7 +938,66 @@ function createBoard(
 
 
 /* =========================================================
-   STREET LIGHTS
+   ZONE TAGS
+========================================================= */
+
+createBoard(
+    "BSS SCHOOL SYSTEM",
+    -210,
+    0,
+    -205,
+    72,
+    10
+);
+
+createBoard(
+    "BSS SMART HOSPITAL",
+    60,
+    0,
+    -95,
+    78,
+    10
+);
+
+createBoard(
+    "BSS SMART SOCIETY",
+    -190,
+    0,
+    245,
+    90,
+    11
+);
+
+createBoard(
+    "SMART CITY STATE BANK",
+    250,
+    0,
+    155,
+    92,
+    11
+);
+
+createBoard(
+    "AI TRAFFIC CONTROLLER",
+    150,
+    0,
+    245,
+    90,
+    11
+);
+
+createBoard(
+    "WIND ENERGY",
+    -55,
+    0,
+    245,
+    65,
+    10
+);
+
+
+/* =========================================================
+   STREET LIGHT
 ========================================================= */
 
 function createStreetLight(
@@ -954,9 +1018,9 @@ function createStreetLight(
     const pole =
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .2,
-                .28,
-                10,
+                .22,
+                .3,
+                11,
                 10
             ),
             material(
@@ -965,7 +1029,8 @@ function createStreetLight(
             )
         );
 
-    pole.position.y = 5;
+    pole.position.y =
+        5.5;
 
     group.add(pole);
 
@@ -973,9 +1038,9 @@ function createStreetLight(
     const arm =
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                3.5,
-                .2,
-                .2
+                4,
+                .22,
+                .22
             ),
             material(
                 0x69757a,
@@ -984,8 +1049,8 @@ function createStreetLight(
         );
 
     arm.position.set(
-        1.5,
-        9,
+        1.7,
+        9.7,
         0
     );
 
@@ -995,51 +1060,68 @@ function createStreetLight(
     const bulb =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .5,
+                .52,
                 14,
                 14
             ),
             new THREE.MeshStandardMaterial({
                 color:0xfff2b0,
                 emissive:0xffd36a,
-                emissiveIntensity:.8
+                emissiveIntensity:.9
             })
         );
 
     bulb.position.set(
-        3,
-        8.8,
+        3.4,
+        9.5,
         0
     );
 
     group.add(bulb);
 
+
     scene.add(group);
 }
 
 
+/* OUTER LIGHTS */
+
 for(
-    let x=-190;
-    x<=190;
-    x+=30
+    let x=-300;
+    x<=300;
+    x+=45
 ){
 
-    createStreetLight(x,-105);
+    createStreetLight(
+        x,
+        -195
+    );
 
-    createStreetLight(x,105);
+    createStreetLight(
+        x,
+        195
+    );
 
 }
 
 
+/* INTERNAL LIGHTS */
+
 for(
-    let z=-145;
-    z<=145;
-    z+=30
+    let z=-210;
+    z<=210;
+    z+=45
 ){
 
-    createStreetLight(-105,z);
+    createStreetLight(
+        -185,
+        z
+    );
 
-    createStreetLight(105,z);
+    createStreetLight(
+        185,
+        z
+    );
 
 }
 
@@ -1073,15 +1155,16 @@ function createTrafficLight(
     const pole =
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .18,
-                .24,
-                8,
+                .2,
+                .25,
+                9,
                 8
             ),
             curbMaterial
         );
 
-    pole.position.y = 4;
+    pole.position.y =
+        4.5;
 
     group.add(pole);
 
@@ -1089,9 +1172,9 @@ function createTrafficLight(
     const box =
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                1.6,
-                4.8,
-                1.3
+                1.7,
+                5,
+                1.4
             ),
             material(
                 0x15191c,
@@ -1099,7 +1182,8 @@ function createTrafficLight(
             )
         );
 
-    box.position.y = 7;
+    box.position.y =
+        7.5;
 
     group.add(box);
 
@@ -1107,7 +1191,7 @@ function createTrafficLight(
     const red =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .34,
+                .35,
                 14,
                 14
             ),
@@ -1120,8 +1204,8 @@ function createTrafficLight(
 
     red.position.set(
         0,
-        8.3,
-        .7
+        8.8,
+        .75
     );
 
     group.add(red);
@@ -1130,7 +1214,7 @@ function createTrafficLight(
     const yellow =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .34,
+                .35,
                 14,
                 14
             ),
@@ -1143,8 +1227,8 @@ function createTrafficLight(
 
     yellow.position.set(
         0,
-        7,
-        .7
+        7.4,
+        .75
     );
 
     group.add(yellow);
@@ -1153,7 +1237,7 @@ function createTrafficLight(
     const green =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .34,
+                .35,
                 14,
                 14
             ),
@@ -1166,8 +1250,8 @@ function createTrafficLight(
 
     green.position.set(
         0,
-        5.7,
-        .7
+        6,
+        .75
     );
 
     group.add(green);
@@ -1186,28 +1270,49 @@ function createTrafficLight(
 }
 
 
-createTrafficLight(-5,-90);
+/* MAJOR INTERSECTIONS */
 
 createTrafficLight(
-    80,
-    -90,
+    -165,
+    -150
+);
+
+createTrafficLight(
+    55,
+    -150,
     Math.PI/2
 );
 
-createTrafficLight(-5,0);
+createTrafficLight(
+    -165,
+    0
+);
 
 createTrafficLight(
-    80,
+    55,
     0,
     Math.PI/2
 );
 
-createTrafficLight(-5,90);
+createTrafficLight(
+    250,
+    0
+);
 
 createTrafficLight(
-    80,
-    90,
+    -165,
+    150
+);
+
+createTrafficLight(
+    55,
+    150,
     Math.PI/2
+);
+
+createTrafficLight(
+    250,
+    150
 );
 
 
@@ -1219,27 +1324,28 @@ const controller =
     new THREE.Group();
 
 controller.position.set(
-    80,
+    150,
     0,
-    125
+    210
 );
 
 
 const controllerBase =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            30,
+            38,
             1,
-            22
+            28
         ),
         material(
             0x263d47,
-            .45,
+            .4,
             .2
         )
     );
 
-controllerBase.position.y = .8;
+controllerBase.position.y =
+    .8;
 
 controller.add(
     controllerBase
@@ -1249,9 +1355,9 @@ controller.add(
 const controllerTower =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            9,
-            14,
-            9
+            11,
+            17,
+            11
         ),
         material(
             0x185a72,
@@ -1260,7 +1366,8 @@ const controllerTower =
         )
     );
 
-controllerTower.position.y = 8;
+controllerTower.position.y =
+    9;
 
 controllerTower.castShadow = true;
 
@@ -1272,21 +1379,21 @@ controller.add(
 const controllerScreen =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            6,
-            4,
-            .25
+            7,
+            4.5,
+            .3
         ),
         new THREE.MeshStandardMaterial({
             color:0x04151d,
             emissive:0x087d9f,
-            emissiveIntensity:1.4
+            emissiveIntensity:1.5
         })
     );
 
 controllerScreen.position.set(
     0,
-    9,
-    -4.7
+    10,
+    -5.7
 );
 
 controller.add(
@@ -1297,15 +1404,16 @@ controller.add(
 const antenna =
     new THREE.Mesh(
         new THREE.CylinderGeometry(
-            .13,
-            .13,
-            11,
+            .15,
+            .15,
+            13,
             8
         ),
         curbMaterial
     );
 
-antenna.position.y = 20;
+antenna.position.y =
+    23;
 
 controller.add(
     antenna
@@ -1315,7 +1423,7 @@ controller.add(
 const signal =
     new THREE.Mesh(
         new THREE.SphereGeometry(
-            .8,
+            .9,
             18,
             18
         ),
@@ -1326,25 +1434,20 @@ const signal =
         })
     );
 
-signal.position.y = 26;
+signal.position.y =
+    30;
 
-controller.add(signal);
+controller.add(
+    signal
+);
 
-scene.add(controller);
-
-
-createBoard(
-    "AI TRAFFIC CONTROLLER",
-    80,
-    0,
-    150,
-    58,
-    8
+scene.add(
+    controller
 );
 
 
 /* =========================================================
-   WIND ENERGY
+   WIND TURBINES
 ========================================================= */
 
 const turbines=[];
@@ -1365,21 +1468,24 @@ function createTurbine(
         z
     );
 
-    group.scale.setScalar(scale);
+    group.scale.setScalar(
+        scale
+    );
 
 
     const tower =
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .75,
-                1.15,
-                32,
+                .8,
+                1.2,
+                35,
                 14
             ),
             whiteMaterial
         );
 
-    tower.position.y = 16;
+    tower.position.y =
+        17.5;
 
     tower.castShadow = true;
 
@@ -1391,7 +1497,7 @@ function createTurbine(
 
     hub.position.set(
         0,
-        32,
+        35,
         0
     );
 
@@ -1399,7 +1505,7 @@ function createTurbine(
     const center =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                2,
+                2.2,
                 18,
                 18
             ),
@@ -1418,21 +1524,22 @@ function createTurbine(
         const blade =
             new THREE.Mesh(
                 new THREE.BoxGeometry(
-                    .9,
-                    12,
-                    .4
+                    1,
+                    14,
+                    .45
                 ),
                 whiteMaterial
             );
 
-        blade.position.y = 6;
+        blade.position.y =
+            7;
 
         blade.rotation.z =
             i*Math.PI*2/3;
 
         blade.geometry.translate(
             0,
-            5,
+            6,
             0
         );
 
@@ -1446,36 +1553,25 @@ function createTurbine(
     scene.add(group);
 
     turbines.push(hub);
-
 }
 
 
 createTurbine(
-    -165,
-    120,
-    1.05
+    -120,
+    210,
+    1.1
 );
 
 createTurbine(
-    -125,
-    120,
-    .95
+    -65,
+    210,
+    1
 );
 
 createTurbine(
-    -85,
-    120,
-    .85
-);
-
-
-createBoard(
-    "WIND ENERGY",
-    -125,
-    0,
-    150,
-    50,
-    8
+    -10,
+    210,
+    .9
 );
 
 
@@ -1487,7 +1583,7 @@ const cars=[];
 
 
 function createCar(
-    lane,
+    x,
     z,
     speed,
     direction=1
@@ -1500,9 +1596,9 @@ function createCar(
     const body =
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                7,
-                1.8,
-                3.2
+                8,
+                2,
+                3.5
             ),
             material(
                 0x287ca3,
@@ -1511,7 +1607,8 @@ function createCar(
             )
         );
 
-    body.position.y = 2.3;
+    body.position.y =
+        2.4;
 
     car.add(body);
 
@@ -1519,9 +1616,9 @@ function createCar(
     const cabin =
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                3.8,
-                1.4,
-                2.5
+                4.2,
+                1.5,
+                2.7
             ),
             new THREE.MeshStandardMaterial({
                 color:0x82eaff,
@@ -1534,7 +1631,7 @@ function createCar(
 
     cabin.position.set(
         .5,
-        3.6,
+        3.8,
         0
     );
 
@@ -1542,23 +1639,25 @@ function createCar(
 
 
     const wheelMat =
-        material(0x111518);
+        material(
+            0x111518
+        );
 
 
     for(
-        const xx of [-2.3,2.3]
+        const xx of [-2.5,2.5]
     ){
 
         for(
-            const zz of [-1.6,1.6]
+            const zz of [-1.7,1.7]
         ){
 
             const wheel =
                 new THREE.Mesh(
                     new THREE.CylinderGeometry(
-                        .65,
-                        .65,
-                        .5,
+                        .7,
+                        .7,
+                        .55,
                         16
                     ),
                     wheelMat
@@ -1581,7 +1680,7 @@ function createCar(
 
 
     car.position.set(
-        lane,
+        x,
         1,
         z
     );
@@ -1601,36 +1700,28 @@ function createCar(
 
 
 /* =========================================================
-   TRAFFIC CARS
+   MANY CARS
 ========================================================= */
 
-createCar(-195,-90,.62,1);
+createCar(-310,-150,.70,1);
+createCar(-220,-150,.62,1);
+createCar(-120,-150,.75,1);
+createCar(-20,-150,.68,1);
+createCar(90,-150,.72,1);
+createCar(190,-150,.65,1);
+createCar(300,-150,.74,1);
 
-createCar(-135,-90,.72,1);
-
-createCar(-70,-90,.68,1);
-
-createCar(0,-90,.78,1);
-
-createCar(75,-90,.68,1);
-
-createCar(145,-90,.74,1);
-
-createCar(195,90,.60,-1);
-
-createCar(125,90,.68,-1);
-
-createCar(55,90,.65,-1);
-
-createCar(-20,90,.72,-1);
-
-createCar(-95,90,.62,-1);
-
-createCar(-175,90,.74,-1);
+createCar(300,150,.66,-1);
+createCar(210,150,.72,-1);
+createCar(110,150,.64,-1);
+createCar(10,150,.75,-1);
+createCar(-90,150,.67,-1);
+createCar(-190,150,.72,-1);
+createCar(-290,150,.65,-1);
 
 
 /* =========================================================
-   GLTF
+   GLTF LOADER
 ========================================================= */
 
 const loader =
@@ -1684,7 +1775,9 @@ function prepareModel(
     const center =
         new THREE.Vector3();
 
-    newBox.getCenter(center);
+    newBox.getCenter(
+        center
+    );
 
 
     object.position.x -=
@@ -1700,7 +1793,9 @@ function prepareModel(
     object.traverse(
         child => {
 
-            if(child.isMesh){
+            if(
+                child.isMesh
+            ){
 
                 child.castShadow = true;
 
@@ -1730,14 +1825,18 @@ loader.load(
 
         prepareModel(
             school,
-            75
+            85
         );
 
 
+        /*
+           LEFT EDUCATION DISTRICT
+        */
+
         school.position.set(
-            -70,
+            -225,
             1,
-            -35
+            -55
         );
 
 
@@ -1751,16 +1850,6 @@ loader.load(
             type:"school"
         });
 
-
-        createBoard(
-            "BSS SCHOOL SYSTEM",
-            -70,
-            0,
-            -78,
-            52,
-            8
-        );
-
     },
 
     undefined,
@@ -1768,7 +1857,7 @@ loader.load(
     error => {
 
         console.error(
-            "School GLB:",
+            "School GLB Error:",
             error
         );
 
@@ -1793,16 +1882,18 @@ loader.load(
 
         prepareModel(
             hospital,
-            62
+            72
         );
 
 
-        /* NEW HOSPITAL LOCATION */
+        /*
+           CENTRAL OPEN HEALTHCARE ZONE
+        */
 
         hospital.position.set(
             55,
             1,
-            -45
+            -65
         );
 
 
@@ -1816,16 +1907,6 @@ loader.load(
             type:"hospital"
         });
 
-
-        createBoard(
-            "BSS SMART HOSPITAL",
-            55,
-            0,
-            -8,
-            58,
-            8
-        );
-
     },
 
     undefined,
@@ -1833,7 +1914,7 @@ loader.load(
     error => {
 
         console.error(
-            "Hospital GLB:",
+            "Hospital GLB Error:",
             error
         );
 
@@ -1843,7 +1924,7 @@ loader.load(
 
 
 /* =========================================================
-   NEW SOCIETY SKYLINE
+   NEW LARGE SOCIETY
 ========================================================= */
 
 loader.load(
@@ -1857,24 +1938,23 @@ loader.load(
 
 
         /*
-           LARGE SOCIETY
+           LARGE SCALE
         */
 
         prepareModel(
             society,
-            145
+            175
         );
 
 
         /*
-           LARGE LEFT-SIDE
-           RESIDENTIAL ZONE
+           LARGE RESIDENTIAL DISTRICT
         */
 
         society.position.set(
-            -125,
+            -190,
             1,
-            55
+            65
         );
 
 
@@ -1889,22 +1969,8 @@ loader.load(
         });
 
 
-        /*
-           LARGE SOCIETY ENTRY
-        */
-
-        createBoard(
-            "BSS SMART SOCIETY",
-            -125,
-            0,
-            125,
-            70,
-            9
-        );
-
-
         console.log(
-            "BSS Smart Society Skyline loaded."
+            "BSS Smart Society loaded."
         );
 
     },
@@ -1914,7 +1980,7 @@ loader.load(
     error => {
 
         console.error(
-            "Society Skyline GLB:",
+            "Society GLB Error:",
             error
         );
 
@@ -1924,25 +1990,25 @@ loader.load(
 
 
 /* =========================================================
-   SOCIETY GATE
+   SOCIETY ENTRY GATE
 ========================================================= */
 
 const societyGate =
     new THREE.Group();
 
 societyGate.position.set(
-    -125,
+    -190,
     0,
-    125
+    245
 );
 
 
 const gateLeft =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            6,
-            14,
-            6
+            7,
+            16,
+            7
         ),
         material(
             0x315d70,
@@ -1952,8 +2018,8 @@ const gateLeft =
     );
 
 gateLeft.position.set(
-    -32,
-    7,
+    -40,
+    8,
     0
 );
 
@@ -1967,7 +2033,8 @@ societyGate.add(
 const gateRight =
     gateLeft.clone();
 
-gateRight.position.x = 32;
+gateRight.position.x =
+    40;
 
 societyGate.add(
     gateRight
@@ -1977,9 +2044,9 @@ societyGate.add(
 const gateTop =
     new THREE.Mesh(
         new THREE.BoxGeometry(
-            70,
-            4.5,
-            6
+            88,
+            5,
+            7
         ),
         material(
             0x164e67,
@@ -1988,7 +2055,8 @@ const gateTop =
         )
     );
 
-gateTop.position.y = 12;
+gateTop.position.y =
+    14;
 
 gateTop.castShadow = true;
 
@@ -2008,7 +2076,7 @@ const gateLightMaterial =
 const gateLightLeft =
     new THREE.Mesh(
         new THREE.SphereGeometry(
-            .9,
+            1,
             16,
             16
         ),
@@ -2016,8 +2084,8 @@ const gateLightLeft =
     );
 
 gateLightLeft.position.set(
-    -32,
-    14,
+    -40,
+    16,
     0
 );
 
@@ -2029,30 +2097,20 @@ societyGate.add(
 const gateLightRight =
     gateLightLeft.clone();
 
-gateLightRight.position.x = 32;
+gateLightRight.position.x =
+    40;
 
 societyGate.add(
     gateLightRight
 );
-
 
 scene.add(
     societyGate
 );
 
 
-/* SOCIETY ENTRY ROAD */
-
-createRoad(
-    -125,
-    125,
-    145,
-    12
-);
-
-
 /* =========================================================
-   STATE BANK
+   BANK
 ========================================================= */
 
 loader.load(
@@ -2067,14 +2125,18 @@ loader.load(
 
         prepareModel(
             bank,
-            130
+            145
         );
 
 
+        /*
+           BUSINESS DISTRICT
+        */
+
         bank.position.set(
-            145,
+            250,
             1,
-            100
+            70
         );
 
 
@@ -2088,16 +2150,6 @@ loader.load(
             type:"bank"
         });
 
-
-        createBoard(
-            "SMART CITY STATE BANK",
-            145,
-            0,
-            145,
-            70,
-            9
-        );
-
     },
 
     undefined,
@@ -2105,7 +2157,7 @@ loader.load(
     error => {
 
         console.error(
-            "Bank GLB:",
+            "Bank GLB Error:",
             error
         );
 
@@ -2115,7 +2167,7 @@ loader.load(
 
 
 /* =========================================================
-   INFORMATION PANEL
+   INFO PANEL
 ========================================================= */
 
 function showPanel(
@@ -2167,7 +2219,7 @@ function(){
 
 
 /* =========================================================
-   CLICK SYSTEM
+   CLICK DETECTION
 ========================================================= */
 
 const raycaster =
@@ -2213,13 +2265,14 @@ renderer.domElement
                 );
 
 
-            if(!hit.length)
+            if(
+                !hit.length
+            )
                 continue;
 
 
             if(
-                item.type ===
-                "school"
+                item.type === "school"
             ){
 
                 showPanel(
@@ -2232,8 +2285,7 @@ renderer.domElement
 
 
             if(
-                item.type ===
-                "hospital"
+                item.type === "hospital"
             ){
 
                 showPanel(
@@ -2246,8 +2298,7 @@ renderer.domElement
 
 
             if(
-                item.type ===
-                "society"
+                item.type === "society"
             ){
 
                 showPanel(
@@ -2260,14 +2311,13 @@ renderer.domElement
 
 
             if(
-                item.type ===
-                "bank"
+                item.type === "bank"
             ){
 
                 showPanel(
                     "Smart City State Bank",
                     "FINANCIAL ZONE",
-                    "A smart banking facility supporting secure digital financial services and connected city infrastructure."
+                    "A smart banking facility providing secure digital financial services for the connected smart city."
                 );
 
             }
@@ -2282,43 +2332,21 @@ renderer.domElement
 
 
 /* =========================================================
-   TRAFFIC SIMULATION
+   TRAFFIC SYSTEM
 ========================================================= */
 
 const clock =
     new THREE.Clock();
 
-
 let simulationSeconds = 0;
 
 let trafficState = 0;
 
-
-/*
-=========================================================
-IMPORTANT:
-
-60 SECONDS = TRAFFIC JAM
-=========================================================
-*/
-
 const JAM_TIME = 60;
-
-
-/*
-JAM STAYS FOR 25 SECONDS
-*/
 
 const JAM_DURATION = 25;
 
-
-/*
-AI TAKES 30 SECONDS TO FULLY
-RESTORE TRAFFIC
-*/
-
 const RESOLVE_DURATION = 30;
-
 
 let jamStartTime = 0;
 
@@ -2326,7 +2354,7 @@ let resolveStartTime = 0;
 
 
 /* =========================================================
-   UI ELEMENTS
+   UI
 ========================================================= */
 
 const simulationTime =
@@ -2481,7 +2509,7 @@ function setTrafficStatus(
 
 
 /* =========================================================
-   ACTIVATE TRAFFIC JAM
+   TRAFFIC JAM
 ========================================================= */
 
 function activateTrafficJam(){
@@ -2504,15 +2532,20 @@ function activateTrafficJam(){
         data.speed = 0;
 
 
-        /*
-        MAKE A VISIBLE TRAFFIC QUEUE
-        */
-
         data.car.position.x =
-            -125 +
-            queueIndex * 12;
+            -150 +
+            queueIndex * 14;
+
 
         queueIndex++;
+
+        if(
+            queueIndex >= cars.length
+        ){
+
+            queueIndex = 0;
+
+        }
 
     }
 
@@ -2555,14 +2588,14 @@ function activateAIResolution(){
 
 
     showAIMessage(
-        "AI is optimizing signals and opening an alternate traffic route."
+        "AI is optimizing traffic signals and opening alternate routes."
     );
 
 }
 
 
 /* =========================================================
-   CLEAR TRAFFIC
+   TRAFFIC CLEAR
 ========================================================= */
 
 function clearTraffic(){
@@ -2593,7 +2626,7 @@ function clearTraffic(){
 
 
 /* =========================================================
-   UPDATE CARS
+   CAR MOVEMENT
 ========================================================= */
 
 function updateCars(){
@@ -2616,19 +2649,7 @@ function updateCars(){
             trafficState === 1
         ){
 
-            if(
-                data.jamStopped
-            ){
-
-                data.speed = 0;
-
-            }
-            else{
-
-                data.speed =
-                    data.baseSpeed * .2;
-
-            }
+            data.speed = 0;
 
         }
 
@@ -2676,19 +2697,21 @@ function updateCars(){
 
 
         if(
-            data.car.position.x > 225
+            data.car.position.x > 345
         ){
 
-            data.car.position.x = -225;
+            data.car.position.x =
+                -345;
 
         }
 
 
         if(
-            data.car.position.x < -225
+            data.car.position.x < -345
         ){
 
-            data.car.position.x = 225;
+            data.car.position.x =
+                345;
 
         }
 
@@ -2698,7 +2721,7 @@ function updateCars(){
 
 
 /* =========================================================
-   TRAFFIC LIGHT SYSTEM
+   TRAFFIC LIGHTS
 ========================================================= */
 
 function updateTrafficLights(
@@ -2708,18 +2731,11 @@ function updateTrafficLights(
     trafficLights.forEach(
         light => {
 
-            const cycleLength =
-                trafficState === 2
-                ? 8
-                : 12;
-
-
             const cycle =
                 (
                     time +
                     light.phase
-                ) %
-                cycleLength;
+                ) % 12;
 
 
             light.red
@@ -2775,9 +2791,7 @@ function updateTrafficLights(
 
 function updateTrafficSystem(){
 
-    /*
-    NORMAL → JAM AFTER 60 SECONDS
-    */
+    /* 1 MINUTE */
 
     if(
         trafficState === 0 &&
@@ -2789,9 +2803,7 @@ function updateTrafficSystem(){
     }
 
 
-    /*
-    JAM → AI AFTER 25 SECONDS
-    */
+    /* AI STARTS */
 
     if(
         trafficState === 1 &&
@@ -2805,9 +2817,7 @@ function updateTrafficSystem(){
     }
 
 
-    /*
-    AI → CLEAR AFTER 30 SECONDS
-    */
+    /* FULL RESTORE */
 
     if(
         trafficState === 2 &&
@@ -2895,8 +2905,6 @@ function animate(){
     );
 
 
-    /* WIND TURBINES */
-
     turbines.forEach(
         turbine => {
 
@@ -2906,8 +2914,6 @@ function animate(){
         }
     );
 
-
-    /* AI SIGNAL */
 
     signal.scale.setScalar(
         1 +
