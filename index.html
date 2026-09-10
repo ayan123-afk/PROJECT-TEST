@@ -31,43 +31,41 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;padding:11px 20px;border-radius:12px;background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);color:#d2e1e7;font-size:12px;white-space:nowrap}
 #dayNightBtn{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;padding:12px 26px;border-radius:14px;background:linear-gradient(135deg,#1e2a35,#0d1620);border:1px solid rgba(90,225,255,.5);color:#c9f5ff;font-size:14px;font-weight:900;letter-spacing:2px;cursor:pointer;font-family:Arial,Helvetica,sans-serif}
 #dayNightBtn.night{background:linear-gradient(135deg,#0d1a30,#050a15);border-color:rgba(255,220,120,.7);color:#ffe28a}
-#watchBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#1a4fc2,#0f2f8a);border:1px solid rgba(90,150,255,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;font-family:Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(40,100,220,.4)}
-#watchBtn:hover{background:linear-gradient(135deg,#2a63e0,#1540a5)}
-#exitBtn{position:fixed;bottom:80px;left:18px;z-index:55;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#c22b1a,#8a1f0f);border:1px solid rgba(255,120,60,.7);color:white;font-weight:900;letter-spacing:1.5px;font-size:12px;cursor:pointer;display:none;font-family:Arial,Helvetica,sans-serif}
-#aiExplain{
-  position:fixed;bottom:80px;right:18px;z-index:65;
-  width:420px;max-height:65vh;overflow-y:auto;
-  background:rgba(3,13,22,.97);
-  border:1px solid rgba(90,225,255,.5);
-  border-radius:16px;padding:20px;
+
+/* AI REASON panel */
+#aiReason{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:65;width:620px;max-width:90vw;
+  background:rgba(3,13,22,.96);
+  border:1px solid rgba(90,225,255,.55);
+  border-radius:16px;padding:16px 22px;
   display:none;box-shadow:0 20px 60px rgba(0,0,0,.8);
+  transition:all .4s;
 }
-#aiExplain h3{color:#22cfff;font-size:14px;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(90,225,255,.3)}
-#aiExplain .step{
-  display:flex;gap:10px;margin-bottom:12px;
-  padding:10px;border-radius:10px;
-  background:rgba(255,255,255,.04);
-  border-left:3px solid #22cfff;
-  font-size:11px;line-height:1.5;color:#c9d6dd;
+#aiReason .title{
+  color:#22cfff;font-size:13px;letter-spacing:2px;
+  margin-bottom:10px;font-weight:900;
+  display:flex;align-items:center;gap:8px;
 }
-#aiExplain .step .num{
-  flex-shrink:0;width:22px;height:22px;border-radius:50%;
-  background:#22cfff;color:#03141b;
-  font-weight:900;font-size:11px;
-  display:flex;align-items:center;justify-content:center;
+#aiReason .title .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#22cfff;box-shadow:0 0 10px #22cfff;
+  animation:pulse 1.5s infinite;
 }
-#aiExplain .step strong{color:#22cfff}
-#aiExplain .step.warning{border-left-color:#ff5252}
-#aiExplain .step.warning .num{background:#ff5252;color:white}
-#aiExplain .step.success{border-left-color:#22ff9d}
-#aiExplain .step.success .num{background:#22ff9d;color:#03141b}
-#aiExplain .step.action{border-left-color:#ffcc00}
-#aiExplain .step.action .num{background:#ffcc00;color:#03141b}
-#aiExplain .closeX{
-  position:absolute;right:12px;top:12px;
-  width:26px;height:26px;border:0;border-radius:6px;
-  background:#172731;color:white;font-size:14px;cursor:pointer;
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.3)}
 }
+#aiReason .reason{
+  color:#ffffff;font-size:14px;line-height:1.6;
+  margin-bottom:8px;
+}
+#aiReason .reason strong{color:#22cfff}
+#aiReason .result{
+  color:#6aff9d;font-size:12px;line-height:1.5;
+  padding-top:8px;border-top:1px solid rgba(90,225,255,.2);
+}
+#aiReason .result strong{color:#6aff9d}
 </style>
 </head>
 <body>
@@ -94,13 +92,10 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 <div id="aiMessage">AI Traffic Controller</div>
 <div id="incident"><span>LIVE SYSTEM:</span> Monitoring 4 city entry routes</div>
 
-<button id="watchBtn">🎥 WATCH THE JAM</button>
-<button id="exitBtn">✕ BACK TO CITY</button>
-
-<div id="aiExplain">
-  <button class="closeX" onclick="document.getElementById('aiExplain').style.display='none'">×</button>
-  <h3>🤖 AI RESOLUTION LOG</h3>
-  <div id="aiSteps"></div>
+<div id="aiReason">
+  <div class="title"><span class="dot"></span><span id="aiReasonTitle">AI ACTION LOG</span></div>
+  <div class="reason" id="aiReasonText"></div>
+  <div class="result" id="aiResultText"></div>
 </div>
 
 <div id="panel">
@@ -190,21 +185,21 @@ function zone(x, z, w, d){
 zone(-280, -210, 340, 250); zone( 250, -210, 340, 250);
 zone(-260, 210, 480, 330);  zone(350, 210, 320, 260);
 
-function makeDualRoad(x, z, w, d){
+function makeRoad(x, z, w, d){
   const r = new THREE.Mesh(new THREE.BoxGeometry(w, .45, d), roadMaterial);
   r.position.set(x, 4.7, z); scene.add(r);
   const c = new THREE.Mesh(new THREE.BoxGeometry(w > d ? w : 1.5, .08, w > d ? 1.5 : d), yellowLineMaterial);
   c.position.set(x, 5, z); scene.add(c);
 }
-makeDualRoad(0, -635, 1740, 40);
-makeDualRoad(0, 635, 1740, 40);
-makeDualRoad(-855, 0, 40, 1250);
-makeDualRoad(855, 0, 40, 1250);
-makeDualRoad(0, -400, 1680, 30);
-makeDualRoad(0, 0, 1680, 30);
-makeDualRoad(0, 400, 1680, 30);
-makeDualRoad(-520, 0, 30, 1200);
-makeDualRoad(520, 0, 30, 1200);
+makeRoad(0, -635, 1740, 40);
+makeRoad(0, 635, 1740, 40);
+makeRoad(-855, 0, 40, 1250);
+makeRoad(855, 0, 40, 1250);
+makeRoad(0, -400, 1680, 30);
+makeRoad(0, 0, 1680, 30);
+makeRoad(0, 400, 1680, 30);
+makeRoad(-520, 0, 30, 1200);
+makeRoad(520, 0, 30, 1200);
 
 function sw(x, z, w, d){
   const s = new THREE.Mesh(new THREE.BoxGeometry(w, .28, d), curbMaterial);
@@ -279,6 +274,7 @@ function tl(x, z){
 }
 tl(-520, -400); tl(520, -400); tl(-520, 400); tl(520, 400);
 
+/* AI CONTROLLER */
 const controller = new THREE.Group();
 controller.position.set(0, 5, 505);
 
@@ -321,13 +317,6 @@ topAntenna.position.y = 70; controller.add(topAntenna);
 const sig = new THREE.Mesh(new THREE.SphereGeometry(2.4, 12, 12), new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 3.5 }));
 sig.position.y = 82; controller.add(sig);
 
-for(let i=0; i<4; i++){
-  const angle = i * Math.PI / 2 + Math.PI/4;
-  const sensor = new THREE.Mesh(new THREE.CylinderGeometry(3, 1.8, 4, 10), new THREE.MeshStandardMaterial({ color: 0x087fa8, emissive: 0x0a9cc8, emissiveIntensity: 2 }));
-  sensor.position.set(Math.cos(angle) * 46, 5, Math.sin(angle) * 46);
-  sensor.rotation.x = 0.4;
-  controller.add(sensor);
-}
 scene.add(controller);
 
 const loader = new GLTFLoader();
@@ -416,17 +405,15 @@ solarPark.position.set(400, 0, 0); powerZone.add(solarPark);
 const solarGround = new THREE.Mesh(new THREE.BoxGeometry(620, .8, 1050), mat(0x2a4536, .92));
 solarGround.position.y = 5; solarPark.add(solarGround);
 const solarMat = new THREE.MeshStandardMaterial({ color: 0x082c4b, roughness: .18, metalness: .7, emissive: 0x063b62, emissiveIntensity: 0.7 });
-const solarFrameMat = mat(0xb7c4c8, .28, .8);
 const solarPanelGeo = new THREE.BoxGeometry(1, 1, 1);
-const solarFrameGeo = new THREE.BoxGeometry(1, 1, 1);
-
 function solarArray(x, z, w, d, rows, cols){
   const g = new THREE.Group();
   g.position.set(x, 8, z); g.rotation.x = -0.22;
   const pw = w / cols - 3, pd = d / rows - 3;
   for(let r=0; r<rows; r++) for(let c=0; c<cols; c++){
-    const px = (c-(cols-1)/2) * (w/cols); const pz = (r-(rows-1)/2) * (d/rows);
-    const p = new THREE.Mesh(solarPanelGeo, solarMat); p.scale.set(pw, .45, pd); p.position.set(px, 0, pz); g.add(p);
+    const p = new THREE.Mesh(solarPanelGeo, solarMat); p.scale.set(pw, .45, pd);
+    p.position.set((c-(cols-1)/2)*(w/cols), 0, (r-(rows-1)/2)*(d/rows));
+    g.add(p);
   }
   solarPark.add(g);
 }
@@ -468,7 +455,6 @@ arenaPad.position.y = 5; arena.add(arenaPad);
 board("SMART BUILDINGS ARENA", 1550, 5, -980, 240, 16);
 
 const winMats = [];
-const roofSolarMat = new THREE.MeshStandardMaterial({ color: 0x092f4e, emissive: 0x075c85, emissiveIntensity: 1.0 });
 const smartBeaconMats = [];
 
 function smartBld(name, x, z, w, d, h, color){
@@ -517,11 +503,8 @@ shop(430, 290, 1.4, "Bank Dagashiya 2");
 [[150, -100], [350, -100], [150, -320], [350, -320], [200, 100], [460, 100], [200, 320], [460, 320]].forEach(p => tree(p[0], p[1], 1));
 
 /* =========================================================
-   ██████ CARS COMING FROM 4 DIRECTIONS INTO THE CENTER ██████
-   - Every car spawns OUTSIDE the city on one of 4 entry roads
-   - They drive TOWARD the AI controller at the center (0, 505)
-   - They queue up at the intersection → realistic traffic jam
-   - The AI controller then reroutes them
+   CARS — they simply drive their routes at their own speed.
+   No weird logic. Just plain driving.
 ========================================================= */
 const cars = [];
 const carColors = [0x287ca3, 0xc83f49, 0xe1a72e, 0x5b72c9, 0x2f9d65, 0xd8d8d8, 0xd97b2a, 0x8b3ad9];
@@ -559,115 +542,61 @@ function makeCar(color){
   return g;
 }
 
-/* 4 entry roads — every road leads to AI controller at (0, 505) */
-const ENTRY_ROUTES = {
-  /* From North (top) — cars come DOWN to city center */
-  north: {
-    spawn: { x: 0, z: -900 },
-    target: { x: 0, z: 505 },
-    direction: 'vertical',
-    carAngle: Math.PI/2
-  },
-  /* From South (bottom) — cars come UP to city center */
-  south: {
-    spawn: { x: 0, z: 1000 },
-    target: { x: 0, z: 505 },
-    direction: 'vertical',
-    carAngle: -Math.PI/2
-  },
-  /* From West (left) — cars come RIGHT to city center */
-  west: {
-    spawn: { x: -1200, z: 505 },
-    target: { x: 0, z: 505 },
-    direction: 'horizontal',
-    carAngle: 0
-  },
-  /* From East (right) — cars come LEFT to city center */
-  east: {
-    spawn: { x: 1200, z: 505 },
-    target: { x: 0, z: 505 },
-    direction: 'horizontal',
-    carAngle: Math.PI
-  }
-};
+/* Main routes — like before, cars just drive around */
+const outerRoute = [[-855,-635],[855,-635],[855,635],[-855,635]];
+const innerRoute = [[-520,-400],[520,-400],[520,400],[-520,400]];
 
-/* Each car has:
-   - road (north/south/west/east)
-   - distance from spawn (starts at 0, increases toward target)
-   - lane offset (which lane — left or right of the road)
-   - speed, currentSpeed, target distance range */
-const roadSpawnCount = { north: 0, south: 0, west: 0, east: 0 };
-const MAX_CARS_PER_ROAD = 12;   /* 12 cars per direction = 48 total on the 4 roads */
-
-function spawnCarFromRoad(roadKey){
-  const road = ENTRY_ROUTES[roadKey];
-  const color = carColors[Math.floor(Math.random()*carColors.length)];
-  const mesh = makeCar(color);
-  scene.add(mesh);
-
-  /* Two lanes: right lane at +8, left lane at -8 relative to road center */
-  const lane = (roadSpawnCount[roadKey] % 2 === 0) ? 8 : -8;
-  roadSpawnCount[roadKey]++;
-
-  /* Initial distance from spawn */
-  const startDist = Math.random() * 100;
-
-  const carData = {
-    mesh,
-    road: roadKey,
-    dist: startDist,
-    maxDist: 2000,
-    lane: lane,
-    currentSpeed: 0.8 + Math.random() * 0.4,
-    baseSpeed: 0.8 + Math.random() * 0.4,
-    stopped: false,
+function car(route, progress, dir, spd, laneOffset){
+  const g = makeCar(carColors[Math.floor(Math.random()*carColors.length)]);
+  scene.add(g);
+  cars.push({
+    car: g, route, progress, direction: dir,
+    speed: spd, baseSpeed: spd, laneOffset,
+    currentSpeed: spd,
     rerouted: false,
-    angle: road.carAngle
+    status: 'driving'
+  });
+}
+
+/* Populate the roads — enough cars for realistic traffic */
+for(let i=0; i<6; i++) car("outer", .02 + i*.14, 1, .40, 10);
+for(let i=0; i<6; i++) car("outer", .25 + i*.14, 1, .40, 10);
+for(let i=0; i<4; i++) car("outer", .50 + i*.14, -1, .40, -10);
+for(let i=0; i<4; i++) car("inner", i/4, 1, .35, 8);
+for(let i=0; i<2; i++) car("inner", .5 + i/2, -1, .35, -8);
+
+function routeP(route, progress, laneOffset = 0){
+  const points = route==="outer" ? outerRoute : innerRoute;
+  const scaled = progress * points.length;
+  const i = Math.floor(scaled) % points.length;
+  const n = (i+1) % points.length;
+  const t = scaled - Math.floor(scaled);
+  const a = points[i], b = points[n];
+
+  const baseX = THREE.MathUtils.lerp(a[0], b[0], t);
+  const baseZ = THREE.MathUtils.lerp(a[1], b[1], t);
+
+  const dx = b[0] - a[0];
+  const dz = b[1] - a[1];
+  const len = Math.sqrt(dx*dx + dz*dz);
+  const nx = dx / len, nz = dz / len;
+  const perpX = -nz, perpZ = nx;
+
+  return {
+    x: baseX + perpX * laneOffset,
+    z: baseZ + perpZ * laneOffset,
+    ax:a[0], az:a[1], bx:b[0], bz:b[1]
   };
-
-  cars.push(carData);
-  return carData;
 }
 
-/* Initial spawn — 8 cars per road */
-for(let i=0; i<MAX_CARS_PER_ROAD; i++){
-  const roadKeys = ['north', 'south', 'west', 'east'];
-  const rk = roadKeys[i % 4];
-  const car = spawnCarFromRoad(rk);
-  /* Spread initial distances */
-  car.dist = 100 + Math.floor(i / 4) * 150 + Math.random() * 80;
-}
-
-/* Position all cars based on their road + distance */
-function positionCar(carData){
-  const road = ENTRY_ROUTES[carData.road];
-  const spawn = road.spawn;
-  const target = road.target;
-
-  /* Interpolate between spawn and target based on dist */
-  const dx = target.x - spawn.x;
-  const dz = target.z - spawn.z;
-  const totalDist = Math.sqrt(dx*dx + dz*dz);
-  const ratio = Math.min(carData.dist / totalDist, 1);
-
-  let x = spawn.x + dx * ratio;
-  let z = spawn.z + dz * ratio;
-
-  /* Apply lane offset perpendicular to road direction */
-  if(road.direction === 'vertical'){
-    /* North/South roads — vertical, lane offset in X */
-    x += carData.lane;
-  } else {
-    /* East/West roads — horizontal, lane offset in Z */
-    z += carData.lane;
-  }
-
-  carData.mesh.position.set(x, 5.2, z);
-  carData.mesh.rotation.y = road.carAngle;
-}
-
-/* Position all initial cars */
-cars.forEach(c => positionCar(c));
+cars.forEach(d => {
+  const p = routeP(d.route, d.progress, d.laneOffset);
+  d.car.position.set(p.x, 5.2, p.z);
+  const dx = p.bx-p.ax, dz = p.bz-p.az;
+  let angle = -Math.atan2(dz, dx);
+  if(d.direction < 0) angle += Math.PI;
+  d.car.rotation.y = angle;
+});
 
 function bld(file, size, pos, type){
   loader.load(file, g => {
@@ -687,68 +616,6 @@ const gR = gL.clone(); gR.position.x = 45; gate.add(gR);
 const gT = new THREE.Mesh(new THREE.BoxGeometry(98, 5, 8), mat(0x164e67, .35, .25)); gT.position.y = 16; gate.add(gT);
 scene.add(gate);
 
-/* =========================================================
-   WATCH MODE — camera flies above the AI controller intersection
-========================================================= */
-let isWatching = false;
-const savedCamPos = new THREE.Vector3();
-const savedCamTarget = new THREE.Vector3();
-
-/* Camera looks straight down at the AI controller intersection
-   from above — you see all 4 roads and the queue of cars */
-const WATCH_POS = new THREE.Vector3(0, 900, 505);       /* high above intersection */
-const WATCH_TARGET = new THREE.Vector3(0, 0, 505);      /* look down at intersection */
-
-function watchTheJam(){
-  isWatching = true;
-  savedCamPos.copy(camera.position);
-  savedCamTarget.copy(controls.target);
-
-  camera.position.copy(WATCH_POS);
-  controls.target.copy(WATCH_TARGET);
-  controls.update();
-
-  controls.enableRotate = true;
-  controls.enablePan = false;
-  controls.enableZoom = true;
-
-  document.getElementById('watchBtn').style.display = 'none';
-  document.getElementById('exitBtn').style.display = 'block';
-
-  document.getElementById('aiSteps').innerHTML = '';
-  document.getElementById('aiExplain').style.display = 'block';
-  stepCounter = 0;
-
-  showMsg("🎥 WATCHING — 4-way intersection at the AI controller");
-}
-
-function exitWatching(){
-  isWatching = false;
-  camera.position.copy(savedCamPos);
-  controls.target.copy(savedCamTarget);
-  controls.enableRotate = true;
-  controls.enablePan = true;
-  controls.update();
-  document.getElementById('watchBtn').style.display = 'block';
-  document.getElementById('exitBtn').style.display = 'none';
-  document.getElementById('aiExplain').style.display = 'none';
-}
-
-document.getElementById('watchBtn').addEventListener('click', watchTheJam);
-document.getElementById('exitBtn').addEventListener('click', exitWatching);
-
-/* AI Explanation log */
-let stepCounter = 0;
-function addAIStep(text, type = ''){
-  stepCounter++;
-  const div = document.createElement('div');
-  div.className = 'step ' + type;
-  div.innerHTML = `<div class="num">${stepCounter}</div><div>${text}</div>`;
-  const container = document.getElementById('aiSteps');
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
-
 /* PANEL */
 function showPanel(title, type, text){
   document.getElementById("panelContent").innerHTML = `<h2>${title}</h2><div class="type">${type}</div><p>${text}</p>`;
@@ -759,7 +626,6 @@ window.closePanel = function(){ document.getElementById("panel").style.display =
 const ray = new THREE.Raycaster();
 const m = new THREE.Vector2();
 renderer.domElement.addEventListener("click", e => {
-  if(isWatching) return;
   m.x = e.clientX / window.innerWidth * 2 - 1;
   m.y = -(e.clientY / window.innerHeight) * 2 + 1;
   ray.setFromCamera(m, camera);
@@ -814,7 +680,9 @@ function setDN(night){
 }
 btn.addEventListener('click', () => setDN(!isNight));
 
-/* TRAFFIC SIM */
+/* =========================================================
+   TRAFFIC SIM
+========================================================= */
 const clock = new THREE.Clock();
 let simSec = 0;
 let tState = 0;
@@ -831,6 +699,10 @@ const tStateEl = document.getElementById("trafficState");
 const iReason = document.getElementById("incidentReason");
 const aiMsg = document.getElementById("aiMessage");
 const inc = document.getElementById("incident");
+const aiReason = document.getElementById("aiReason");
+const aiReasonTitle = document.getElementById("aiReasonTitle");
+const aiReasonText = document.getElementById("aiReasonText");
+const aiResultText = document.getElementById("aiResultText");
 
 function showMsg(msg){
   aiMsg.textContent = msg;
@@ -843,146 +715,108 @@ function setState(s){
     tStateEl.textContent = "TRAFFIC NORMAL"; tStateEl.style.color = "#63ddff";
     iReason.textContent = "4-SITE NETWORK OPERATING NORMALLY";
     tLevel.textContent = "NORMAL"; tFlow.textContent = "92%"; aMode.textContent = "MONITORING";
-    inc.innerHTML = "<span>LIVE:</span> 4 roads flowing smoothly";
+    inc.innerHTML = "<span>LIVE:</span> Traffic flowing normally";
+    aiReason.style.display = "none";
   }
   if(s===1){
     tStateEl.textContent = "TRAFFIC JAM"; tStateEl.style.color = "#ffd15a";
-    iReason.textContent = "HEAVY CONGESTION AT CENTRAL INTERSECTION";
+    iReason.textContent = "QUEUE BUILDING AT CENTRAL INTERSECTION";
     tLevel.textContent = "HEAVY"; tFlow.textContent = "28%"; aMode.textContent = "ANALYZING";
-    inc.innerHTML = "<span>INCIDENT:</span> 4-way intersection jammed";
+    inc.innerHTML = "<span>INCIDENT:</span> Cars queuing at intersection";
+    /* Show reason */
+    aiReason.style.display = "block";
+    aiReasonTitle.textContent = "🔴 PROBLEM DETECTED";
+    aiReasonText.innerHTML = `<strong>REASON:</strong> Too many cars arriving at the central intersection from all 4 roads at the same time. Queue is building up on each road.`;
+    aiResultText.innerHTML = `AI is <strong>reading the queue on all 4 roads</strong> to figure out the best fix.`;
   }
   if(s===2){
     tStateEl.textContent = "AI REROUTING"; tStateEl.style.color = "#67e4ff";
-    iReason.textContent = "AI OPENING INNER-CITY BYPASS ROUTES";
+    iReason.textContent = "AI SPLITTING TRAFFIC TO INNER ROADS";
     tLevel.textContent = "RECOVERING"; tFlow.textContent = "68%"; aMode.textContent = "OPTIMIZING";
-    inc.innerHTML = "<span>AI ACTION:</span> Rerouting vehicles via inner ring";
+    inc.innerHTML = "<span>AI ACTION:</span> Rerouting cars via inner roads";
+    aiReason.style.display = "block";
+    aiReasonTitle.textContent = "🔵 AI IS ACTING";
+    aiReasonText.innerHTML = `<strong>AI DID THIS:</strong> AI <strong>flipped some signals to green</strong> on the inner-city roads and <strong>redirected half the cars</strong> to those roads before they reach the intersection.`;
+    aiResultText.innerHTML = `Result: <strong>less cars at the intersection → jam starts clearing.</strong>`;
   }
   if(s===3){
     tStateEl.textContent = "TRAFFIC CLEAR"; tStateEl.style.color = "#6aff9d";
-    iReason.textContent = "ALL ROUTES CLEARED SUCCESSFULLY";
+    iReason.textContent = "ALL ROUTES FLOWING NORMALLY";
     tLevel.textContent = "CLEAR"; tFlow.textContent = "96%"; aMode.textContent = "OPTIMAL";
-    inc.innerHTML = "<span>SYSTEM:</span> All 4 routes flowing normally";
+    inc.innerHTML = "<span>SYSTEM:</span> All routes flowing normally";
+    aiReason.style.display = "block";
+    aiReasonTitle.textContent = "🟢 RESOLVED BY AI";
+    aiReasonText.innerHTML = `<strong>AI RESOLVED IT</strong> by splitting the traffic between the outer and inner roads. Now both are flowing.`;
+    aiResultText.innerHTML = `Jam cleared in <strong>22 seconds</strong>. AI is back to monitoring.`;
   }
 }
 
 function activateJam(){
   tState = 1; iStart = simSec;
   setState(1);
-  showMsg("⚠ HEAVY CONGESTION AT 4-WAY INTERSECTION");
-
-  addAIStep("<strong>[DETECT]</strong> AI sensors on all 4 entry roads are reading high vehicle density.", 'warning');
-  addAIStep("<strong>[COUNT]</strong> 48 vehicles inbound — 12 from North, 12 from South, 12 from East, 12 from West.", 'warning');
-  addAIStep("<strong>[VERIFY]</strong> Average speed at intersection dropped to 8 km/h — real congestion building up.", 'warning');
-  addAIStep("<strong>[REASON]</strong> Rush-hour inflow exceeds intersection capacity. Queue forming on all 4 approaches.", 'warning');
-  addAIStep("<strong>[WATCH]</strong> You can see cars queuing on all 4 roads leading to the AI controller.", 'warning');
+  showMsg("⚠ CARS QUEUING AT INTERSECTION");
 }
-
 function activateReroute(){
   tState = 2; rStart = simSec;
   setState(2);
-  showMsg("🤖 AI REROUTING VEHICLES VIA INNER RING");
-
-  addAIStep("<strong>[PLAN]</strong> AI calculates optimal bypass using the inner-city ring roads (x=±520, z=±400).", 'action');
-  addAIStep("<strong>[SIGNALS]</strong> Synchronizing 4 traffic lights at inner ring junctions — creating a green wave.", 'action');
-  addAIStep("<strong>[REROUTE]</strong> Redirecting 50% of incoming cars to inner ring before they reach the intersection.", 'action');
-  addAIStep("<strong>[BALANCE]</strong> Now only 6 cars per road enter the intersection instead of 12.", 'action');
-  addAIStep("<strong>[WATCH]</strong> Watch the cars change lanes and merge onto the inner ring — intersection pressure dropping.", 'action');
+  showMsg("🤖 AI SPLITS TRAFFIC TO INNER ROADS");
 }
-
 function clearAll(){
   tState = 3;
   setState(3);
-  showMsg("✅ TRAFFIC CLEARED — ALL 4 ROUTES OPTIMAL");
-
-  addAIStep("<strong>[CLEAR]</strong> Intersection now flowing at 92% capacity. Queue eliminated.", 'success');
-  addAIStep("<strong>[RESULT]</strong> Jam resolved in 22 seconds by splitting flow into inner-ring roads.", 'success');
-  addAIStep("<strong>[AI MODE]</strong> Returning to monitoring mode. All 4 approaches at 96% flow.", 'success');
+  showMsg("✅ JAM CLEARED BY AI");
 }
 
 function updateCars(){
-  /* Convert cars to sorted by distance travelled — near intersection first */
-  for(const roadKey of ['north', 'south', 'west', 'east']){
-    const roadCars = cars.filter(c => c.road === roadKey);
-    roadCars.sort((a,b) => b.dist - a.dist);  /* furthest (closest to intersection) first */
+  for(const d of cars){
+    /* Each car moves at its own speed */
+    let s = d.baseSpeed;
 
-    for(let i=0; i<roadCars.length; i++){
-      const car = roadCars[i];
-      const totalDist = Math.sqrt(
-        Math.pow(ENTRY_ROUTES[car.road].target.x - ENTRY_ROUTES[car.road].spawn.x, 2) +
-        Math.pow(ENTRY_ROUTES[car.road].target.z - ENTRY_ROUTES[car.road].spawn.z, 2)
-      );
-
-      /* Distance to intersection */
-      const distToIntersection = totalDist - car.dist;
-
-      /* Car ahead gap check (only in same lane) */
-      let carAheadGap = Infinity;
-      for(const other of roadCars){
-        if(other === car) continue;
-        if(other.lane !== car.lane) continue;
-        if(other.dist > car.dist){
-          const gap = other.dist - car.dist;
-          if(gap < carAheadGap) carAheadGap = gap;
-        }
+    /* During jam: outer-ring cars slow down near north */
+    if(tState === 1){
+      const p = routeP(d.route, d.progress, d.laneOffset);
+      if(d.route === "outer"){
+        const distToNorth = Math.abs(p.z + 635);
+        if(distToNorth < 300) s *= 0.3;
+        else s *= 0.6;
+      } else {
+        s *= 0.7;
       }
+    }
 
-      /* Base speed */
-      let speed = car.baseSpeed;
-
-      /* Jam: cars slow down when near the intersection */
-      if(tState === 1){
-        if(distToIntersection < 250){
-          speed *= 0.15;
-        } else if(distToIntersection < 500){
-          speed *= 0.4;
-        } else {
-          speed *= 0.7;
-        }
-      }
-
-      /* Normal: cars slow slightly when near intersection */
-      if(tState === 0){
-        if(distToIntersection < 100){
-          speed *= 0.5;
-        }
-      }
-
-      /* Reroute: cars slow a bit but keep moving */
-      if(tState === 2){
-        speed *= 0.8;
-        /* About half the cars reroute to inner ring when they reach x=±520 or z=±400 */
-        const pos = car.mesh.position;
-        if(!car.rerouted){
-          if(Math.abs(Math.abs(pos.x) - 520) < 40 && Math.abs(pos.z - 505) < 40){
-            /* Reroute to inner ring — start going around the block */
-            car.rerouted = true;
-            /* Simple: just keep them moving past the intersection and out */
+    /* During reroute: reroute some outer cars to inner */
+    if(tState === 2){
+      if(d.route === "outer" && !d.rerouted){
+        const p = routeP(d.route, d.progress, d.laneOffset);
+        /* If car is near the x=520 or x=-520 junction, switch it to inner */
+        if(Math.abs(p.x - 520) < 60 || Math.abs(p.x + 520) < 60){
+          if(Math.random() < 0.04){
+            d.route = "inner";
+            d.rerouted = true;
+            /* Find nearest point on inner */
+            let bp = 0, bd = Infinity;
+            for(let i=0; i<50; i++){
+              const tt = routeP("inner", i/50, d.laneOffset);
+              const dd = (tt.x-p.x)*(tt.x-p.x) + (tt.z-p.z)*(tt.z-p.z);
+              if(dd < bd){ bd = dd; bp = i/50; }
+            }
+            d.progress = bp;
           }
         }
       }
-
-      /* Collision: don't get closer than CAR_LEN + gap */
-      const MIN_GAP = V_LEN + 8;
-      if(carAheadGap < MIN_GAP){
-        car.stopped = true;
-        speed = 0;
-      } else {
-        car.stopped = false;
-      }
-
-      /* Only move if not stopped */
-      if(speed > 0){
-        car.dist += speed * 4;
-      }
-
-      /* Wrap around if reached target */
-      if(car.dist > totalDist){
-        car.dist = 0;
-        car.rerouted = false;
-      }
-
-      positionCar(car);
     }
+
+    /* Move forward */
+    d.progress += (s / 1400) * d.direction;
+    if(d.progress > 1) d.progress -= 1;
+    if(d.progress < 0) d.progress += 1;
+
+    const p = routeP(d.route, d.progress, d.laneOffset);
+    d.car.position.set(p.x, 5.2, p.z);
+    const dx = p.bx-p.ax, dz = p.bz-p.az;
+    let a = -Math.atan2(dz, dx);
+    if(d.direction < 0) a += Math.PI;
+    d.car.rotation.y = a;
   }
 }
 
@@ -1008,6 +842,7 @@ function updSys(){
   if(tState===0 && simSec >= INCIDENT_TIME) activateJam();
   if(tState===1 && simSec - iStart >= JAM_DURATION) activateReroute();
   if(tState===2 && simSec - rStart >= RESOLVE_DURATION) clearAll();
+  if(tState===3 && simSec - iStart > 60){ tState = 0; iStart = 0; simSec = 0; }
 }
 
 function updTimer(){
@@ -1055,13 +890,6 @@ function animate(){
     controlScreen.material.emissiveIntensity = 2 + Math.sin(t*2.5)*.5;
   }
 
-  /* Watch button only during jam/reroute */
-  if(tState === 1 || tState === 2){
-    if(!isWatching) document.getElementById('watchBtn').style.display = 'block';
-  } else {
-    if(!isWatching) document.getElementById('watchBtn').style.display = 'none';
-  }
-
   controls.update();
   renderer.render(scene, camera);
 }
@@ -1069,7 +897,7 @@ function animate(){
 setState(0);
 animate();
 
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
