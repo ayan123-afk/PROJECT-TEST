@@ -528,7 +528,7 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   BIG ANTENNA SYSTEM — WITH VISIBLE GLOWING WIRES
+   BIG ANTENNA SYSTEM — NO CABLES / WIRES AT ALL
 ========================================================= */
 const antennaArray = new THREE.Group();
 antennaArray.position.set(-950, 5, 1050);
@@ -652,7 +652,7 @@ for(let i=0; i<12; i++){
   signalNodes.push(node);
 }
 
-/* --- SOLAR CONNECTION: panels & cables around antenna --- */
+/* --- SOLAR PANELS around antenna (NO CABLES CONNECTING THEM) --- */
 const antSolarPanelMat = new THREE.MeshStandardMaterial({
   color:0x092f4e,
   emissive:0x075c85,
@@ -695,33 +695,7 @@ for(let i=0; i<8; i++){
   antennaArray.add(panelGroup);
 }
 
-/* --- VISIBLE GLOWING POWER CABLES from solar panels to antenna mast --- */
-const antCableMat = new THREE.MeshStandardMaterial({
-  color:0x00e0ff,
-  emissive:0x00cfff,
-  emissiveIntensity:3.0,
-  metalness:.4,
-  roughness:.2
-});
-
-for(let i=0; i<8; i++){
-  const angle = (i/8) * Math.PI * 2;
-  const sx = Math.cos(angle) * 78;
-  const sz = Math.sin(angle) * 78;
-  const points = [
-    new THREE.Vector3(sx, 10, sz),
-    new THREE.Vector3(sx*0.5, 18, sz*0.5),
-    new THREE.Vector3(0, 28, 0)
-  ];
-  const curve = new THREE.CatmullRomCurve3(points);
-  const tube = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, 32, 1.4, 8, false),
-    antCableMat
-  );
-  antennaArray.add(tube);
-}
-
-/* --- power hub at antenna base --- */
+/* --- power hub at antenna base (NO CABLES) --- */
 const antPowerHub = new THREE.Mesh(
   new THREE.CylinderGeometry(16, 20, 4, 24),
   new THREE.MeshStandardMaterial({
@@ -753,7 +727,7 @@ antennaArray.add(antPowerRing);
 createBoard("BIG ANTENNA ARRAY · SOLAR LINK", -950, 5, 1170, 160, 12);
 
 /* =========================================================
-   SOLAR ENERGY PARK — ENHANCED & TALLER
+   SOLAR ENERGY PARK
 ========================================================= */
 const solarPark = new THREE.Group();
 solarPark.position.set(-1150, 0, 760);
@@ -856,7 +830,7 @@ createLargeSolarArray(-155, 125, 280, 145, 3, 5);
 createLargeSolarArray(160, 125, 280, 145, 3, 5);
 
 /* =========================================================
-   SOLAR ENERGY CONTROL STATION — TALLER
+   SOLAR ENERGY CONTROL STATION
 ========================================================= */
 const solarControl = new THREE.Group();
 solarControl.position.set(0, 6, 235);
@@ -930,45 +904,11 @@ for(let i=0; i<12; i++){
 }
 
 /* =========================================================
-   UNDERGROUND POWER NETWORK — NOW HIGHLY VISIBLE
+   NO UNDERGROUND POWER NETWORK — ALL CABLES REMOVED
+   (Previously there were tubes/curves — now completely gone)
 ========================================================= */
-const undergroundPower = new THREE.Group();
-scene.add(undergroundPower);
-const powerMaterial = new THREE.MeshStandardMaterial({
-  color:0x00e0ff,
-  emissive:0x00cfff,
-  emissiveIntensity:2.5,
-  metalness:.3,
-  roughness:.2
-});
 
-function createPowerCable(points){
-  const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p[0], 3.2, p[1])));
-  const tube = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, 100, 1.6, 10, false),
-    powerMaterial
-  );
-  undergroundPower.add(tube);
-  points.forEach(p => {
-    const node = new THREE.Mesh(
-      new THREE.SphereGeometry(2.2, 12, 12),
-      new THREE.MeshStandardMaterial({ color:0x36eaff, emissive:0x0fdcff, emissiveIntensity:3 })
-    );
-    node.position.set(p[0], 4.2, p[1]);
-    undergroundPower.add(node);
-  });
-}
-
-/* ALL CABLES — VISIBLE ABOVE GROUND */
-createPowerCable([[-1150,760],[-1150,700],[-1000,700],[-855,635],[-520,520],[0,520]]);
-createPowerCable([[-1150,760],[-1050,700],[-900,520],[-690,-210]]);
-createPowerCable([[-1150,760],[-900,600],[-500,400],[0,200],[250,-210]]);
-createPowerCable([[-1150,760],[-950,650],[-650,500],[-260,210]]);
-createPowerCable([[-1150,760],[-850,650],[-450,500],[0,400],[350,210]]);
-createPowerCable([[-1150,760],[-800,650],[-300,560],[0,505]]);
-/* CABLE FROM SOLAR PARK TO BIG ANTENNA */
-createPowerCable([[-1150,760],[-1050,850],[-1000,950],[-950,1050]]);
-
+/* just the power hub remains — no cables attached */
 const powerHub = new THREE.Mesh(
   new THREE.CylinderGeometry(14, 18, 4, 24),
   new THREE.MeshStandardMaterial({ color:0x07516a, emissive:0x10dfff, emissiveIntensity:2, metalness:.5 })
@@ -1084,7 +1024,6 @@ function createCodedSmartBuilding(name, x, z, width, depth, height, color){
   return group;
 }
 
-/* TALLER BUILDINGS */
 createCodedSmartBuilding("Smart Energy Tower", -850, 380, 100, 80, 185, 0x245d72);
 createCodedSmartBuilding("Green Technology Tower", -650, 380, 90, 75, 155, 0x356b57);
 createCodedSmartBuilding("Digital Innovation Center", 700, 380, 105, 82, 195, 0x31547c);
@@ -1304,7 +1243,7 @@ renderer.domElement.addEventListener("click", event => {
     showPanel(
       "Big Antenna Array · Solar Link",
       "COMMUNICATION & ENERGY HUB",
-      "A massive multi-band antenna system integrated with solar panels and underground power lines. The array receives clean energy from the Solar Park and distributes it through glowing cables, supporting city-wide communication and smart-grid telemetry."
+      "A massive multi-band antenna system integrated with solar panels. The array receives clean energy from the Solar Park through invisible underground power lines, supporting city-wide communication and smart-grid telemetry."
     );
     return;
   }
@@ -1349,7 +1288,7 @@ renderer.domElement.addEventListener("click", event => {
   const solarHits = raycaster.intersectObject(solarPark, true);
   if(solarHits.length){
     showPanel("Solar Energy Park", "RENEWABLE ENERGY ZONE",
-      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Big Antenna Array is also directly connected via dedicated power cables.");
+      "A large-scale solar generation area containing multiple photovoltaic arrays, a solar control station and battery storage. Electricity is distributed through an underground smart-energy network to the major buildings and smart infrastructure of BSS WORLD. The Big Antenna Array is also directly connected via dedicated power lines.");
   }
 });
 
@@ -1553,10 +1492,6 @@ function animate(){
   signalNodes.forEach((node, idx) => {
     node.material.emissiveIntensity = 2.2 + Math.sin(elapsed*5 + idx)*0.8;
   });
-
-  /* animate glowing cable pulses */
-  powerMaterial.emissiveIntensity = 2.2 + Math.sin(elapsed * 4) * 0.8;
-  antCableMat.emissiveIntensity = 2.5 + Math.sin(elapsed * 5) * 1.0;
 
   controls.update();
   renderer.render(scene, camera);
