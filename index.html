@@ -528,12 +528,62 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   DAGASHIYA SHOP — MEDIUM SIZE (base 40)
+   TREE HELPER — low poly procedural trees
+========================================================= */
+function createTree(x, z, scale=1){
+  const group = new THREE.Group();
+  group.position.set(x, 5, z);
+  group.scale.setScalar(scale);
+
+  /* trunk */
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.2, 1.8, 14, 8),
+    material(0x6b4a2f, .95, .05)
+  );
+  trunk.position.y = 7;
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+  group.add(trunk);
+
+  /* foliage — 3 stacked cones */
+  const leafMat1 = material(0x2d6e3d, .9);
+  const leafMat2 = material(0x3a8a4c, .9);
+  const leafMat3 = material(0x4aa05c, .9);
+
+  const leaf1 = new THREE.Mesh(
+    new THREE.ConeGeometry(11, 14, 10),
+    leafMat1
+  );
+  leaf1.position.y = 15;
+  leaf1.castShadow = true;
+  group.add(leaf1);
+
+  const leaf2 = new THREE.Mesh(
+    new THREE.ConeGeometry(9, 13, 10),
+    leafMat2
+  );
+  leaf2.position.y = 22;
+  leaf2.castShadow = true;
+  group.add(leaf2);
+
+  const leaf3 = new THREE.Mesh(
+    new THREE.ConeGeometry(6.5, 11, 10),
+    leafMat3
+  );
+  leaf3.position.y = 29;
+  leaf3.castShadow = true;
+  group.add(leaf3);
+
+  scene.add(group);
+  return group;
+}
+
+/* =========================================================
+   DAGASHIYA SHOP — MEDIUM SIZE
 ========================================================= */
 function loadDagashiyaShop(x, z, scale=1, rotationY=0, customLabel=null){
   loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", gltf => {
     const shop = gltf.scene;
-    /* Medium base size: 40 * scale */
     prepareModel(shop, 40 * scale);
     shop.position.set(x, 5, z);
     shop.rotation.y = rotationY;
@@ -1199,19 +1249,41 @@ createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
 
 /* =========================================================
    DAGASHIYA SHOPS — MEDIUM SIZE
-   Only 1 at SCHOOL (named Canteen), 1 at HOSPITAL (named Canteen),
-   and 2 at BANK.
 ========================================================= */
-
-/* --- SCHOOL: 1 shop named "School Canteen" --- */
 loadDagashiyaShop(-800, -75, 1.4, 0, "School Canteen");
-
-/* --- HOSPITAL: 1 shop named "Hospital Canteen" --- */
 loadDagashiyaShop(370, -75, 1.4, 0, "Hospital Canteen");
-
-/* --- BANK: 2 shops (regular Dagashiya) --- */
 loadDagashiyaShop(240, 270, 1.4, 0, "Bank Dagashiya 1");
 loadDagashiyaShop(460, 270, 1.4, 0, "Bank Dagashiya 2");
+
+/* =========================================================
+   ██████  TREES AROUND HOSPITAL AND BANK  ██████
+========================================================= */
+
+/* --- Trees around HOSPITAL (zone at 250, -210, size 440x320) --- */
+const hospitalTrees = [
+  [ 60, -95], [ 110, -95], [ 440, -95], [ 490, -95],
+  [ 60, -325], [ 110, -325], [ 440, -325], [ 490, -325],
+  [ 60, -150], [ 60, -270],
+  [ 490, -150], [ 490, -270],
+  [ 30, -210], [ 520, -210],
+  [ 180, -360], [ 320, -360],
+];
+hospitalTrees.forEach((pos, i) => {
+  createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
+});
+
+/* --- Trees around BANK (zone at 350, 210, size 390x330) --- */
+const bankTrees = [
+  [ 175, 95], [ 220, 95], [ 480, 95], [ 525, 95],
+  [ 175, 325], [ 220, 325], [ 480, 325], [ 525, 325],
+  [ 175, 160], [ 175, 260],
+  [ 525, 160], [ 525, 260],
+  [ 155, 210], [ 545, 210],
+  [ 270, 360], [ 430, 360],
+];
+bankTrees.forEach((pos, i) => {
+  createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
+});
 
 /* =========================================================
    CAR SYSTEM
@@ -1324,8 +1396,9 @@ function loadBuilding(file, targetSize, position, type){
     clickable.push({ object:building, type });
   }, undefined, error => { console.error(file, error); });
 }
-loadBuilding("./high_school.glb", 185, [-690,-210], "school");
-loadBuilding("./stylized_modern_hospital.glb", 175, [250,-210], "hospital");
+/* UPDATED: american_high_school.glb + low_poly_hospital.glb */
+loadBuilding("./american_high_school.glb", 200, [-690,-210], "school");
+loadBuilding("./low_poly_hospital.glb", 190, [250,-210], "hospital");
 loadBuilding("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 loadBuilding("./us_bank_tower.glb", 275, [350,210], "bank");
 
@@ -1388,12 +1461,12 @@ renderer.domElement.addEventListener("click", event => {
     const hit = raycaster.intersectObject(item.object, true);
     if(!hit.length) continue;
     if(item.type==="school"){
-      showPanel("BSS Smart School", "EDUCATION ZONE",
-        "A future-ready Beaconhouse educational facility with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. A School Canteen (Dagashiya-style snack shop) serves students nearby.");
+      showPanel("American High School", "EDUCATION ZONE",
+        "A future-ready American-style high school with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. A School Canteen (Dagashiya-style snack shop) serves students nearby. The campus is surrounded by lush trees.");
     }
     if(item.type==="hospital"){
-      showPanel("BSS Smart Hospital", "HEALTHCARE ZONE",
-        "A modern smart healthcare facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park. A Hospital Canteen (Dagashiya-style snack shop) serves visitors nearby.");
+      showPanel("Low Poly Hospital", "HEALTHCARE ZONE",
+        "A modern low-poly hospital facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park. A Hospital Canteen (Dagashiya-style snack shop) serves visitors nearby. Trees surround the hospital for a calm healing environment.");
     }
     if(item.type==="society"){
       showPanel("BSS Smart Society", "RESIDENTIAL ZONE",
@@ -1401,7 +1474,7 @@ renderer.domElement.addEventListener("click", event => {
     }
     if(item.type==="bank"){
       showPanel("Smart City State Bank", "FINANCIAL ZONE",
-        "A smart banking facility providing secure digital financial services while receiving renewable electricity from the centralized Solar Energy Park. Two Dagashiya snack shops serve customers nearby.");
+        "A smart banking facility providing secure digital financial services while receiving renewable electricity from the centralized Solar Energy Park. Two Dagashiya snack shops serve customers nearby, and trees line the property for a pleasant atmosphere.");
     }
     if(item.type==="farm"){
       showPanel("Smart Eco Farm", "SUSTAINABLE AGRICULTURE ZONE",
