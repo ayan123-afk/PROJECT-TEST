@@ -29,6 +29,27 @@
     #panel p{color:#d0dce1;line-height:1.7;font-size:13px}
     .close{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;border-radius:8px;background:#172731;color:white;font-size:19px;cursor:pointer}
     #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;padding:11px 20px;border-radius:12px;background:rgba(3,14,22,.90);border:1px solid rgba(255,255,255,.14);color:#d2e1e7;font-size:12px;white-space:nowrap}
+    /* DAY / NIGHT toggle button */
+    #dayNightBtn{
+      position:fixed;top:18px;left:50%;transform:translateX(-50%);
+      z-index:60;padding:12px 26px;border-radius:14px;
+      background:linear-gradient(135deg,#1e2a35,#0d1620);
+      border:1px solid rgba(90,225,255,.5);
+      color:#c9f5ff;font-size:14px;font-weight:900;letter-spacing:2px;
+      cursor:pointer;transition:.3s;
+      box-shadow:0 8px 30px rgba(0,0,0,.5);
+      font-family:Arial,Helvetica,sans-serif;
+    }
+    #dayNightBtn:hover{
+      background:linear-gradient(135deg,#25384a,#122030);
+      border-color:rgba(90,225,255,.9);
+      box-shadow:0 8px 40px rgba(50,200,255,.4);
+    }
+    #dayNightBtn.night{
+      background:linear-gradient(135deg,#0d1a30,#050a15);
+      border-color:rgba(255,220,120,.7);
+      color:#ffe28a;
+    }
   </style>
 </head>
 <body>
@@ -37,6 +58,8 @@
   <div class="title">BSS WORLD</div>
   <div class="sub">3D SMART CITY • BEACONHOUSE SCHOOL SYSTEM</div>
 </div>
+
+<button id="dayNightBtn">☀ DAY</button>
 
 <div id="trafficStatus">
   <div class="heading">AI TRAFFIC MANAGEMENT</div>
@@ -59,7 +82,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Zone / Smart Arena / Canteen
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Zone / Smart Arena / Canteen / Battery
 </div>
 
 <script type="importmap">
@@ -80,8 +103,10 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
    SCENE
 ========================================================= */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xa9dcf4);
-scene.fog = new THREE.Fog(0xa9dcf4, 950, 3500);
+const DAY_BG = new THREE.Color(0xa9dcf4);
+const NIGHT_BG = new THREE.Color(0x0a1225);
+scene.background = DAY_BG.clone();
+scene.fog = new THREE.Fog(DAY_BG.clone(), 950, 3500);
 
 /* =========================================================
    CAMERA
@@ -205,19 +230,13 @@ function createZone(x, z, width, depth){
   trim.position.set(x, 4.5, z);
   scene.add(trim);
 }
-/* SCHOOL */
 createZone(-280, -210, 340, 250);
-/* HOSPITAL */
 createZone( 250, -210, 340, 250);
-/* SOCIETY */
 createZone(-260, 210, 480, 330);
-/* BANK */
 createZone(350, 210, 320, 260);
 
 /* =========================================================
    ROADS
-   ── Removed the vertical x=0 road through AI Traffic Manager ──
-   ── Kept only 2 vertical roads (-520, 520) & 3 horizontal (-400,0,400) ──
 ========================================================= */
 function createRoad(x, z, width, depth){
   const shoulder = new THREE.Mesh(new THREE.BoxGeometry(width+7, .25, depth+7), roadShoulderMaterial);
@@ -253,25 +272,17 @@ function createRoad(x, z, width, depth){
     }
   }
 }
-/* Outer ring roads — connected */
 createRoad(0, -635, 1740, 34);
 createRoad(0, 635, 1740, 34);
 createRoad(-855, 0, 34, 1250);
 createRoad(855, 0, 34, 1250);
-
-/* Horizontal inner roads (3) — span the full width to connect to outer ring */
 for(const z of [-400, 0, 400]){ createRoad(0, z, 1680, 24); }
-
-/* Vertical inner roads — REMOVED x=0 middle road (going through AI Traffic Manager) */
-/* Only left (-520) and right (520) vertical roads remain, but they don't reach z=505 */
 createRoad(-520, 0, 24, 1200);
 createRoad( 520, 0, 24, 1200);
-
-/* Short inner connector roads to keep the AI Manager area connected but NOT running through it */
-createRoad(-520, 400, 24, 24);  /* small junction pad at x=-520,z=400 */
-createRoad( 520, 400, 24, 24);  /* small junction pad at x=520,z=400  */
-createRoad(-520, -400, 24, 24); /* small junction pad at x=-520,z=-400 */
-createRoad( 520, -400, 24, 24); /* small junction pad at x=520,z=-400  */
+createRoad(-520, 400, 24, 24);
+createRoad( 520, 400, 24, 24);
+createRoad(-520, -400, 24, 24);
+createRoad( 520, -400, 24, 24);
 
 /* =========================================================
    CROSSWALKS
@@ -285,14 +296,12 @@ function createCrosswalk(x, z, horizontal=true){
     scene.add(stripe);
   }
 }
-/* Crosswalks only at real junctions (not at x=0 anymore) */
 for(const x of [-520, 520]){
   for(const z of [-400, 0, 400]){
     createCrosswalk(x, z, true);
     createCrosswalk(x, z, false);
   }
 }
-/* Also crosswalks on the outer ring corners */
 for(const x of [-855, 855]){
   for(const z of [-635, 635]){
     createCrosswalk(x, z, true);
@@ -360,8 +369,9 @@ createBoard("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 createBoard("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
 
 /* =========================================================
-   STREET LIGHTS
+   STREET LIGHTS — Store bulbs for night effect
 ========================================================= */
+const streetLightBulbs = [];
 function createStreetLight(x, z){
   const group = new THREE.Group();
   group.position.set(x, 5, z);
@@ -371,13 +381,18 @@ function createStreetLight(x, z){
   const arm = new THREE.Mesh(new THREE.BoxGeometry(4, .22, .22), darkMaterial);
   arm.position.set(1.7, 9.7, 0);
   group.add(arm);
-  const bulb = new THREE.Mesh(
-    new THREE.SphereGeometry(.52, 14, 14),
-    new THREE.MeshStandardMaterial({ color:0xfff2b0, emissive:0xffd36a, emissiveIntensity:.9 })
-  );
+  const bulbMat = new THREE.MeshStandardMaterial({
+    color:0xfff2b0, emissive:0xffd36a, emissiveIntensity:.9
+  });
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(.52, 14, 14), bulbMat);
   bulb.position.set(3.4, 9.5, 0);
   group.add(bulb);
+  /* real point light for glow at night */
+  const bulbLight = new THREE.PointLight(0xffd97a, 0, 90);
+  bulbLight.position.set(3.4, 9.5, 0);
+  group.add(bulbLight);
   scene.add(group);
+  streetLightBulbs.push({ mat: bulbMat, light: bulbLight });
 }
 for(let x=-800; x<=800; x+=70){ createStreetLight(x, -610); createStreetLight(x, 610); }
 for(let z=-560; z<=560; z+=70){ createStreetLight(-830, z); createStreetLight(830, z); }
@@ -385,7 +400,6 @@ for(let x=-780; x<=780; x+=130){ createStreetLight(x, -425); createStreetLight(x
 
 /* =========================================================
    TRAFFIC LIGHTS
-   ── Removed lights at x=0 (middle road removed) ──
 ========================================================= */
 const trafficLights = [];
 function createTrafficLight(x, z, rotation=0){
@@ -413,7 +427,6 @@ function createTrafficLight(x, z, rotation=0){
   scene.add(group);
   trafficLights.push({ red, yellow, green, phase: Math.random()*10 });
 }
-/* Only at x=-520 and x=520 (no x=0) */
 for(const x of [-520, 520]){
   for(const z of [-400, 0, 400]){
     createTrafficLight(x, z);
@@ -422,7 +435,6 @@ for(const x of [-520, 520]){
 
 /* =========================================================
    AI TRAFFIC MANAGER
-   (now sits alone — no road through it)
 ========================================================= */
 const controller = new THREE.Group();
 controller.position.set(0, 5, 505);
@@ -591,12 +603,10 @@ function createTree(x, z, scale=1){
   leaf1.position.y = 15;
   leaf1.castShadow = true;
   group.add(leaf1);
-
   const leaf2 = new THREE.Mesh(new THREE.ConeGeometry(9, 13, 10), leafMat2);
   leaf2.position.y = 22;
   leaf2.castShadow = true;
   group.add(leaf2);
-
   const leaf3 = new THREE.Mesh(new THREE.ConeGeometry(6.5, 11, 10), leafMat3);
   leaf3.position.y = 29;
   leaf3.castShadow = true;
@@ -919,21 +929,6 @@ const solarScreen = new THREE.Mesh(
 solarScreen.position.set(0, 36, -11.3);
 solarControl.add(solarScreen);
 
-for(let x=-32; x<=32; x+=16){
-  const battery = new THREE.Mesh(
-    new THREE.BoxGeometry(12, 12, 14),
-    material(0x24383d, .35, .3)
-  );
-  battery.position.set(x, 11, 32);
-  solarPark.add(battery);
-  const batteryLight = new THREE.Mesh(
-    new THREE.BoxGeometry(8, .5, .5),
-    new THREE.MeshStandardMaterial({ color:0x63e7ff, emissive:0x1bdcff, emissiveIntensity:2.2 })
-  );
-  batteryLight.position.set(x, 14, 24.8);
-  solarPark.add(batteryLight);
-}
-
 const solarBeams = [];
 for(let i=0; i<16; i++){
   const beam = new THREE.Mesh(
@@ -946,6 +941,70 @@ for(let i=0; i<16; i++){
   solarPark.add(beam);
   solarBeams.push(beam);
 }
+
+/* =========================================================
+   ██████  10 BATTERIES (battery.glb) in Power Supply Zone  ██████
+========================================================= */
+const batteries = [];
+const batteryPositions = [
+  /* Row 1 — 5 batteries near the front (south) of zone */
+  [-500, 450],
+  [-350, 450],
+  [-200, 450],
+  [ -50, 450],
+  [ 100, 450],
+  /* Row 2 — 5 batteries near the back (north) of zone */
+  [-500, 520],
+  [-350, 520],
+  [-200, 520],
+  [ -50, 520],
+  [ 100, 520],
+];
+
+batteryPositions.forEach((pos, i) => {
+  loader.load("./battery.glb", gltf => {
+    const battery = gltf.scene;
+    prepareModel(battery, 45);
+    battery.position.set(pos[0], 6, pos[1]);
+    battery.rotation.y = Math.PI / 2;
+    powerSupplyZone.add(battery);
+
+    /* glowing charge ring around each battery */
+    const chargeRing = new THREE.Mesh(
+      new THREE.TorusGeometry(22, .6, 10, 40),
+      new THREE.MeshStandardMaterial({
+        color:0x22ff9d,
+        emissive:0x22ff9d,
+        emissiveIntensity:1.5,
+        metalness:.6,
+        roughness:.25
+      })
+    );
+    chargeRing.rotation.x = Math.PI/2;
+    chargeRing.position.set(pos[0], 7, pos[1]);
+    powerSupplyZone.add(chargeRing);
+
+    /* tiny charge indicator light */
+    const indicator = new THREE.PointLight(0x22ff9d, 0, 80);
+    indicator.position.set(pos[0], 12, pos[1]);
+    powerSupplyZone.add(indicator);
+
+    batteries.push({
+      model: battery,
+      ring: chargeRing,
+      indicator: indicator,
+      pos: pos
+    });
+
+    clickable.push({
+      object: battery,
+      type: "battery",
+      name: "Smart Battery " + (i + 1)
+    });
+  }, undefined, error => {
+    console.error("battery.glb load error:", error);
+  });
+});
 
 /* =========================================================
    POWER HUB
@@ -1474,7 +1533,7 @@ renderer.domElement.addEventListener("click", event => {
     showPanel(
       "Power Supply Smart City",
       "RENEWABLE ENERGY & COMMUNICATION ZONE",
-      "A massive integrated zone containing the Solar Energy Park, Wind Farm, and Antenna Array. Together they generate and distribute clean renewable electricity to power the entire smart city, while supporting city-wide communication and smart-grid telemetry."
+      "A massive integrated zone containing the Solar Energy Park, Wind Farm, Antenna Array, and 10 Smart Batteries. During the day, solar panels charge the batteries. At night, these batteries power the entire city's lighting system."
     );
     return;
   }
@@ -1514,6 +1573,10 @@ renderer.domElement.addEventListener("click", event => {
       showPanel(item.name, "COMMUNICATION ANTENNA",
         "A communication antenna model loaded from a GLB file. It is part of the Power Supply Smart City zone, connected to the Solar Park and Wind Farm through the underground power grid.");
     }
+    if(item.type==="battery"){
+      showPanel(item.name, "SMART BATTERY STORAGE UNIT",
+        "One of 10 smart batteries installed in the Power Supply Smart City zone. These batteries store excess solar and wind energy during the day, and discharge it at night to power all city street lights and infrastructure, ensuring the smart city operates 24/7.");
+    }
     if(item.type==="shop"){
       const isCanteen = item.name && item.name.includes("Canteen");
       showPanel(
@@ -1533,6 +1596,102 @@ renderer.domElement.addEventListener("click", event => {
       "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow.");
     return;
   }
+});
+
+/* =========================================================
+   DAY / NIGHT SYSTEM
+========================================================= */
+let isNight = false;
+const dayNightBtn = document.getElementById("dayNightBtn");
+
+/* Save original color values for materials that need to change */
+const NIGHT_COLORS = {
+  grass: new THREE.Color(0x1e3a24),
+  grassDark: new THREE.Color(0x122a1a),
+  zone: new THREE.Color(0x2c4a30),
+  road: new THREE.Color(0x0c1013),
+  roadShoulder: new THREE.Color(0x141a1c),
+  curb: new THREE.Color(0x2a3438),
+  building: new THREE.Color(0x0a1a22),
+};
+
+function setDayNight(night){
+  isNight = night;
+
+  /* Background and fog */
+  if(night){
+    scene.background = NIGHT_BG.clone();
+    scene.fog.color.copy(NIGHT_BG);
+    scene.fog.near = 600;
+    scene.fog.far = 2500;
+    ambient.intensity = 0.55;
+    sun.intensity = 0.15;
+    solarLight.intensity = 0.4;
+    renderer.toneMappingExposure = 0.9;
+    dayNightBtn.textContent = "🌙 NIGHT";
+    dayNightBtn.classList.add("night");
+  } else {
+    scene.background = DAY_BG.clone();
+    scene.fog.color.copy(DAY_BG);
+    scene.fog.near = 950;
+    scene.fog.far = 3500;
+    ambient.intensity = 3.7;
+    sun.intensity = 6;
+    solarLight.intensity = 4;
+    renderer.toneMappingExposure = 1.35;
+    dayNightBtn.textContent = "☀ DAY";
+    dayNightBtn.classList.remove("night");
+  }
+
+  /* Ground colors */
+  grassMaterial.color.copy(night ? NIGHT_COLORS.grass : new THREE.Color(0x4d8f50));
+  grassDarkMaterial.color.copy(night ? NIGHT_COLORS.grassDark : new THREE.Color(0x28633a));
+  zoneMaterial.color.copy(night ? NIGHT_COLORS.zone : new THREE.Color(0x72ad58));
+  roadMaterial.color.copy(night ? NIGHT_COLORS.road : new THREE.Color(0x20272a));
+  roadShoulderMaterial.color.copy(night ? NIGHT_COLORS.roadShoulder : new THREE.Color(0x30383a));
+  curbMaterial.color.copy(night ? NIGHT_COLORS.curb : new THREE.Color(0x697578));
+
+  /* Street lights */
+  streetLightBulbs.forEach(({mat, light}) => {
+    if(night){
+      mat.emissiveIntensity = 3.5;
+      light.intensity = 2.5;
+    } else {
+      mat.emissiveIntensity = 0.9;
+      light.intensity = 0;
+    }
+  });
+
+  /* Batteries — glow only at night, and their point lights turn on */
+  batteries.forEach((b) => {
+    if(night){
+      b.ring.material.emissiveIntensity = 3.0;
+      b.indicator.intensity = 2.5;
+    } else {
+      b.ring.material.emissiveIntensity = 1.5;
+      b.indicator.intensity = 0;
+    }
+  });
+
+  /* Building beacons and windows glow brighter at night */
+  smartBuildings.forEach((b) => {
+    b.beacon.material.emissiveIntensity = night ? 4.5 : 3.2;
+  });
+
+  /* Emissive window materials — brighter at night */
+  smartWindowMaterial.emissiveIntensity = night ? 3.5 : 1.2;
+  rooftopSolarMaterial.emissiveIntensity = night ? 0.4 : 0.9;
+
+  /* Traffic light emissive — keep visible */
+  trafficLights.forEach((light) => {
+    if(night){
+      /* already animated in updateTrafficLights */
+    }
+  });
+}
+
+dayNightBtn.addEventListener("click", () => {
+  setDayNight(!isNight);
 });
 
 /* =========================================================
@@ -1728,7 +1887,8 @@ function animate(){
   solarBeams.forEach((beam,index) => { beam.material.opacity = .035 + Math.sin(elapsed*1.5+index)*.018; });
 
   smartBuildings.forEach((building,index) => {
-    building.beacon.material.emissiveIntensity = 2 + Math.sin(elapsed*3+index)*.8;
+    const base = isNight ? 4.5 : 2;
+    building.beacon.material.emissiveIntensity = base + Math.sin(elapsed*3+index)*.8;
   });
 
   smallBuildings.forEach((b, index) => {
@@ -1745,6 +1905,14 @@ function animate(){
 
   holoRing.rotation.z = elapsed * 0.9;
   holoDisplay.material.emissiveIntensity = 1.8 + Math.sin(elapsed*3)*0.6;
+
+  /* Animated battery charge rings */
+  batteries.forEach((b, i) => {
+    b.ring.rotation.z = elapsed * (0.8 + i * 0.05);
+    /* At night, they pulse more strongly to show discharging */
+    const base = isNight ? 2.5 : 1.5;
+    b.ring.material.emissiveIntensity = base + Math.sin(elapsed * 5 + i) * 0.8;
+  });
 
   controls.update();
   renderer.render(scene, camera);
