@@ -59,7 +59,7 @@
 </div>
 
 <div id="hint">
-  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Zone / Smart Arena / Shops
+  Drag = Rotate &nbsp;|&nbsp; Wheel = Zoom &nbsp;|&nbsp; Click School / Hospital / Society / Bank / Farm / Power Zone / Smart Arena / Canteen
 </div>
 
 <script type="importmap">
@@ -528,21 +528,21 @@ function prepareModel(object, targetSize){
 }
 
 /* =========================================================
-   DAGASHIYA SHOP — BIGGER SIZE (was 22, now 60)
+   DAGASHIYA SHOP — MEDIUM SIZE (base 40)
 ========================================================= */
-function loadDagashiyaShop(x, z, scale=1, rotationY=0, nearName="Area"){
+function loadDagashiyaShop(x, z, scale=1, rotationY=0, customLabel=null){
   loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", gltf => {
     const shop = gltf.scene;
-    /* Bigger base size: 60 * scale (was 22 * scale) */
-    prepareModel(shop, 60 * scale);
+    /* Medium base size: 40 * scale */
+    prepareModel(shop, 40 * scale);
     shop.position.set(x, 5, z);
     shop.rotation.y = rotationY;
     scene.add(shop);
     clickable.push({
       object: shop,
       type: "shop",
-      name: "Dagashiya Snack Shop",
-      near: nearName
+      name: customLabel ? customLabel : "Dagashiya Snack Shop",
+      label: customLabel
     });
   }, undefined, error => {
     console.error("dagashiya shop load error:", error);
@@ -1198,40 +1198,20 @@ loader.load("./simple_farm_free.glb", gltf => {
 createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
 
 /* =========================================================
-   DAGASHIYA SHOPS — MUCH BIGGER (scale increased)
+   DAGASHIYA SHOPS — MEDIUM SIZE
+   Only 1 at SCHOOL (named Canteen), 1 at HOSPITAL (named Canteen),
+   and 2 at BANK.
 ========================================================= */
 
-/* --- SCHOOL: 2 shops --- */
-loadDagashiyaShop(-600, -75, 2.5, 0, "School");
-loadDagashiyaShop(-780, -75, 2.5, 0, "School");
+/* --- SCHOOL: 1 shop named "School Canteen" --- */
+loadDagashiyaShop(-800, -75, 1.4, 0, "School Canteen");
 
-/* --- HOSPITAL: 2 shops --- */
-loadDagashiyaShop(180, -75, 2.5, 0, "Hospital");
-loadDagashiyaShop(320, -75, 2.5, 0, "Hospital");
+/* --- HOSPITAL: 1 shop named "Hospital Canteen" --- */
+loadDagashiyaShop(370, -75, 1.4, 0, "Hospital Canteen");
 
-/* --- SOCIETY: 2 shops --- */
-loadDagashiyaShop(-330, 270, 2.5, 0, "Society");
-loadDagashiyaShop(-190, 270, 2.5, 0, "Society");
-
-/* --- BANK: 2 shops --- */
-loadDagashiyaShop(280, 270, 2.5, 0, "Bank");
-loadDagashiyaShop(420, 270, 2.5, 0, "Bank");
-
-/* --- FARM: 2 shops --- */
-loadDagashiyaShop(980, -310, 2.5, 0, "Farm");
-loadDagashiyaShop(980, -400, 2.5, 0, "Farm");
-
-/* --- POWER SUPPLY ZONE: 2 shops --- */
-loadDagashiyaShop(-1900, 1320, 3.5, 0, "Power Supply Zone");
-loadDagashiyaShop(-1100, 1320, 3.5, 0, "Power Supply Zone");
-
-/* --- SMART ARENA: 2 shops --- */
-loadDagashiyaShop(1550, -260, 3.5, 0, "Smart Arena");
-loadDagashiyaShop(1550, -1040, 3.5, 0, "Smart Arena");
-
-/* --- TRAFFIC CONTROLLER: 2 shops --- */
-loadDagashiyaShop(-120, 600, 2.5, 0, "Traffic Manager");
-loadDagashiyaShop(120, 600, 2.5, 0, "Traffic Manager");
+/* --- BANK: 2 shops (regular Dagashiya) --- */
+loadDagashiyaShop(240, 270, 1.4, 0, "Bank Dagashiya 1");
+loadDagashiyaShop(460, 270, 1.4, 0, "Bank Dagashiya 2");
 
 /* =========================================================
    CAR SYSTEM
@@ -1409,15 +1389,15 @@ renderer.domElement.addEventListener("click", event => {
     if(!hit.length) continue;
     if(item.type==="school"){
       showPanel("BSS Smart School", "EDUCATION ZONE",
-        "A future-ready Beaconhouse educational facility with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. Two Dagashiya snack shops serve students nearby.");
+        "A future-ready Beaconhouse educational facility with smart learning, digital education, accessibility and renewable solar energy supplied through the city's underground smart-energy network. A School Canteen (Dagashiya-style snack shop) serves students nearby.");
     }
     if(item.type==="hospital"){
       showPanel("BSS Smart Hospital", "HEALTHCARE ZONE",
-        "A modern smart healthcare facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park. Two Dagashiya snack shops serve visitors nearby.");
+        "A modern smart healthcare facility using intelligent infrastructure, emergency connectivity and renewable energy supplied by the centralized Solar Energy Park. A Hospital Canteen (Dagashiya-style snack shop) serves visitors nearby.");
     }
     if(item.type==="society"){
       showPanel("BSS Smart Society", "RESIDENTIAL ZONE",
-        "A connected residential community with organized housing, smart roads, controlled access and clean renewable electricity from the city's underground solar-energy network. Two Dagashiya snack shops serve residents nearby.");
+        "A connected residential community with organized housing, smart roads, controlled access and clean renewable electricity from the city's underground solar-energy network.");
     }
     if(item.type==="bank"){
       showPanel("Smart City State Bank", "FINANCIAL ZONE",
@@ -1425,7 +1405,7 @@ renderer.domElement.addEventListener("click", event => {
     }
     if(item.type==="farm"){
       showPanel("Smart Eco Farm", "SUSTAINABLE AGRICULTURE ZONE",
-        "A sustainable smart farming facility combining modern agriculture, renewable wind energy, intelligent infrastructure and environmental sustainability. Two Dagashiya snack shops serve farm workers nearby.");
+        "A sustainable smart farming facility combining modern agriculture, renewable wind energy, intelligent infrastructure and environmental sustainability.");
     }
     if(item.type==="smartBuilding"){
       showPanel(item.name, "SMART BUILDING",
@@ -1440,10 +1420,13 @@ renderer.domElement.addEventListener("click", event => {
         "A communication antenna model loaded from a GLB file. It is part of the Power Supply Smart City zone, connected to the Solar Park and Wind Farm through the underground power grid.");
     }
     if(item.type==="shop"){
+      const isCanteen = item.name && item.name.includes("Canteen");
       showPanel(
-        "Dagashiya Snack Shop",
-        "JAPANESE OLD SNACK SHOP · NEAR " + item.near.toUpperCase(),
-        "A traditional Japanese Dagashiya (old snack shop) placed near " + item.near + ". This charming little shop brings character to the smart city and serves residents, students, patients, and visitors in the surrounding area."
+        item.name,
+        isCanteen ? "SCHOOL / HOSPITAL CANTEEN" : "DAGASHIYA SNACK SHOP",
+        isCanteen
+          ? "A Dagashiya-style canteen serving fresh snacks and drinks to students and hospital visitors. Built in traditional Japanese snack shop style, it brings warmth and character to the smart city."
+          : "A traditional Japanese Dagashiya (old snack shop). This charming little shop brings character to the smart city and serves bank customers and nearby visitors."
       );
     }
     return;
@@ -1452,7 +1435,7 @@ renderer.domElement.addEventListener("click", event => {
   const managerHits = raycaster.intersectObject(controller, true);
   if(managerHits.length){
     showPanel("AI Traffic Management Center", "INTELLIGENT TRANSPORTATION ZONE",
-      "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow. Two Dagashiya snack shops are located nearby.");
+      "The AI Traffic Manager monitors four city entry routes, detects road construction and congestion, synchronizes traffic signals and redirects vehicles through alternate routes to maintain efficient traffic flow.");
     return;
   }
 });
