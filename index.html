@@ -205,10 +205,10 @@ function createZone(x, z, width, depth){
   trim.position.set(x, 4.5, z);
   scene.add(trim);
 }
-/* SCHOOL — beside hospital (left side) */
+/* SCHOOL — stays where it is */
 createZone(-370, -210, 340, 250);
-/* HOSPITAL — beside school (right side) */
-createZone(  0, -210, 340, 250);
+/* HOSPITAL — moved back to its original position */
+createZone( 250, -210, 340, 250);
 /* SOCIETY */
 createZone(-260, 210, 480, 330);
 /* BANK */
@@ -281,7 +281,7 @@ function createSidewalk(x, z, width, depth){
   scene.add(sidewalk);
 }
 createSidewalk(-370, -350, 340, 7);
-createSidewalk(   0, -350, 340, 7);
+createSidewalk( 250, -350, 340, 7);
 createSidewalk(-260, 390, 470, 7);
 createSidewalk( 350, 355, 310, 7);
 
@@ -326,7 +326,7 @@ function createBoard(text, x, y, z, width=70, height=10){
   return group;
 }
 createBoard("AMERICAN HIGH SCHOOL", -370, 5, -350, 130, 11);
-createBoard("BSS SMART HOSPITAL",     0, 5, -350, 130, 11);
+createBoard("BSS SMART HOSPITAL",     250, 5, -350, 130, 11);
 createBoard("BSS SMART SOCIETY", -260, 5, 390, 110, 11);
 createBoard("SMART CITY STATE BANK", 350, 5, 355, 120, 11);
 createBoard("AI TRAFFIC CONTROLLER", 0, 5, 555, 120, 11);
@@ -1253,22 +1253,22 @@ createBoard("SMART ECO FARM", 1160, 5, -345, 120, 11);
    DAGASHIYA SHOPS
 ========================================================= */
 loadDagashiyaShop(-520, -110, 1.4, 0, "School Canteen");
-loadDagashiyaShop( 150, -110, 1.4, 0, "Hospital Canteen");
+loadDagashiyaShop( 400, -110, 1.4, 0, "Hospital Canteen");
 loadDagashiyaShop( 270,  290, 1.4, 0, "Bank Dagashiya 1");
 loadDagashiyaShop( 430,  290, 1.4, 0, "Bank Dagashiya 2");
 
 /* =========================================================
-   ██████  TREES AROUND SCHOOL, HOSPITAL AND BANK  ██████
-   (NO trees inside the school zone — only around hospital & bank)
+   ██████  TREES AROUND HOSPITAL AND BANK ONLY  ██████
+   (NO trees inside the school zone)
 ========================================================= */
 
-/* --- Trees around HOSPITAL (zone 340x250 at 0,-210) --- */
+/* --- Trees around HOSPITAL (zone 340x250 at 250,-210) --- */
 const hospitalTrees = [
-  [-100, -100], [ -60, -100], [ 100, -100], [ 140, -100],
-  [-100, -320], [ -60, -320], [ 100, -320], [ 140, -320],
-  [-110, -160], [-110, -260],
-  [ 150, -160], [ 150, -260],
-  [ -50, -345], [  50, -345],
+  [ 150, -100], [ 190, -100], [ 350, -100], [ 390, -100],
+  [ 150, -320], [ 190, -320], [ 350, -320], [ 390, -320],
+  [ 140, -160], [ 140, -260],
+  [ 400, -160], [ 400, -260],
+  [ 200, -345], [ 300, -345],
 ];
 hospitalTrees.forEach((pos, i) => {
   createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
@@ -1285,8 +1285,6 @@ const bankTrees = [
 bankTrees.forEach((pos, i) => {
   createTree(pos[0], pos[1], 0.9 + (i % 3) * 0.15);
 });
-
-/* NO TREES INSIDE THE SCHOOL ZONE — school zone is at -370,-210 */
 
 /* =========================================================
    CAR SYSTEM
@@ -1399,10 +1397,10 @@ function loadBuilding(file, targetSize, position, type){
     clickable.push({ object:building, type });
   }, undefined, error => { console.error(file, error); });
 }
-/* SCHOOL — in left zone beside hospital */
+/* SCHOOL — at -370,-210 (left zone) */
 loadBuilding("./american_high_school.glb", 200, [-370,-210], "school");
-/* HOSPITAL — in right zone beside school */
-loadBuilding("./low_poly_hospital.glb", 180, [0,-210], "hospital");
+/* HOSPITAL — moved BACK to original position 250,-210 */
+loadBuilding("./low_poly_hospital.glb", 180, [250,-210], "hospital");
 loadBuilding("./low_poly_night_city_building_skyline.glb", 315, [-260,210], "society");
 loadBuilding("./us_bank_tower.glb", 260, [350,210], "bank");
 
