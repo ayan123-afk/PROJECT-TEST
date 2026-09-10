@@ -135,7 +135,7 @@ const loadingScreen = document.getElementById("loading");
 ========================================================= */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa9dcf4);
-scene.fog = new THREE.Fog(0xa9dcf4, 900, 2400);
+scene.fog = new THREE.Fog(0xa9dcf4, 1000, 2600);
 
 /* =========================================================
    CAMERA
@@ -143,7 +143,7 @@ scene.fog = new THREE.Fog(0xa9dcf4, 900, 2400);
 const camera = new THREE.PerspectiveCamera(
     52, window.innerWidth / window.innerHeight, .1, 3500
 );
-camera.position.set(700, 520, 780);
+camera.position.set(750, 560, 820);
 
 /* =========================================================
    RENDERER
@@ -236,13 +236,11 @@ function createRoad(x, z, width, depth) {
     }
 }
 
-// Outer ring
 createRoad(0, -440, 1160, 32);
 createRoad(0,  440, 1160, 32);
 createRoad(-580, 0, 32, 900);
 createRoad( 580, 0, 32, 900);
 
-// Internal grid
 createRoad(0, -240, 1110, 18);
 createRoad(0,    0, 1110, 20);
 createRoad(0,  240, 1110, 18);
@@ -250,7 +248,6 @@ createRoad(-280, 0, 18, 880);
 createRoad( 100, 0, 18, 880);
 createRoad( 420, 0, 18, 880);
 
-// Society entrance road
 createRoad(-320, 360, 460, 16);
 
 /* =========================================================
@@ -282,26 +279,17 @@ function createTree(x, z, scale = 1) {
     trunk.castShadow = true;
     g.add(trunk);
 
-    const foliage = new THREE.Mesh(
-        new THREE.SphereGeometry(3.5, 12, 12),
-        mat(0x2d6e2d, .85)
-    );
-    foliage.position.y = 6.5;
-    foliage.castShadow = true;
-    g.add(foliage);
+    const f1 = new THREE.Mesh(new THREE.SphereGeometry(3.5, 12, 12), mat(0x2d6e2d, .85));
+    f1.position.y = 6.5;
+    f1.castShadow = true;
+    g.add(f1);
 
-    const f2 = new THREE.Mesh(
-        new THREE.SphereGeometry(2.6, 10, 10),
-        mat(0x3a8a3a, .85)
-    );
+    const f2 = new THREE.Mesh(new THREE.SphereGeometry(2.6, 10, 10), mat(0x3a8a3a, .85));
     f2.position.set(1.2, 8, .8);
     f2.castShadow = true;
     g.add(f2);
 
-    const f3 = new THREE.Mesh(
-        new THREE.SphereGeometry(2.2, 10, 10),
-        mat(0x256025, .85)
-    );
+    const f3 = new THREE.Mesh(new THREE.SphereGeometry(2.2, 10, 10), mat(0x256025, .85));
     f3.position.set(-1.3, 7.5, -.7);
     f3.castShadow = true;
     g.add(f3);
@@ -378,7 +366,7 @@ function createBoard(text, x, y, z, width = 65, height = 9) {
 
 createBoard("BSS SCHOOL SYSTEM",      -380, 0, -330, 90, 11);
 createBoard("BSS SMART HOSPITAL",      100, 0, -170, 95, 11);
-createBoard("BSS SMART SOCIETY",      -300, 0,  400, 110, 12);
+createBoard("BSS SMART SOCIETY",      -320, 0,  400, 110, 12);
 createBoard("SMART CITY STATE BANK",   420, 0,  260, 110, 12);
 createBoard("AI TRAFFIC CONTROLLER",   240, 0,  400, 110, 12);
 createBoard("WIND ENERGY",             -80, 0,  400, 80, 11);
@@ -390,25 +378,17 @@ function createStreetLight(x, z) {
     const g = new THREE.Group();
     g.position.set(x, 0, z);
 
-    const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(.22, .3, 11, 10),
-        mat(0x69757a, .7)
-    );
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.22, .3, 11, 10), mat(0x69757a, .7));
     pole.position.y = 5.5;
     g.add(pole);
 
-    const arm = new THREE.Mesh(
-        new THREE.BoxGeometry(4, .22, .22),
-        mat(0x69757a, .7)
-    );
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(4, .22, .22), mat(0x69757a, .7));
     arm.position.set(1.7, 9.7, 0);
     g.add(arm);
 
     const bulb = new THREE.Mesh(
         new THREE.SphereGeometry(.52, 14, 14),
-        new THREE.MeshStandardMaterial({
-            color: 0xfff2b0, emissive: 0xffd36a, emissiveIntensity: .9
-        })
+        new THREE.MeshStandardMaterial({ color: 0xfff2b0, emissive: 0xffd36a, emissiveIntensity: .9 })
     );
     bulb.position.set(3.4, 9.5, 0);
     g.add(bulb);
@@ -435,43 +415,31 @@ function createTrafficLight(x, z, rotation = 0) {
     g.position.set(x, 0, z);
     g.rotation.y = rotation;
 
-    const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(.2, .25, 9, 8),
-        curbMaterial
-    );
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.2, .25, 9, 8), curbMaterial);
     pole.position.y = 4.5;
     g.add(pole);
 
-    const box = new THREE.Mesh(
-        new THREE.BoxGeometry(1.7, 5, 1.4),
-        mat(0x15191c, .5)
-    );
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1.7, 5, 1.4), mat(0x15191c, .5));
     box.position.y = 7.5;
     g.add(box);
 
     const red = new THREE.Mesh(
         new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({
-            color: 0xff2222, emissive: 0xff0000, emissiveIntensity: 0
-        })
+        new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff0000, emissiveIntensity: 0 })
     );
     red.position.set(0, 8.8, .75);
     g.add(red);
 
     const yellow = new THREE.Mesh(
         new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({
-            color: 0xffcc22, emissive: 0xffaa00, emissiveIntensity: 0
-        })
+        new THREE.MeshStandardMaterial({ color: 0xffcc22, emissive: 0xffaa00, emissiveIntensity: 0 })
     );
     yellow.position.set(0, 7.4, .75);
     g.add(yellow);
 
     const green = new THREE.Mesh(
         new THREE.SphereGeometry(.35, 14, 14),
-        new THREE.MeshStandardMaterial({
-            color: 0x22ff66, emissive: 0x00ff44, emissiveIntensity: 1
-        })
+        new THREE.MeshStandardMaterial({ color: 0x22ff66, emissive: 0x00ff44, emissiveIntensity: 1 })
     );
     green.position.set(0, 6, .75);
     g.add(green);
@@ -495,42 +463,29 @@ createTrafficLight( 420,  240);
 const controller = new THREE.Group();
 controller.position.set(240, 0, 340);
 
-const cBase = new THREE.Mesh(
-    new THREE.BoxGeometry(48, 1, 36),
-    mat(0x263d47, .4, .2)
-);
+const cBase = new THREE.Mesh(new THREE.BoxGeometry(48, 1, 36), mat(0x263d47, .4, .2));
 cBase.position.y = .8;
 controller.add(cBase);
 
-const cTower = new THREE.Mesh(
-    new THREE.BoxGeometry(15, 23, 15),
-    mat(0x185a72, .35, .25)
-);
+const cTower = new THREE.Mesh(new THREE.BoxGeometry(15, 23, 15), mat(0x185a72, .35, .25));
 cTower.position.y = 12;
 cTower.castShadow = true;
 controller.add(cTower);
 
 const cScreen = new THREE.Mesh(
     new THREE.BoxGeometry(9, 6, .4),
-    new THREE.MeshStandardMaterial({
-        color: 0x04151d, emissive: 0x087d9f, emissiveIntensity: 1.5
-    })
+    new THREE.MeshStandardMaterial({ color: 0x04151d, emissive: 0x087d9f, emissiveIntensity: 1.5 })
 );
 cScreen.position.set(0, 13, -7.7);
 controller.add(cScreen);
 
-const antenna = new THREE.Mesh(
-    new THREE.CylinderGeometry(.18, .18, 16, 8),
-    curbMaterial
-);
+const antenna = new THREE.Mesh(new THREE.CylinderGeometry(.18, .18, 16, 8), curbMaterial);
 antenna.position.y = 29;
 controller.add(antenna);
 
 const signal = new THREE.Mesh(
     new THREE.SphereGeometry(1.1, 18, 18),
-    new THREE.MeshStandardMaterial({
-        color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 2
-    })
+    new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 2 })
 );
 signal.position.y = 38;
 controller.add(signal);
@@ -547,10 +502,7 @@ function createTurbine(x, z, scale = 1) {
     g.position.set(x, 0, z);
     g.scale.setScalar(scale);
 
-    const tower = new THREE.Mesh(
-        new THREE.CylinderGeometry(.9, 1.4, 45, 14),
-        whiteMaterial
-    );
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(.9, 1.4, 45, 14), whiteMaterial);
     tower.position.y = 22.5;
     tower.castShadow = true;
     g.add(tower);
@@ -562,10 +514,7 @@ function createTurbine(x, z, scale = 1) {
     hub.add(center);
 
     for (let i = 0; i < 3; i++) {
-        const blade = new THREE.Mesh(
-            new THREE.BoxGeometry(1.2, 18, .5),
-            whiteMaterial
-        );
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(1.2, 18, .5), whiteMaterial);
         blade.position.y = 9;
         blade.rotation.z = i * Math.PI * 2 / 3;
         blade.geometry.translate(0, 8, 0);
@@ -589,18 +538,14 @@ const cars = [];
 function createCar(x, z, speed, direction = 1) {
     const car = new THREE.Group();
 
-    const body = new THREE.Mesh(
-        new THREE.BoxGeometry(8, 2, 3.5),
-        mat(0x287ca3, .4, .2)
-    );
+    const body = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 3.5), mat(0x287ca3, .4, .2));
     body.position.y = 2.4;
     car.add(body);
 
     const cabin = new THREE.Mesh(
         new THREE.BoxGeometry(4.2, 1.5, 2.7),
         new THREE.MeshStandardMaterial({
-            color: 0x82eaff, transparent: true, opacity: .48,
-            roughness: .1, metalness: .3
+            color: 0x82eaff, transparent: true, opacity: .48, roughness: .1, metalness: .3
         })
     );
     cabin.position.set(.5, 3.8, 0);
@@ -609,10 +554,7 @@ function createCar(x, z, speed, direction = 1) {
     const wheelMat = mat(0x111518);
     for (const xx of [-2.5, 2.5]) {
         for (const zz of [-1.7, 1.7]) {
-            const wheel = new THREE.Mesh(
-                new THREE.CylinderGeometry(.7, .7, .55, 16),
-                wheelMat
-            );
+            const wheel = new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, .55, 16), wheelMat);
             wheel.rotation.z = Math.PI / 2;
             wheel.position.set(xx, 1.2, zz);
             car.add(wheel);
@@ -642,14 +584,11 @@ createCar(-300, 240,.72,-1);
 createCar(-460, 240,.65,-1);
 
 /* =========================================================
-   GLTF LOADER
+   GLTF LOADER + FALLBACKS
 ========================================================= */
 const loader = new GLTFLoader();
 const clickable = [];
 
-/* =========================================================
-   LOADING TRACKER
-========================================================= */
 let totalModels = 4;
 let loadedModels = 0;
 
@@ -657,39 +596,102 @@ function updateLoadBar() {
     loadedModels++;
     const pct = (loadedModels / totalModels) * 100;
     loadFill.style.width = pct + "%";
-
     if (loadedModels >= totalModels) {
-        setTimeout(() => {
-            loadingScreen.classList.add("hide");
-        }, 500);
+        setTimeout(() => loadingScreen.classList.add("hide"), 500);
     }
 }
 
-/* =========================================================
-   PREPARE MODEL  (auto scale + center + sit on ground)
-========================================================= */
 function prepareModel(object, targetSize) {
     const box = new THREE.Box3().setFromObject(object);
     const size = new THREE.Vector3();
     box.getSize(size);
-
     const maxDim = Math.max(size.x, size.y, size.z);
     object.scale.setScalar(targetSize / Math.max(maxDim, .001));
 
     const newBox = new THREE.Box3().setFromObject(object);
     const center = new THREE.Vector3();
     newBox.getCenter(center);
-
     object.position.x -= center.x;
     object.position.z -= center.z;
     object.position.y -= newBox.min.y;
 
-    object.traverse(child => {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
+    object.traverse(c => {
+        if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; }
     });
+}
+
+/* ---- Fallback: code se building jab GLB fail ho ---- */
+function makeFallbackBuilding({ x, z, w, d, h, color, type, roof = true }) {
+    const g = new THREE.Group();
+    g.position.set(x, 0, z);
+
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(w, h, d),
+        new THREE.MeshStandardMaterial({ color, roughness: .55, metalness: .15 })
+    );
+    body.position.y = h / 2;
+    body.castShadow = true;
+    body.receiveShadow = true;
+    g.add(body);
+
+    const winMat = new THREE.MeshStandardMaterial({
+        color: 0xa8e8ff, emissive: 0x4fc8ff, emissiveIntensity: .85, roughness: .2
+    });
+    const floors = Math.max(1, Math.floor(h / 7));
+    const colsF = Math.max(2, Math.floor(w / 6));
+    const colsB = Math.max(2, Math.floor(d / 6));
+
+    for (let f = 0; f < floors; f++) {
+        const y = 4 + f * 7;
+        for (let c = 0; c < colsF; c++) {
+            const xx = -w/2 + 4 + c * (w / colsF);
+            const wf = new THREE.Mesh(new THREE.BoxGeometry(3, 3, .18), winMat);
+            wf.position.set(xx, y, d/2 + .09);
+            g.add(wf);
+            const wb = wf.clone();
+            wb.position.z = -d/2 - .09;
+            g.add(wb);
+        }
+        for (let c = 0; c < colsB; c++) {
+            const zz = -d/2 + 4 + c * (d / colsB);
+            const wl = new THREE.Mesh(new THREE.BoxGeometry(.18, 3, 3), winMat);
+            wl.position.set(-w/2 - .09, y, zz);
+            g.add(wl);
+            const wr = wl.clone();
+            wr.position.x = w/2 + .09;
+            g.add(wr);
+        }
+    }
+
+    if (roof) {
+        const rm = new THREE.Mesh(
+            new THREE.BoxGeometry(w + 1.5, 1.2, d + 1.5),
+            mat(0x1c2b33, .6, .4)
+        );
+        rm.position.y = h + .6;
+        rm.castShadow = true;
+        g.add(rm);
+
+        const tip = new THREE.Mesh(
+            new THREE.SphereGeometry(.5, 10, 10),
+            new THREE.MeshStandardMaterial({ color: 0xff3355, emissive: 0xff2244, emissiveIntensity: 2 })
+        );
+        tip.position.y = h + 3;
+        g.add(tip);
+    }
+
+    scene.add(g);
+    if (type) clickable.push({ object: g, type });
+    return g;
+}
+
+function makeTower(x, z, maxH = 220) {
+    const h = 70 + Math.random() * (maxH - 70);
+    const w = 16 + Math.random() * 12;
+    const d = 16 + Math.random() * 12;
+    const palette = [0x1a5f7a, 0x2c7da0, 0x3a86a8, 0x468faf, 0x61a5c2, 0x1e3a5f, 0x22333b, 0x2b6b8a];
+    const color = palette[Math.floor(Math.random() * palette.length)];
+    return makeFallbackBuilding({ x, z, w, d, h, color, type: "society" });
 }
 
 /* =========================================================
@@ -703,11 +705,17 @@ loader.load(
         school.position.set(-380, 1, -100);
         scene.add(school);
         clickable.push({ object: school, type: "school" });
-        console.log("School loaded");
+        console.log("✅ School loaded");
         updateLoadBar();
     },
     undefined,
-    err => { console.error("School Error:", err); updateLoadBar(); }
+    err => {
+        console.error("❌ School Error:", err);
+        makeFallbackBuilding({ x: -380, z: -100, w: 150, d: 100, h: 50, color: 0x4b8fb5, type: "school" });
+        makeFallbackBuilding({ x: -470, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
+        makeFallbackBuilding({ x: -290, z: -100, w: 45, d: 70, h: 32, color: 0x3a7ca5 });
+        updateLoadBar();
+    }
 );
 
 /* =========================================================
@@ -721,11 +729,16 @@ loader.load(
         hospital.position.set(100, 1, -110);
         scene.add(hospital);
         clickable.push({ object: hospital, type: "hospital" });
-        console.log("Hospital loaded");
+        console.log("✅ Hospital loaded");
         updateLoadBar();
     },
     undefined,
-    err => { console.error("Hospital Error:", err); updateLoadBar(); }
+    err => {
+        console.error("❌ Hospital Error:", err);
+        makeFallbackBuilding({ x: 100, z: -110, w: 130, d: 90, h: 85, color: 0xe8f2f7, type: "hospital" });
+        makeFallbackBuilding({ x: 100, z: -110, w: 45, d: 35, h: 130, color: 0xdfeaf0 });
+        updateLoadBar();
+    }
 );
 
 /* =========================================================
@@ -735,15 +748,25 @@ loader.load(
     "low_poly_night_city_building_skyline.glb",
     gltf => {
         const society = gltf.scene;
-        prepareModel(society, 320);
-        society.position.set(-300, 1, 120);
+        prepareModel(society, 340);
+        society.position.set(-320, 1, 100);
         scene.add(society);
         clickable.push({ object: society, type: "society" });
-        console.log("Society loaded");
+        console.log("✅ Society loaded");
         updateLoadBar();
     },
     undefined,
-    err => { console.error("Society Error:", err); updateLoadBar(); }
+    err => {
+        console.error("❌ Society Error:", err);
+        // fallback cluster
+        const spots = [
+            [-420, 40], [-380, 90], [-340, 30], [-310, 90],
+            [-270, 40], [-240, 100], [-380, 150], [-330, 160],
+            [-260, 150], [-220, 80], [-410, 130], [-350, 130],
+        ];
+        spots.forEach(([x, z]) => makeTower(x, z, 220));
+        updateLoadBar();
+    }
 );
 
 /* =========================================================
@@ -753,16 +776,38 @@ loader.load(
     "us_bank_tower.glb",
     gltf => {
         const bank = gltf.scene;
-        prepareModel(bank, 260);
+        prepareModel(bank, 270);
         bank.position.set(420, 1, 120);
         scene.add(bank);
         clickable.push({ object: bank, type: "bank" });
-        console.log("Bank loaded");
+        console.log("✅ Bank loaded");
         updateLoadBar();
     },
     undefined,
-    err => { console.error("Bank Error:", err); updateLoadBar(); }
+    err => {
+        console.error("❌ Bank Error:", err);
+        makeFallbackBuilding({ x: 420, z: 120, w: 80, d: 80, h: 260, color: 0x1e3a5f, type: "bank" });
+        makeFallbackBuilding({ x: 510, z:  60, w: 60, d: 60, h: 160, color: 0x245c7a });
+        makeFallbackBuilding({ x: 510, z: 180, w: 60, d: 60, h: 190, color: 0x2b6b8a });
+        makeFallbackBuilding({ x: 340, z:  60, w: 55, d: 55, h: 140, color: 0x1a5f7a });
+        makeFallbackBuilding({ x: 340, z: 180, w: 55, d: 55, h: 170, color: 0x1e3a5f });
+        updateLoadBar();
+    }
 );
+
+/* =========================================================
+   EXTRA CITY FILLER TOWERS  (hamesha add honge)
+========================================================= */
+const fillers = [
+    [  60, -350], [ 180, -350], [ 300, -350], [ 460, -350],
+    [-100, -350], [-220, -350], [-500, -350], [-420, -350],
+    [  60,  360], [ 180,  360], [ 300,  360], [ 460,  360],
+    [ 500, -120], [ 500,  120], [ 500, -280], [ 500,  280],
+    [-520, -120], [-520,  120], [-520, -280], [-520,  280],
+    [ 200, -110], [ 280, -110], [ 200,   40], [ 300,   40],
+    [ -100,  240], [   0,  240], [ -100,  120], [   0,  120],
+];
+fillers.forEach(([x, z]) => makeTower(x, z, 180));
 
 /* =========================================================
    SOCIETY ENTRY GATE
@@ -770,10 +815,7 @@ loader.load(
 const societyGate = new THREE.Group();
 societyGate.position.set(-320, 0, 400);
 
-const gateLeft = new THREE.Mesh(
-    new THREE.BoxGeometry(9, 20, 9),
-    mat(0x315d70, .4, .2)
-);
+const gateLeft = new THREE.Mesh(new THREE.BoxGeometry(9, 20, 9), mat(0x315d70, .4, .2));
 gateLeft.position.set(-60, 10, 0);
 gateLeft.castShadow = true;
 societyGate.add(gateLeft);
@@ -782,10 +824,7 @@ const gateRight = gateLeft.clone();
 gateRight.position.x = 60;
 societyGate.add(gateRight);
 
-const gateTop = new THREE.Mesh(
-    new THREE.BoxGeometry(130, 6, 9),
-    mat(0x164e67, .35, .25)
-);
+const gateTop = new THREE.Mesh(new THREE.BoxGeometry(130, 6, 9), mat(0x164e67, .35, .25));
 gateTop.position.y = 18;
 gateTop.castShadow = true;
 societyGate.add(gateTop);
