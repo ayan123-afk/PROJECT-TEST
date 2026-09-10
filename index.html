@@ -209,6 +209,9 @@ controls.minDistance = 200;
 controls.maxDistance = 6000;
 controls.target.set(0, 5, 0);
 
+/* Fog for depth */
+scene.fog = new THREE.Fog(0xa9dcf4, 3000, 9000);
+
 /* ═══════════════════════════════════════════
    LIGHTS
    ═══════════════════════════════════════════ */
@@ -244,114 +247,12 @@ ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
 /* ═══════════════════════════════════════════
-   CITY BLOCKS (to give proper city look)
-   ═══════════════════════════════════════════ */
-function cityBlock(cx, cz, w, d, color){
-  const pad = new THREE.Mesh(
-    new THREE.BoxGeometry(w, 0.6, d),
-    mat(color || 0x6b7a82, .95)
-  );
-  pad.position.set(cx, 4.9, cz);
-  scene.add(pad);
-}
-
-/* Filler buildings between main buildings (city look) */
-function smallBuilding(x, z, w, h, d, color){
-  const b = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, d),
-    mat(color || 0x8b8f96, .7, .15)
-  );
-  b.position.set(x, 5 + h/2, z);
-  scene.add(b);
-
-  /* Windows */
-  const winMat = new THREE.MeshStandardMaterial({
-    color: 0x223344, emissive: 0x88ccff, emissiveIntensity: 0.5,
-    metalness: .4, roughness: .3
-  });
-  const rows = Math.max(2, Math.floor(h / 15));
-  const cols = Math.max(2, Math.floor(w / 12));
-  for(let r = 0; r < rows; r++){
-    for(let c = 0; c < cols; c++){
-      const wy = 5 + 8 + r * (h - 12) / rows;
-      const wx = x + (c - (cols-1)/2) * (w / cols) * 0.8;
-      /* front windows */
-      const wf = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 0.4), winMat);
-      wf.position.set(wx, wy, z + d/2 + 0.2);
-      scene.add(wf);
-      /* back windows */
-      const wb = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 0.4), winMat);
-      wb.position.set(wx, wy, z - d/2 - 0.2);
-      scene.add(wb);
-    }
-  }
-
-  /* Roof cap */
-  const roof = new THREE.Mesh(
-    new THREE.BoxGeometry(w + 4, 2, d + 4),
-    mat(0x3a4448, .7, .2)
-  );
-  roof.position.set(x, 5 + h + 1, z);
-  scene.add(roof);
-}
-
-/* City filler buildings to make it look like a real city */
-const fillerBuildings = [
-  /* Around school / hospital area */
-  {x: -900, z: -900, w: 90, h: 80, d: 70, c: 0x7a8288},
-  {x: -300, z: -900, w: 80, h: 120, d: 70, c: 0x6b7278},
-  {x: 300, z: -900, w: 85, h: 100, d: 65, c: 0x808890},
-  {x: 900, z: -900, w: 95, h: 140, d: 75, c: 0x6e767c},
-  {x: -900, z: -300, w: 70, h: 90, d: 85, c: 0x7e878d},
-  {x: 900, z: -300, w: 75, h: 110, d: 90, c: 0x727a80},
-  {x: -900, z: 300, w: 80, h: 95, d: 80, c: 0x767e84},
-  {x: 900, z: 300, w: 85, h: 130, d: 75, c: 0x7a8288},
-  {x: -900, z: 900, w: 90, h: 105, d: 70, c: 0x808890},
-  {x: -300, z: 900, w: 85, h: 115, d: 80, c: 0x6e767c},
-  {x: 300, z: 900, w: 80, h: 85, d: 75, c: 0x7a8288},
-  {x: 900, z: 900, w: 95, h: 125, d: 85, c: 0x727a80},
-  /* outer ring buildings */
-  {x: -1800, z: -1800, w: 120, h: 150, d: 100, c: 0x6a7278},
-  {x: -900, z: -1800, w: 110, h: 130, d: 95, c: 0x7a8288},
-  {x: 900, z: -1800, w: 115, h: 160, d: 100, c: 0x6e767c},
-  {x: 1800, z: -1800, w: 125, h: 140, d: 105, c: 0x767e84},
-  {x: -1800, z: -900, w: 100, h: 120, d: 110, c: 0x727a80},
-  {x: 1800, z: -900, w: 105, h: 155, d: 115, c: 0x7e878d},
-  {x: -1800, z: 900, w: 110, h: 135, d: 105, c: 0x808890},
-  {x: 1800, z: 900, w: 100, h: 145, d: 100, c: 0x6a7278},
-  {x: -1800, z: 1800, w: 120, h: 130, d: 110, c: 0x767e84},
-  {x: -900, z: 1800, w: 105, h: 150, d: 95, c: 0x727a80},
-  {x: 900, z: 1800, w: 115, h: 125, d: 100, c: 0x7a8288},
-  {x: 1800, z: 1800, w: 110, h: 140, d: 105, c: 0x6e767c},
-  /* outer outer layer */
-  {x: -2600, z: -1800, w: 130, h: 165, d: 110, c: 0x6a7278},
-  {x: 2600, z: -1800, w: 135, h: 155, d: 115, c: 0x727a80},
-  {x: -2600, z: 1800, w: 125, h: 145, d: 105, c: 0x7a8288},
-  {x: 2600, z: 1800, w: 130, h: 160, d: 110, c: 0x6e767c},
-  {x: -2600, z: 0, w: 100, h: 170, d: 120, c: 0x767e84},
-  {x: 2600, z: 0, w: 105, h: 150, d: 115, c: 0x808890},
-  {x: 0, z: -2600, w: 140, h: 155, d: 105, c: 0x7a8288},
-  {x: 0, z: 2600, w: 135, h: 165, d: 110, c: 0x6a7278},
-];
-fillerBuildings.forEach(b => smallBuilding(b.x, b.z, b.w, b.h, b.d, b.c));
-
-/* ═══════════════════════════════════════════
-   ROADS — PROPER GRID (FULL COVERAGE)
+   ROADS — 5x5 GRID (FULL COVERAGE)
    ═══════════════════════════════════════════ */
 const ROAD_W = 90;
 const ROAD_HALF = ROAD_W / 2;
 
-/*
-  Road grid plan:
-  - Horizontal roads (E-W) at Z = -2400, -1200, 0, 1200, 2400
-  - Vertical roads (N-S) at X = -2400, -1200, 0, 1200, 2400
-  
-  All roads span the whole length (from -4800 to +4800)
-  so trucks always stay on roads and lanes are proper.
-*/
-
 function makeRoadE(x, z, length){
-  /* E-W road (horizontal), width = ROAD_W, length along X */
   const shoulder = new THREE.Mesh(
     new THREE.BoxGeometry(length, .25, ROAD_W + 10),
     roadLaneMaterial
@@ -366,7 +267,6 @@ function makeRoadE(x, z, length){
   r.position.set(x, 4.7, z);
   scene.add(r);
 
-  /* Center yellow lines (two-way divider) */
   const c1 = new THREE.Mesh(
     new THREE.BoxGeometry(length, .1, 1.6),
     yellowLineMaterial
@@ -380,7 +280,6 @@ function makeRoadE(x, z, length){
   c2.position.set(x, 5, z + 2);
   scene.add(c2);
 
-  /* White edge lines */
   const topLine = new THREE.Mesh(
     new THREE.BoxGeometry(length, .08, 1.2),
     whiteLineMaterial
@@ -395,9 +294,7 @@ function makeRoadE(x, z, length){
   botLine.position.set(x, 5.05, z - ROAD_HALF + 5);
   scene.add(botLine);
 
-  /* Lane dashes — two lanes each side */
   for(let lx = x - length/2 + 20; lx < x + length/2 - 10; lx += 55){
-    /* top lane divider */
     const d1 = new THREE.Mesh(
       new THREE.BoxGeometry(25, .09, .6),
       whiteLineMaterial
@@ -405,7 +302,6 @@ function makeRoadE(x, z, length){
     d1.position.set(lx, 5.06, z + ROAD_HALF/2);
     scene.add(d1);
 
-    /* bottom lane divider */
     const d2 = new THREE.Mesh(
       new THREE.BoxGeometry(25, .09, .6),
       whiteLineMaterial
@@ -416,7 +312,6 @@ function makeRoadE(x, z, length){
 }
 
 function makeRoadN(x, z, length){
-  /* N-S road (vertical), width = ROAD_W, length along Z */
   const shoulder = new THREE.Mesh(
     new THREE.BoxGeometry(ROAD_W + 10, .25, length),
     roadLaneMaterial
@@ -431,7 +326,6 @@ function makeRoadN(x, z, length){
   r.position.set(x, 4.7, z);
   scene.add(r);
 
-  /* Center yellow lines */
   const c1 = new THREE.Mesh(
     new THREE.BoxGeometry(1.6, .1, length),
     yellowLineMaterial
@@ -445,7 +339,6 @@ function makeRoadN(x, z, length){
   c2.position.set(x + 2, 5, z);
   scene.add(c2);
 
-  /* White edge lines */
   const leftLine = new THREE.Mesh(
     new THREE.BoxGeometry(1.2, .08, length),
     whiteLineMaterial
@@ -460,7 +353,6 @@ function makeRoadN(x, z, length){
   rightLine.position.set(x + ROAD_HALF - 5, 5.05, z);
   scene.add(rightLine);
 
-  /* Lane dashes */
   for(let lz = z - length/2 + 20; lz < z + length/2 - 10; lz += 55){
     const d1 = new THREE.Mesh(
       new THREE.BoxGeometry(.6, .09, 25),
@@ -478,15 +370,14 @@ function makeRoadN(x, z, length){
   }
 }
 
-/* Build full road grid — 5 horizontal, 5 vertical */
-const ROAD_LEN = 9600;  /* -4800 to +4800 */
+const ROAD_LEN = 9600;
 const roadZs = [-2400, -1200, 0, 1200, 2400];
 const roadXs = [-2400, -1200, 0, 1200, 2400];
 
 roadZs.forEach(z => makeRoadE(0, z, ROAD_LEN));
 roadXs.forEach(x => makeRoadN(x, 0, ROAD_LEN));
 
-/* Sidewalks along roads */
+/* Sidewalks */
 function sidewalkE(x, z, len){
   const s = new THREE.Mesh(
     new THREE.BoxGeometry(len, .3, 8),
@@ -626,7 +517,6 @@ function sl(x, z){
   scene.add(g);
   streetBulbMats.push(bMat);
 }
-/* Street lights along each horizontal road */
 roadZs.forEach(z => {
   for(let x = -4500; x <= 4500; x += 350){
     sl(x, z + ROAD_HALF + 16);
@@ -635,7 +525,7 @@ roadZs.forEach(z => {
 });
 
 /* ═══════════════════════════════════════════
-   TRAFFIC LIGHTS at all intersections
+   TRAFFIC LIGHTS
    ═══════════════════════════════════════════ */
 const trafficLights = [];
 function tl(x, z){
@@ -751,20 +641,33 @@ function prep(obj, size){
 }
 
 /* ═══════════════════════════════════════════
-   TREES + FLOWERS
+   NATURE — TREES, FLOWERS, BUSHES, ROCKS
    ═══════════════════════════════════════════ */
 const treeTrunkMat = mat(0x6b4a2f, .95, .05);
 const treeLeafMat = mat(0x2d6e3d, .9);
 const treeLeafMat2 = mat(0x3a8a4c, .9);
+const treeLeafMat3 = mat(0x1f5a2e, .9);
 const treeGeo1 = new THREE.CylinderGeometry(1.2, 1.8, 14, 5);
 const treeGeo2 = new THREE.ConeGeometry(11, 22, 6);
+const treeGeo3 = new THREE.SphereGeometry(9, 7, 6);
 
 function tree(x, z, s=1){
   const g = new THREE.Group();
   g.position.set(x, 5, z); g.scale.setScalar(s);
   const t = new THREE.Mesh(treeGeo1, treeTrunkMat); t.position.y = 7; g.add(t);
-  const l = new THREE.Mesh(treeGeo2, Math.random() > 0.5 ? treeLeafMat : treeLeafMat2);
-  l.position.y = 22; g.add(l);
+  const roll = Math.random();
+  if(roll < 0.45){
+    const l = new THREE.Mesh(treeGeo2, Math.random() > 0.5 ? treeLeafMat : treeLeafMat2);
+    l.position.y = 22; g.add(l);
+  } else if(roll < 0.75){
+    /* Round tree */
+    const l = new THREE.Mesh(treeGeo3, Math.random() > 0.5 ? treeLeafMat : treeLeafMat3);
+    l.position.y = 22; l.scale.set(1, 1.1, 1); g.add(l);
+  } else {
+    /* Double cone tree */
+    const l1 = new THREE.Mesh(treeGeo2, treeLeafMat); l1.position.y = 20; l1.scale.setScalar(0.85); g.add(l1);
+    const l2 = new THREE.Mesh(treeGeo2, treeLeafMat2); l2.position.y = 28; l2.scale.setScalar(0.7); g.add(l2);
+  }
   scene.add(g);
 }
 
@@ -792,36 +695,205 @@ function flower(x, z){
   scene.add(g);
 }
 
-/* Trees between roads — city look */
-const treePositions = [
-  [-600, -900], [-300, -900], [300, -900], [600, -900],
-  [-900, -600], [-300, -600], [300, -600], [900, -600],
-  [-900, 0], [-600, 0], [-300, 0], [300, 0], [600, 0], [900, 0],
-  [-900, 600], [-300, 600], [300, 600], [900, 600],
-  [-600, 900], [-300, 900], [300, 900], [600, 900],
-  [-1500, -1500], [-900, -1500], [-300, -1500], [300, -1500], [900, -1500], [1500, -1500],
-  [-1500, 1500], [-900, 1500], [-300, 1500], [300, 1500], [900, 1500], [1500, 1500],
-  [-1500, -900], [-1500, -300], [-1500, 300], [-1500, 900],
-  [1500, -900], [1500, -300], [1500, 300], [1500, 900],
-  [-2100, -900], [-2100, 900], [2100, -900], [2100, 900],
-  [-900, -2100], [900, -2100], [-900, 2100], [900, 2100],
-];
-treePositions.forEach(p => tree(p[0], p[1], 0.85 + Math.random() * 0.3));
+/* Bush */
+function bush(x, z, s=1){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z); g.scale.setScalar(s);
+  const colors = [0x2d6e3d, 0x3a8a4c, 0x1f5a2e, 0x4a9d5a];
+  for(let i = 0; i < 4; i++){
+    const b = new THREE.Mesh(
+      new THREE.SphereGeometry(3 + Math.random() * 2, 6, 5),
+      mat(colors[Math.floor(Math.random() * colors.length)], .95)
+    );
+    b.position.set(
+      (Math.random() - .5) * 5,
+      3 + Math.random() * 2,
+      (Math.random() - .5) * 5
+    );
+    g.add(b);
+  }
+  scene.add(g);
+}
 
+/* Rock */
+function rock(x, z, s=1){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z); g.scale.setScalar(s);
+  const colors = [0x8a8a8a, 0x6b6b6b, 0x9a9a95, 0x7a7a72];
+  for(let i = 0; i < 3; i++){
+    const r = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(2 + Math.random() * 2, 0),
+      mat(colors[Math.floor(Math.random() * colors.length)], .95)
+    );
+    r.position.set(
+      (Math.random() - .5) * 5,
+      2 + Math.random() * 1.5,
+      (Math.random() - .5) * 5
+    );
+    r.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
+    g.add(r);
+  }
+  scene.add(g);
+}
+
+/* Grass tuft */
+function grassTuft(x, z){
+  const g = new THREE.Group();
+  g.position.set(x, 5, z);
+  const greenMat = mat(0x3a8a4c, .95);
+  for(let i = 0; i < 6; i++){
+    const blade = new THREE.Mesh(
+      new THREE.ConeGeometry(.4, 2 + Math.random() * 1.5, 3),
+      greenMat
+    );
+    blade.position.set(
+      (Math.random() - .5) * 2.5,
+      1,
+      (Math.random() - .5) * 2.5
+    );
+    blade.rotation.z = (Math.random() - .5) * 0.4;
+    g.add(blade);
+  }
+  scene.add(g);
+}
+
+/* Natural pond */
+function pond(x, z, r){
+  const waterMat = new THREE.MeshStandardMaterial({
+    color: 0x2d8fb5, roughness: .15, metalness: .4,
+    emissive: 0x0a3a52, emissiveIntensity: .4,
+    transparent: true, opacity: .85
+  });
+  const p = new THREE.Mesh(new THREE.CircleGeometry(r, 24), waterMat);
+  p.rotation.x = -Math.PI/2;
+  p.position.set(x, 5.1, z);
+  scene.add(p);
+
+  /* Sand/dirt ring around pond */
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(r, r + 12, 24),
+    mat(0x8a7a5a, .95)
+  );
+  ring.rotation.x = -Math.PI/2;
+  ring.position.set(x, 5.05, z);
+  scene.add(ring);
+
+  /* Some grass tufts around pond */
+  for(let i = 0; i < 12; i++){
+    const a = (i / 12) * Math.PI * 2;
+    const rr = r + 15 + Math.random() * 15;
+    grassTuft(x + Math.cos(a) * rr, z + Math.sin(a) * rr);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   NATURE PLACEMENT — fill the entire city with green
+   ═══════════════════════════════════════════ */
+/* Helper: check if position is too close to a road */
+function isOnRoad(x, z){
+  const roadClear = 75;
+  for(const rz of roadZs){
+    if(Math.abs(z - rz) < roadClear) return true;
+  }
+  for(const rx of roadXs){
+    if(Math.abs(x - rx) < roadClear) return true;
+  }
+  return false;
+}
+
+/* Check if position overlaps any building */
+const buildingFootprints = [
+  {x: -600, z: -600, r: 250},
+  {x: 600, z: -600, r: 230},
+  {x: -600, z: 600, r: 320},
+  {x: 600, z: 600, r: 290},
+  {x: 1800, z: -600, r: 400},
+  {x: 600, z: 1800, r: 290},
+  {x: 1800, z: 1750, r: 320},
+  {x: 1800, z: 600, r: 290},
+  {x: 0, z: 0, r: 130},
+];
+
+function isOnBuilding(x, z){
+  for(const b of buildingFootprints){
+    const dx = x - b.x;
+    const dz = z - b.z;
+    if(dx*dx + dz*dz < b.r * b.r) return true;
+  }
+  return false;
+}
+
+function isFree(x, z){
+  return !isOnRoad(x, z) && !isOnBuilding(x, z);
+}
+
+/* Scatter trees everywhere (natural forest feel) */
+let treeCount = 0;
+for(let i = 0; i < 900; i++){
+  const x = (Math.random() - 0.5) * 9000;
+  const z = (Math.random() - 0.5) * 9000;
+  if(isFree(x, z)){
+    tree(x, z, 0.7 + Math.random() * 0.7);
+    treeCount++;
+  }
+}
+
+/* Scatter bushes */
+for(let i = 0; i < 500; i++){
+  const x = (Math.random() - 0.5) * 9000;
+  const z = (Math.random() - 0.5) * 9000;
+  if(isFree(x, z)){
+    bush(x, z, 0.7 + Math.random() * 0.6);
+  }
+}
+
+/* Scatter rocks */
+for(let i = 0; i < 250; i++){
+  const x = (Math.random() - 0.5) * 9000;
+  const z = (Math.random() - 0.5) * 9000;
+  if(isFree(x, z)){
+    rock(x, z, 0.6 + Math.random() * 0.8);
+  }
+}
+
+/* Grass tufts everywhere */
+for(let i = 0; i < 800; i++){
+  const x = (Math.random() - 0.5) * 9000;
+  const z = (Math.random() - 0.5) * 9000;
+  if(isFree(x, z)){
+    grassTuft(x, z);
+  }
+}
+
+/* Flowers in clusters */
 const flowerClusters = [
-  [-600, -400, 6], [600, -400, 6],
-  [-600, 400, 6], [600, 400, 6],
-  [-1500, 0, 5], [1500, 0, 5],
-  [0, -1500, 5], [0, 1500, 5],
+  [-600, -400, 12], [600, -400, 12],
+  [-600, 400, 12], [600, 400, 12],
+  [-1500, 0, 8], [1500, 0, 8],
+  [0, -1500, 8], [0, 1500, 8],
+  [-3000, 0, 10], [3000, 0, 10],
+  [0, -3000, 10], [0, 3000, 10],
+  [-3000, 3000, 15], [3000, -3000, 15],
+  [-3000, -3000, 15], [3000, 3000, 15],
 ];
 flowerClusters.forEach(cluster => {
   const [cx, cz, count] = cluster;
-  for(let i=0; i<count; i++){
+  for(let i = 0; i < count; i++){
     const angle = Math.random() * Math.PI * 2;
-    const r = 30 + Math.random() * 60;
-    flower(cx + Math.cos(angle) * r, cz + Math.sin(angle) * r);
+    const r = 40 + Math.random() * 80;
+    const fx = cx + Math.cos(angle) * r;
+    const fz = cz + Math.sin(angle) * r;
+    if(isFree(fx, fz)){
+      flower(fx, fz);
+    }
   }
 });
+
+/* Natural ponds scattered around */
+pond(-1500, -2200, 90);
+pond(2200, 1500, 110);
+pond(-2600, 1700, 80);
+pond(1700, -2300, 95);
 
 /* ═══════════════════════════════════════════
    LOAD BUILDINGS
@@ -837,22 +909,16 @@ function bld(file, size, pos, type, name, borderColor){
   }, undefined, () => console.log("Missing:", file));
 }
 
-/* Main buildings — placed between roads (not on them) */
 bld("./american_high_school.glb", 300, [-600, -600], "school", "American High School", 0x1a5490);
 bld("./low_poly_hospital.glb", 280, [600, -600], "hospital", "Smart Hospital", 0xc0392b);
 bld("./low_poly_night_city_building_skyline.glb", 400, [-600, 600], "society", "Smart Society", 0x16a085);
 bld("./us_bank_tower.glb", 360, [600, 600], "bank", "State Bank", 0x8e44ad);
 bld("./simple_farm_free.glb", 520, [1800, -600], "farm", "Smart Eco Farm", 0x27ae60);
 bld("./great_hall.glb", 360, [600, 1800], "marriageHall", "Marriage Hall", 0xd4a017);
-
-/* Gas Station — bigger with proper border, placed away from roads */
 bld("./gas_station.glb", 380, [1800, 1750], "gasStation", "Gas Station · Car Wash", 0xc0392b);
-/* Bigger gas station border */
 buildingBorder(1800, 1750, 520, 520, 0xc0392b);
-
 bld("./brutalist_building.glb", 360, [1800, 600], "sewageCompany", "Sewage & Filtration Co.", 0x34495e);
 
-/* Sign boards */
 board("AMERICAN HIGH SCHOOL", -600, 5, -950, 200, 14, 0x1a5490);
 board("BSS SMART HOSPITAL", 600, 5, -950, 200, 14, 0xc0392b);
 board("BSS SMART SOCIETY", -600, 5, 950, 200, 14, 0x16a085);
@@ -863,7 +929,6 @@ board("CAR WASH · GAS STATION", 1800, 5, 2200, 220, 16, 0xc0392b);
 board("SEWAGE & FILTRATION CO.", 1800, 5, 300, 240, 16, 0x34495e);
 board("AI TRAFFIC CONTROLLER", 0, 5, 300, 190, 14);
 
-/* Society gate */
 const gate = new THREE.Group();
 gate.position.set(-600, 5, 950);
 const gL = new THREE.Mesh(new THREE.BoxGeometry(10, 22, 10), mat(0x315d70, .4, .2));
@@ -873,7 +938,6 @@ const gT = new THREE.Mesh(new THREE.BoxGeometry(120, 5, 10), mat(0x164e67, .35, 
 gT.position.y = 20; gate.add(gT);
 scene.add(gate);
 
-/* Shops */
 function shop(x, z, scale=1.4, name){
   loader.load("./dagashiya_shop_japanese_old_snack_shop.glb", g => {
     const s = g.scene;
@@ -1504,9 +1568,8 @@ wbL.position.set(-475, 6.5, 0); wasteZone.add(wbL);
 const wbR = wbL.clone(); wbR.position.x = 475; wasteZone.add(wbR);
 
 /* ═══════════════════════════════════════════
-   TRUCKS — driving ONLY on roads
+   TRUCKS
    ═══════════════════════════════════════════ */
-
 function buildTruck(color1, color2, textLabel, textColor){
   const truck = new THREE.Group();
 
@@ -1531,11 +1594,11 @@ function buildTruck(color1, color2, textLabel, textColor){
   );
   win.position.set(84, 42, 0); truck.add(win);
 
-  const wheelMat = mat(0x0c1012, .6, .1);
+  const wheelMat2 = mat(0x0c1012, .6, .1);
   const wheelGeo = new THREE.CylinderGeometry(12, 12, 8, 12);
   for(const wx of [-36, 36, 60]){
     for(const wz of [-20, 20]){
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
+      const w = new THREE.Mesh(wheelGeo, wheelMat2);
       w.rotation.x = Math.PI/2;
       w.position.set(wx, 12, wz);
       truck.add(w);
@@ -1583,14 +1646,12 @@ function buildTruck(color1, color2, textLabel, textColor){
   return { truck, warn };
 }
 
-/* === Garbage Truck === */
 const gTruckObj = buildTruck(0x3498db, 0x2980b9, "WASTE|MANAGEMENT", "#3498db");
 const garbageTruck = gTruckObj.truck;
 const garbageWarn = gTruckObj.warn;
 scene.add(garbageTruck);
 clickable.push({ object: garbageTruck, type: "garbageTruck", name: "Garbage Truck" });
 
-/* Route along actual roads (X = -1200, 0, 1200 ; Z = -1200, 0, 1200) */
 const garbageRoute = [
   [-1200, -1200], [0, -1200], [1200, -1200],
   [1200, 0], [1200, 1200],
@@ -1612,7 +1673,6 @@ const garbageRoute = [
   [1200, 2400], [0, 1200], [-1200, 0], [-1200, -1200]
 ];
 
-/* === Fertilizer Trucks === */
 const fertTruck1Obj = buildTruck(0xb266ff, 0x7a3b9d, "AI FERTILIZER", "#8e44ad");
 const fertTruck1 = fertTruck1Obj.truck;
 scene.add(fertTruck1);
@@ -1623,7 +1683,6 @@ const fertTruck2 = fertTruck2Obj.truck;
 scene.add(fertTruck2);
 clickable.push({ object: fertTruck2, type: "fertTruck", name: "Fertilizer Truck 2" });
 
-/* Fertilizer Route 1 — Farm → Fertilizer Zone (all on roads) */
 const fertRoute1 = [
   [1800, -1200],
   [1200, -1200],
@@ -1646,7 +1705,6 @@ const fertRoute1 = [
   [1800, -1200]
 ];
 
-/* Fertilizer Route 2 — Fertilizer Zone → Power Supply → City */
 const fertRoute2 = [
   [-3600, -3600],
   [-3600, -2400],
@@ -1675,11 +1733,6 @@ const fertRoute2 = [
   [-3600, -3600]
 ];
 
-let garbageRouteIdx = 0;
-let garbageProgress = 0;
-let fert1Idx = 0, fert1Prog = 0;
-let fert2Idx = 0, fert2Prog = 0;
-
 function moveTruck(truck, route, state, delta, speed){
   const from = route[state.idx];
   const to = route[(state.idx + 1) % route.length];
@@ -1702,7 +1755,7 @@ function moveTruck(truck, route, state, delta, speed){
 }
 
 /* ═══════════════════════════════════════════
-   CARS — separate lanes (one side go, one side come)
+   CARS
    ═══════════════════════════════════════════ */
 const cityCars = [];
 const carColors = [
@@ -1779,11 +1832,6 @@ function makeCar(colorHex){
   return g;
 }
 
-/* 
-  Clean two-way roads:
-  - Outer loop: cars go one side (right lane) one direction, other side (left lane) opposite
-  - Inner loop: same
-*/
 const outerRoute = [[-3600, -2400], [3600, -2400], [3600, 2400], [-3600, 2400]];
 const innerRoute = [[-1200, -1200], [1200, -1200], [1200, 1200], [-1200, 1200]];
 const midRoute   = [[-2400, -1200], [2400, -1200], [2400, 1200], [-2400, 1200]];
@@ -1820,16 +1868,10 @@ function spawnCityCar(route, progress, dir, speed, laneOffset){
   });
 }
 
-/* Two-way traffic with proper lane offsets (right side of road each direction) */
-/* Outer loop — 8 cars going one way (right lane), 8 opposite (right lane) */
 for(let i=0; i<8; i++) spawnCityCar(outerRoute, i/8, 1, .38, -25);
 for(let i=0; i<8; i++) spawnCityCar(outerRoute, i/8 + 0.5, -1, .38, 25);
-
-/* Mid loop */
 for(let i=0; i<6; i++) spawnCityCar(midRoute, i/6, 1, .35, -22);
 for(let i=0; i<6; i++) spawnCityCar(midRoute, i/6 + 0.5, -1, .35, 22);
-
-/* Inner loop */
 for(let i=0; i<5; i++) spawnCityCar(innerRoute, i/5, 1, .32, -20);
 for(let i=0; i<5; i++) spawnCityCar(innerRoute, i/5 + 0.5, -1, .32, 20);
 
@@ -1897,8 +1939,6 @@ spawnPeople(1800, -600, 8, 240);
 spawnPeople(600, 1800, 12, 220);
 spawnPeople(1800, 1750, 6, 160);
 spawnPeople(0, 0, 6, 130);
-spawnPeople(-900, -300, 6, 120);
-spawnPeople(900, 300, 6, 120);
 
 /* ═══════════════════════════════════════════
    CAMERA LOCATIONS
@@ -2307,12 +2347,14 @@ function setDN(night){
   isNight = night;
   if(night){
     scene.background = NIGHT_BG.clone();
+    scene.fog = new THREE.Fog(0x050810, 3000, 9000);
     ambient.intensity = 0.35;
     sun.intensity = 0.1;
     dayNightBtn.textContent = "🌙 NIGHT";
     dayNightBtn.classList.add("night");
   } else {
     scene.background = DAY_BG.clone();
+    scene.fog = new THREE.Fog(0xa9dcf4, 3000, 9000);
     ambient.intensity = 3.7;
     sun.intensity = 3.5;
     dayNightBtn.textContent = "☀ DAY";
