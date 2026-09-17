@@ -73,7 +73,7 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #signalPanel{position:fixed;bottom:100px;left:18px;z-index:56;padding:14px 18px;border-radius:14px;background:rgba(3,13,22,.94);border:1px solid rgba(90,225,255,.45);box-shadow:0 15px 55px rgba(0,0,0,.4);font-size:11px;color:#c9f6ff;min-width:300px}
 #signalPanel .spTitle{color:#22cfff;font-size:10px;letter-spacing:2px;margin-bottom:10px;font-weight:900}
 #signalPanel .spRow{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px;padding:5px 0}
-#signalPanel .spDot{width:16px;height:16px;border-radius:50%;background:#1a1a1a;border:1px solid #333;flex-shrink:0;transition:.15s;box-shadow:inset 0 0 4px rgba(0,0,0,.6)}
+#signalPanel .spDot{width:16px;height:16px;border-radius:50%;background:#1a1a1a;border:1px solid #333;flex-shrink:0;transition:.15s}
 #signalPanel .spDot.red.on{background:#ff1a1a;box-shadow:0 0 16px #ff1a1a,0 0 30px #ff1a1a;border-color:#ff5555}
 #signalPanel .spDot.yellow.on{background:#ffcc00;box-shadow:0 0 16px #ffcc00,0 0 30px #ffcc00;border-color:#ffdd44}
 #signalPanel .spDot.green.on{background:#00ff55;box-shadow:0 0 16px #00ff55,0 0 30px #00ff55;border-color:#55ff88}
@@ -84,6 +84,19 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #signalPanel .spInfo{margin-top:10px;padding-top:10px;border-top:1px solid rgba(90,225,255,.2);font-size:10px;color:#a8d8e8;line-height:1.6}
 #signalPanel .spInfo strong{color:#22cfff}
 #signalPanel .spInfo .aiHint{color:#ffcf66;font-weight:900}
+#aiLogPanel{position:fixed;bottom:100px;left:340px;z-index:56;padding:12px 14px;border-radius:14px;background:rgba(3,13,22,.94);border:1px solid rgba(34,207,255,.5);box-shadow:0 15px 55px rgba(0,0,0,.4);font-size:10px;color:#c9f6ff;width:300px}
+#aiLogPanel .logTitle{color:#22cfff;font-size:10px;letter-spacing:2px;margin-bottom:8px;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+#aiLogPanel .logTitle .liveDot{width:8px;height:8px;border-radius:50%;background:#22ff66;box-shadow:0 0 8px #22ff66;animation:logPulse 1.5s infinite}
+@keyframes logPulse{0%,100%{opacity:1}50%{opacity:.4}}
+#aiLogPanel .logList{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+#aiLogPanel .logItem{padding:5px 8px;border-radius:6px;background:rgba(34,207,255,.08);border-left:2px solid #22cfff;font-size:9.5px;line-height:1.35;color:#b8d8e6;animation:logSlide .4s}
+#aiLogPanel .logItem.warn{background:rgba(255,200,80,.1);border-left-color:#ffcf66;color:#ffe0a8}
+#aiLogPanel .logItem.ok{background:rgba(106,255,157,.1);border-left-color:#6aff9d;color:#a8ffc4}
+#aiLogPanel .logItem.act{background:rgba(180,120,255,.1);border-left-color:#b47aff;color:#d8b8ff}
+@keyframes logSlide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+#aiLogPanel .logTime{color:#5a7a8a;margin-right:4px}
+#aiLogPanel .logList::-webkit-scrollbar{width:4px}
+#aiLogPanel .logList::-webkit-scrollbar-thumb{background:rgba(34,207,255,.4);border-radius:2px}
 #placePopup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.6);z-index:200;width:620px;max-width:92vw;max-height:88vh;overflow-y:auto;background:linear-gradient(135deg,rgba(4,20,34,.98),rgba(2,10,20,.99));border:2px solid rgba(90,225,255,.7);border-radius:22px;opacity:0;pointer-events:none;transition:all .45s cubic-bezier(.34,1.56,.64,1);box-shadow:0 30px 100px rgba(0,0,0,.9),0 0 60px rgba(34,207,255,.4)}
 #placePopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 #placePopup .ppHero{height:170px;background:linear-gradient(135deg,#0a3a5c,#1a5c7a);border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:center;font-size:90px;text-shadow:0 0 30px rgba(90,225,255,.8);animation:ppHeroPulse 3s infinite}
@@ -109,7 +122,6 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 @keyframes ppSlide{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 #popupOverlay{position:fixed;inset:0;background:rgba(0,5,12,.75);z-index:190;opacity:0;pointer-events:none;transition:.4s;backdrop-filter:blur(4px)}
 #popupOverlay.show{opacity:1;pointer-events:auto}
-#collectionPoint{position:fixed;bottom:280px;left:18px;z-index:56;padding:10px 14px;border-radius:12px;background:rgba(3,13,22,.94);border:1px solid rgba(255,200,80,.5);font-size:10px;color:#ffcf66;display:none}
 </style>
 </head>
 <body>
@@ -160,6 +172,11 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
   </div>
   <div class="spBar"><div class="spFill" id="spFill"></div></div>
   <div class="spInfo" id="spInfo"></div>
+</div>
+
+<div id="aiLogPanel">
+  <div class="logTitle"><span>🤖 AI ACTION LOGS</span><span class="liveDot"></span></div>
+  <div class="logList" id="logList"></div>
 </div>
 
 <div id="cycleBar">
@@ -411,7 +428,7 @@ roadZs.forEach(z => {
   }
 });
 
-/* GRID TRAFFIC LIGHTS (decorative) */
+/* GRID TRAFFIC LIGHTS */
 const trafficLights = [];
 function tl(x, z){
   const g = new THREE.Group();
@@ -431,7 +448,8 @@ function tl(x, z){
   trafficLights.push({ r, y, gr, phase: Math.random()*10 });
 }
 roadXs.forEach(x => roadZs.forEach(z => tl(x, z)));
-  /* AI TRAFFIC CONTROLLER (with better styling) */
+
+/* AI TRAFFIC CONTROLLER */
 const controller = new THREE.Group();
 controller.position.set(0, 5, 0);
 const controllerBase = new THREE.Mesh(new THREE.CylinderGeometry(55, 62, 3, 24), mat(0x142f3b, .28, .4));
@@ -460,8 +478,7 @@ radar.rotation.x = Math.PI/2; radar.position.y = 53; controller.add(radar);
 const controllerSig = new THREE.Mesh(new THREE.SphereGeometry(2.2, 12, 12), new THREE.MeshStandardMaterial({ color: 0x66e5ff, emissive: 0x33dfff, emissiveIntensity: 5 }));
 controllerSig.position.y = 68; controller.add(controllerSig);
 scene.add(controller);
-
-/* LOADER */
+  /* LOADER */
 const loader = new GLTFLoader();
 const clickable = [];
 function prep(obj, size){
@@ -658,7 +675,8 @@ const occupiedSpots = [
   {x: 1800, z: 1750, r: 320}, {x: 1800, z: 600, r: 290},
   {x: 0, z: 0, r: 130}, {x: -3600, z: 3600, r: 900},
   {x: 3600, z: -3600, r: 600}, {x: -3600, z: -3600, r: 600},
-  {x: 3600, z: 3600, r: 600}, {x: 2200, z: -1800, r: 600},
+  {x: 3600, z: 3600, r: 600}, {x: 3400, z: -2800, r: 700},
+  {x: 3200, z: 2600, r: 700},
 ];
 function isFreeSpot(x, z, r){
   for(const s of occupiedSpots){
@@ -793,8 +811,7 @@ shop(-1000, -600, 1.4, "School Canteen");
 shop(1000, -600, 1.4, "Hospital Canteen");
 shop(-1000, 600, 1.4, "Society Shop");
 shop(1000, 600, 1.4, "Bank Shop");
-
-/* POWER SUPPLY ZONE */
+  /* POWER SUPPLY ZONE */
 const powerZone = new THREE.Group();
 powerZone.position.set(-3600, 0, 3600);
 scene.add(powerZone);
@@ -1047,12 +1064,12 @@ const fertLogBack = new THREE.Mesh(new THREE.BoxGeometry(85, 45, 2), mat(0x2a1e3
 fertLogBack.position.set(0, 30, 401); fertZone.add(fertLogBack);
 
 /* ═══════════════════════════════════════════
-   🌾 VERTICAL FARMING ZONE (NEW)
+   🌾 VERTICAL FARMING ZONE (road se door, animated crops)
    ═══════════════════════════════════════════ */
 const verticalFarmZone = new THREE.Group();
-verticalFarmZone.position.set(2200, 0, -1800);
+verticalFarmZone.position.set(3400, 0, -2800);
 scene.add(verticalFarmZone);
-board("VERTICAL FARMING", 2200, 5, -1100, 380, 20, 0x27ae60);
+board("VERTICAL FARMING", 3400, 5, -2000, 380, 20, 0x27ae60);
 const vfPad = new THREE.Mesh(new THREE.BoxGeometry(1100, 1, 1100), mat(0x2a3a2e, .95));
 vfPad.position.y = 4.2; verticalFarmZone.add(vfPad);
 const vfBorderMat = new THREE.MeshStandardMaterial({ color: 0x27ae60, emissive: 0x27ae60, emissiveIntensity: 2.5, metalness: .6, roughness: .2 });
@@ -1096,11 +1113,21 @@ function buildVerticalFarmTower(x, z, width, depth, floors){
     const rightGlass = leftGlass.clone(); rightGlass.position.x = width/2 + 0.4; g.add(rightGlass);
     const cropRows = [];
     for(let c = 0; c < 4; c++){
-      const cropMat = new THREE.MeshStandardMaterial({ color: cropColor, emissive: cropColor, emissiveIntensity: 0.6, roughness: .8 });
-      const crop = new THREE.Mesh(new THREE.BoxGeometry(width - 8, 3 + Math.random() * 2, 4), cropMat);
-      crop.position.set(0, y - 3, (c - 1.5) * 5);
-      g.add(crop);
-      cropRows.push({ mesh: crop, phase: Math.random() * Math.PI * 2 });
+      const cropMat = new THREE.MeshStandardMaterial({ color: cropColor, emissive: cropColor, emissiveIntensity: 1.2, roughness: .8 });
+      const cropGroup = new THREE.Group();
+      cropGroup.position.set(0, y - 6, (c - 1.5) * 5);
+      for(let p = 0; p < 3; p++){
+        const plant = new THREE.Mesh(
+          new THREE.ConeGeometry(0.9, 2.5, 5),
+          new THREE.MeshStandardMaterial({ color: cropColor, emissive: cropColor, emissiveIntensity: 1.5, roughness: .7 })
+        );
+        plant.position.set((p - 1) * (width/4), 1.2, 0);
+        plant.userData.baseScale = 0.6 + Math.random() * 0.4;
+        plant.userData.phase = Math.random() * Math.PI * 2;
+        cropGroup.add(plant);
+      }
+      g.add(cropGroup);
+      cropRows.push({ mesh: cropGroup, phase: Math.random() * Math.PI * 2, plants: cropGroup.children });
     }
     const stripMat = new THREE.MeshStandardMaterial({ color: cropColor, emissive: cropColor, emissiveIntensity: 3 });
     const strip = new THREE.Mesh(new THREE.BoxGeometry(width - 6, 0.8, 0.8), stripMat);
@@ -1147,7 +1174,70 @@ function spawnFarmer(cx, cz, radius){
   scene.add(f.g);
   farmers.push({ obj: f.g, legL: f.legL, legR: f.legR, armL: f.armL, armR: f.armR, cx, cz, r, angle, dir: Math.random() > 0.5 ? 1 : -1, speed: 0.004 + Math.random() * 0.006, phase: Math.random() * Math.PI * 2 });
 }
-for(let i = 0; i < 20; i++){ spawnFarmer(2200 + (Math.random()-0.5)*900, -1800 + (Math.random()-0.5)*900, 500); }
+for(let i = 0; i < 20; i++){ spawnFarmer(3400 + (Math.random()-0.5)*900, -2800 + (Math.random()-0.5)*900, 500); }
+
+/* ═══════════════════════════════════════════
+   🏗 AGGREGATE PLANT ZONE
+   ═══════════════════════════════════════════ */
+const aggZone = new THREE.Group();
+aggZone.position.set(3200, 0, 2600);
+scene.add(aggZone);
+board("AGGREGATE PLANT", 3200, 5, 3400, 380, 20, 0x8a6a3a);
+const aggPad = new THREE.Mesh(new THREE.BoxGeometry(900, 1, 900), mat(0x3a2e1e, .95));
+aggPad.position.y = 4.2; aggZone.add(aggPad);
+const aggBorderMat = new THREE.MeshStandardMaterial({ color: 0xd4a017, emissive: 0xd4a017, emissiveIntensity: 2.5, metalness: .6, roughness: .3 });
+const agF = new THREE.Mesh(new THREE.BoxGeometry(900, 1.8, 6), aggBorderMat);
+agF.position.set(0, 6.5, -450); aggZone.add(agF);
+const agB = agF.clone(); agB.position.z = 450; aggZone.add(agB);
+const agL = new THREE.Mesh(new THREE.BoxGeometry(6, 1.8, 900), aggBorderMat);
+agL.position.set(-450, 6.5, 0); aggZone.add(agL);
+const agR = agL.clone(); agR.position.x = 450; aggZone.add(agR);
+for(const cx of [-450, 450]){
+  for(const cz of [-450, 450]){
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(4, 5, 30, 10), aggBorderMat);
+    p.position.set(cx, 20, cz); aggZone.add(p);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(3.5, 10, 10), new THREE.MeshStandardMaterial({ color: 0xffe0a0, emissive: 0xd4a017, emissiveIntensity: 3 }));
+    cap.position.set(cx, 37, cz); aggZone.add(cap);
+  }
+}
+const crusherBase = new THREE.Mesh(new THREE.BoxGeometry(120, 60, 120), mat(0x5a4a3a, .5, .4));
+crusherBase.position.set(-200, 35, -200); aggZone.add(crusherBase);
+const crusherTop = new THREE.Mesh(new THREE.BoxGeometry(100, 30, 100), new THREE.MeshStandardMaterial({ color: 0x3a2e1e, emissive: 0xd4a017, emissiveIntensity: 1.5, metalness: .6, roughness: .3 }));
+crusherTop.position.set(-200, 80, -200); aggZone.add(crusherTop);
+const crusherLight = new THREE.Mesh(new THREE.SphereGeometry(4, 12, 12), new THREE.MeshStandardMaterial({ color: 0xffcf66, emissive: 0xffcf66, emissiveIntensity: 6 }));
+crusherLight.position.set(-200, 105, -200); aggZone.add(crusherLight);
+const pileMat = mat(0x8a7a5a, .95);
+for(let i = 0; i < 6; i++){
+  const pile = new THREE.Mesh(new THREE.ConeGeometry(35, 40, 8), pileMat);
+  pile.position.set(150 + (i % 3) * 100, 25, -150 + Math.floor(i / 3) * 200);
+  pile.rotation.y = Math.random() * Math.PI;
+  aggZone.add(pile);
+}
+for(let i = 0; i < 3; i++){
+  const belt = new THREE.Mesh(new THREE.BoxGeometry(20, 4, 180), mat(0x2a2a2a, .6, .3));
+  belt.position.set(-100 + i * 60, 40, -100);
+  belt.rotation.x = 0.3;
+  aggZone.add(belt);
+}
+const aggTruckGroup = new THREE.Group();
+aggTruckGroup.position.set(200, 5, 200);
+const aggTruckBody = new THREE.Mesh(new THREE.BoxGeometry(90, 60, 42), mat(0xd4a017, .5, .4));
+aggTruckBody.position.y = 42; aggTruckGroup.add(aggTruckBody);
+const aggTruckCab = new THREE.Mesh(new THREE.BoxGeometry(35, 40, 42), mat(0x8a6a3a, .5, .4));
+aggTruckCab.position.set(62, 32, 0); aggTruckGroup.add(aggTruckCab);
+const aggTruckWin = new THREE.Mesh(new THREE.BoxGeometry(2, 18, 32), new THREE.MeshStandardMaterial({ color: 0x8be8ff, transparent: true, opacity: .7, roughness: .1, metalness: .3 }));
+aggTruckWin.position.set(80, 38, 0); aggTruckGroup.add(aggTruckWin);
+for(const wx of [-30, 30, 55]){
+  for(const wz of [-18, 18]){
+    const w = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, 7, 12), mat(0x0c1012, .6, .1));
+    w.rotation.x = Math.PI / 2; w.position.set(wx, 11, wz); aggTruckGroup.add(w);
+  }
+}
+const aggWarn = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10), new THREE.MeshStandardMaterial({ color: 0xff8a00, emissive: 0xff8a00, emissiveIntensity: 4 }));
+aggWarn.position.set(0, 75, 0); aggTruckGroup.add(aggWarn);
+aggZone.add(aggTruckGroup);
+clickable.push({ object: aggTruckGroup, type: "aggTruck", name: "Aggregate Truck" });
+clickable.push({ object: crusherBase, type: "aggregate", name: "Stone Crusher" });
 
 /* WASTE MANAGEMENT ZONE */
 const wasteZone = new THREE.Group();
@@ -1302,13 +1392,6 @@ const fertRoute2 = [
   [1200, 2400], [1200, 1200], [1200, 0], [1200, -1200], [0, -1200],
   [-1200, -1200], [-2400, -1200], [-3600, -1200], [-3600, -2400], [-3600, -3600]
 ];
-/* Truck circulation routes near Central Intersection (extra traffic) */
-const centralTruckRoute = [
-  [-3000, -3000], [-1200, -3000], [0, -3000], [1200, -3000], [3000, -3000],
-  [3000, -1200], [3000, 0], [3000, 1200], [3000, 3000],
-  [1200, 3000], [0, 3000], [-1200, 3000], [-3000, 3000],
-  [-3000, 1200], [-3000, 0], [-3000, -1200], [-3000, -3000]
-];
 function moveTruck(truck, route, state, delta, speed){
   const from = route[state.idx];
   const to = route[(state.idx + 1) % route.length];
@@ -1321,7 +1404,7 @@ function moveTruck(truck, route, state, delta, speed){
   if(Math.abs(dx) + Math.abs(dz) > 0.1){ truck.rotation.y = -Math.atan2(dz, dx); }
 }
 
-/* Collection Points */
+/* COLLECTION POINTS */
 const collectionPoints = [
   { x: -800, z: -800, label: "School" }, { x: 800, z: -800, label: "Hospital" },
   { x: -800, z: 800, label: "Society" }, { x: 800, z: 800, label: "Bank" },
@@ -1329,7 +1412,8 @@ const collectionPoints = [
   { x: 2000, z: 1950, label: "Gas Station" }, { x: 2000, z: 800, label: "Sewage Co." },
   { x: -3800, z: 3800, label: "Power Zone" }, { x: 3800, z: -3800, label: "Filtration" },
   { x: -3800, z: -3800, label: "Fertilizer" }, { x: 3800, z: 3800, label: "Waste Zone" },
-  { x: 2000, z: -1800, label: "Vertical Farm" }
+  { x: 3400, z: -2800, label: "Vertical Farm" },
+  { x: 3200, z: 2600, label: "Aggregate Plant" }
 ];
 collectionPoints.forEach(cp => {
   const g = new THREE.Group();
@@ -1337,8 +1421,10 @@ collectionPoints.forEach(cp => {
   const baseMat = new THREE.MeshStandardMaterial({ color: 0xffcf66, emissive: 0xffcf66, emissiveIntensity: 2.5, metalness: .5, roughness: .3 });
   const base = new THREE.Mesh(new THREE.CylinderGeometry(18, 20, 3, 16), baseMat);
   base.position.y = 1.5; g.add(base);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(16, 1, 8, 24), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffcf66, emissiveIntensity: 3.5 }));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(16, 1.2, 8, 24), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffcf66, emissiveIntensity: 8 }));
   ring.rotation.x = Math.PI / 2; ring.position.y = 4; g.add(ring);
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(20, 0.7, 8, 24), new THREE.MeshStandardMaterial({ color: 0x22cfff, emissive: 0x22cfff, emissiveIntensity: 10 }));
+  ring2.rotation.x = Math.PI / 2; ring2.position.y = 6; g.add(ring2);
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(.4, .5, 18, 6), darkMaterial);
   pole.position.y = 12; g.add(pole);
   const c = document.createElement("canvas");
@@ -1348,19 +1434,21 @@ collectionPoints.forEach(cp => {
   cx.strokeStyle = "#ffcf66"; cx.lineWidth = 6; cx.strokeRect(4, 4, 504, 120);
   cx.fillStyle = "#ffcf66"; cx.font = "bold 32px Arial";
   cx.textAlign = "center"; cx.textBaseline = "middle";
-  cx.fillText("📦 COLLECTION", 256, 45);
-  cx.font = "bold 24px Arial"; cx.fillStyle = "#ffe8a8";
-  cx.fillText(cp.label.substring(0, 22), 256, 90);
+  cx.fillText("📦 COLLECTION", 256, 42);
+  cx.font = "bold 22px Arial"; cx.fillStyle = "#ffe8a8";
+  cx.fillText(cp.label.substring(0, 22), 256, 78);
+  cx.font = "bold 16px Arial"; cx.fillStyle = "#22cfff";
+  cx.fillText("🤖 AI TRACKING", 256, 108);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   const label = new THREE.Mesh(new THREE.PlaneGeometry(40, 10), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }));
   label.position.y = 24; g.add(label);
-  const glow = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10), new THREE.MeshStandardMaterial({ color: 0xffcf66, emissive: 0xffcf66, emissiveIntensity: 4 }));
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(3.5, 12, 12), new THREE.MeshStandardMaterial({ color: 0xffcf66, emissive: 0xffcf66, emissiveIntensity: 12 }));
   glow.position.y = 28; g.add(glow);
   scene.add(g);
 });
 
-/* Signal System */
+/* AI TRAFFIC SIGNALS */
 const SIGNAL = { NS: "GREEN", EW: "RED" };
 const STOP_DIST = 130;
 const CAR_LEN = 26;
@@ -1453,11 +1541,11 @@ function spawnInterCar(approach, startProgress){
   interCars.push(car);
   return car;
 }
-/* 3 cars per approach (TRAFFIC INCREASED) */
-spawnInterCar("N", 0.00); spawnInterCar("N", 0.28); spawnInterCar("N", 0.58);
-spawnInterCar("S", 0.00); spawnInterCar("S", 0.28); spawnInterCar("S", 0.58);
-spawnInterCar("E", 0.00); spawnInterCar("E", 0.28); spawnInterCar("E", 0.58);
-spawnInterCar("W", 0.00); spawnInterCar("W", 0.28); spawnInterCar("W", 0.58);
+/* 4 cars per approach (16 total) */
+spawnInterCar("N", 0.00); spawnInterCar("N", 0.20); spawnInterCar("N", 0.42); spawnInterCar("N", 0.65);
+spawnInterCar("S", 0.00); spawnInterCar("S", 0.20); spawnInterCar("S", 0.42); spawnInterCar("S", 0.65);
+spawnInterCar("E", 0.00); spawnInterCar("E", 0.20); spawnInterCar("E", 0.42); spawnInterCar("E", 0.65);
+spawnInterCar("W", 0.00); spawnInterCar("W", 0.20); spawnInterCar("W", 0.42); spawnInterCar("W", 0.65);
 
 function placeInterCar(car){
   const off = 22;
@@ -1574,8 +1662,47 @@ function updateSignalUI(){
     else if(ewStopped > 3) aiHint = "AI extending EW green time...";
     else if(nsStopped + ewStopped > 6) aiHint = "AI balancing both axes";
     else aiHint = "Flow optimal — monitoring";
-    spInfo.innerHTML = `<div><strong>Phase:</strong> ${phaseName}</div><div><strong>Time left:</strong> ${remaining.toFixed(1)}s</div><div><strong>NS axis:</strong> ${nsStopped} stopped, ${nsMoving} moving</div><div><strong>EW axis:</strong> ${ewStopped} stopped, ${ewMoving} moving</div><div class="aiHint">🤖 ${aiHint}</div>`;
+    spInfo.innerHTML = '<div><strong>Phase:</strong> ' + phaseName + '</div><div><strong>Time left:</strong> ' + remaining.toFixed(1) + 's</div><div><strong>NS:</strong> ' + nsStopped + ' stopped, ' + nsMoving + ' moving</div><div><strong>EW:</strong> ' + ewStopped + ' stopped, ' + ewMoving + ' moving</div><div class="aiHint">🤖 ' + aiHint + '</div>';
   }
+}
+
+/* AI LOGS */
+function addLog(msg, type){
+  type = type || "info";
+  const logList = document.getElementById("logList");
+  if(!logList) return;
+  const now = new Date();
+  const timeStr = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0") + ":" + String(now.getSeconds()).padStart(2,"0");
+  const div = document.createElement("div");
+  div.className = "logItem " + type;
+  div.innerHTML = '<span class="logTime">[' + timeStr + ']</span>' + msg;
+  logList.insertBefore(div, logList.firstChild);
+  while(logList.children.length > 15){
+    logList.removeChild(logList.lastChild);
+  }
+}
+let autoLogTimer = 0;
+function autoLogTick(delta){
+  autoLogTimer += delta;
+  if(autoLogTimer < 3.5) return;
+  autoLogTimer = 0;
+  let nsStopped = 0, ewStopped = 0;
+  for(const c of interCars){
+    if(c.progress < 1 && c.stopped){
+      if(c.approach === "N" || c.approach === "S") nsStopped++;
+      else ewStopped++;
+    }
+  }
+  const phase = sigCycle.phase;
+  if(phase === 0 && nsStopped > 2) addLog("NS GREEN — " + nsStopped + " cars passing", "ok");
+  else if(phase === 2 && ewStopped > 2) addLog("EW GREEN — " + ewStopped + " cars passing", "ok");
+  else if(phase === 1) addLog("NS YELLOW — switching to EW soon", "warn");
+  else if(phase === 3) addLog("EW YELLOW — switching to NS soon", "warn");
+  else if(nsStopped + ewStopped > 8) addLog("Heavy queue — AI extending green", "act");
+  else addLog("Signal monitoring — flow optimal", "info");
+  if(tState === 0 && Math.random() > 0.7) addLog("Routine scan: " + interCars.length + " vehicles tracked", "info");
+  if(tState === 1 && Math.random() > 0.6) addLog("⚠ Jam building — evaluating reroute", "warn");
+  if(tState === 2 && Math.random() > 0.6) addLog("AI rerouting trucks via outer road", "act");
 }
 
 /* PEOPLE */
@@ -1647,7 +1774,9 @@ const LOCATIONS = {
     cameras: [{ name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI }, { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 }, { name: "Top View", top: true }] },
   trafficController: { label: "AI Traffic Controller", icon: "🤖", type: "TRANSPORTATION", position: [0, 5, 0], camHeight: 320, camDistance: 280, info: "Monitors 4 city entry routes.",
     cameras: [{ name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI }, { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 }, { name: "Top View", top: true }] },
-  verticalFarm: { label: "Vertical Farming", icon: "🌾", type: "AGRITECH", position: [2200, 5, -1800], camHeight: 500, camDistance: 550, info: "6 vertical farm towers with crops.",
+  verticalFarm: { label: "Vertical Farming", icon: "🌾", type: "AGRITECH", position: [3400, 5, -2800], camHeight: 500, camDistance: 550, info: "6 vertical farm towers with crops.",
+    cameras: [{ name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI }, { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 }, { name: "Top View", top: true }] },
+  aggregate: { label: "Aggregate Plant", icon: "🏗", type: "CONSTRUCTION", position: [3200, 5, 2600], camHeight: 420, camDistance: 450, info: "Stone crusher + aggregate piles.",
     cameras: [{ name: "Camera 1", angle: 0 }, { name: "Camera 2", angle: Math.PI }, { name: "Camera 3", angle: Math.PI/2 }, { name: "Camera 4", angle: -Math.PI/2 }, { name: "Top View", top: true }] }
 };
 const menuLocationsEl = document.getElementById("menuLocations");
@@ -1655,13 +1784,13 @@ Object.keys(LOCATIONS).forEach(key => {
   const loc = LOCATIONS[key];
   const item = document.createElement("div");
   item.className = "menuItem";
-  item.innerHTML = `<span class="mIcon">${loc.icon}</span><span class="mLabel">${loc.label}</span><span class="arrow">▼</span>`;
+  item.innerHTML = '<span class="mIcon">' + loc.icon + '</span><span class="mLabel">' + loc.label + '</span><span class="arrow">▼</span>';
   const camOpts = document.createElement("div");
   camOpts.className = "cameraOptions";
   loc.cameras.forEach(cam => {
     const camOpt = document.createElement("div");
     camOpt.className = "camOption";
-    camOpt.innerHTML = `<span class="camIcon">${cam.inside ? "🎯" : (cam.top ? "🔭" : "📹")}</span> ${cam.name}`;
+    camOpt.innerHTML = '<span class="camIcon">' + (cam.inside ? "🎯" : (cam.top ? "🔭" : "📹")) + '</span> ' + cam.name;
     camOpt.onclick = (e) => { e.stopPropagation(); goToLocationCamera(key, cam.name); };
     camOpts.appendChild(camOpt);
   });
@@ -1684,7 +1813,7 @@ const menuVehiclesEl = document.getElementById("menuVehicles");
 ].forEach(v => {
   const item = document.createElement("div");
   item.className = "menuItem";
-  item.innerHTML = `<span class="mIcon">${v.icon}</span><span class="mLabel">${v.label}</span>`;
+  item.innerHTML = '<span class="mIcon">' + v.icon + '</span><span class="mLabel">' + v.label + '</span>';
   item.onclick = () => followVehicle(v.key);
   menuVehiclesEl.appendChild(item);
 });
@@ -1788,27 +1917,28 @@ function goToTopDown(){
 }
 window.goToTopDown = goToTopDown;
 function showPanel(title, type, text){
-  document.getElementById("panelContent").innerHTML = `<h2>${title}</h2><div class="type">${type}</div><p>${text}</p>`;
+  document.getElementById("panelContent").innerHTML = '<h2>' + title + '</h2><div class="type">' + type + '</div><p>' + text + '</p>';
   document.getElementById("panel").style.display = "block";
 }
 window.closePanel = function(){ document.getElementById("panel").style.display = "none"; };
 
-/* PLACE INFO DATA */
+/* PLACE INFO */
 const PLACE_INFO = {
   school: { icon: "🏫", title: "American High School", type: "EDUCATION • SMART CAMPUS", intro: "The American High School is a state-of-the-art educational facility equipped with AI-powered smart classrooms, digital libraries, and interactive learning spaces. Students learn from world-class faculty using cutting-edge technology. The campus includes science labs, sports facilities, an auditorium, and a smart cafeteria that uses IoT for efficient food management.", stats: [{ val: "2,400+", lbl: "STUDENTS" }, { val: "180", lbl: "TEACHERS" }, { val: "98%", lbl: "PASS RATE" }], features: ["Smart Classrooms", "AI Tutor System", "Digital Library", "Science Labs", "Sports Complex", "Auditorium"] },
   hospital: { icon: "🏥", title: "BSS Smart Hospital", type: "HEALTHCARE • AI-POWERED", intro: "The BSS Smart Hospital is a fully automated healthcare facility using AI diagnostics, robotic surgery, and real-time patient monitoring. Every bed is connected to central AI that predicts health deterioration before it happens. Emergency drones deliver medicine within 90 seconds.", stats: [{ val: "500", lbl: "BEDS" }, { val: "24/7", lbl: "EMERGENCY" }, { val: "12s", lbl: "RESPONSE" }], features: ["AI Diagnostics", "Robotic Surgery", "Med Drones", "ICU Smart Beds", "Telemedicine", "Smart Pharmacy"] },
   society: { icon: "🏘", title: "BSS Smart Society", type: "RESIDENTIAL • SMART LIVING", intro: "The BSS Smart Society is a futuristic residential community with automated homes, solar power, smart waste management, and AI-driven security. Residents enjoy 24/7 surveillance with facial recognition, drone delivery, and seamless public transport connectivity.", stats: [{ val: "3,200", lbl: "RESIDENTS" }, { val: "850", lbl: "HOMES" }, { val: "100%", lbl: "SOLAR" }], features: ["Smart Homes", "Solar Grid", "AI Security", "Drone Delivery", "Smart Parking", "Community Center"] },
   bank: { icon: "🏦", title: "Smart City State Bank", type: "FINANCIAL • BLOCKCHAIN", intro: "The State Bank of the Smart City uses blockchain for every transaction, ensuring 100% security. AI predicts fraud in real-time, and customers enjoy instant loans, zero paperwork, and 24/7 digital banking.", stats: [{ val: "$2.4B", lbl: "DEPOSITS" }, { val: "180K", lbl: "ACCOUNTS" }, { val: "0.2s", lbl: "TRANSFER" }], features: ["Blockchain Ledger", "AI Fraud Detection", "Instant Loans", "Digital Wallet", "24/7 ATMs", "Biometric Login"] },
   farm: { icon: "🌾", title: "Smart Eco Farm", type: "AGRICULTURE • AUTOMATED", intro: "The Smart Eco Farm uses drones for crop monitoring, AI for soil analysis, and automated irrigation. Crops grow 40% faster with sensor-controlled nutrients. Solar-powered robots plant and harvest with precision.", stats: [{ val: "1200", lbl: "ACRES" }, { val: "40%", lbl: "FASTER" }, { val: "18", lbl: "DRONES" }], features: ["Drone Monitoring", "AI Soil Analysis", "Auto Irrigation", "Solar Robots", "Organic Farming", "Greenhouse"] },
-  marriageHall: { icon: "💒", title: "Grand Marriage Hall", type: "EVENT VENUE • LUXURY", intro: "The Grand Marriage Hall is a luxurious event venue with 3D holographic decorations, AI-powered lighting, and a robotic catering service. It can host 2,000 guests with 360-degree immersive audio-visual experiences.", stats: [{ val: "2,000", lbl: "GUESTS" }, { val: "12", lbl: "HALLS" }, { val: "5★", lbl: "RATING" }], features: ["Holographic Decor", "Robotic Catering", "Immersive AV", "Smart Lighting", "Valet Parking", "Live Streaming"] },
+  marriageHall: { icon: "💒", title: "Grand Marriage Hall", type: "EVENT VENUE • LUXURY", intro: "The Grand Marriage Hall is a luxurious event venue with 3D holographic decorations, AI-powered lighting, and robotic catering service. It can host 2,000 guests with 360-degree immersive audio-visual experiences.", stats: [{ val: "2,000", lbl: "GUESTS" }, { val: "12", lbl: "HALLS" }, { val: "5★", lbl: "RATING" }], features: ["Holographic Decor", "Robotic Catering", "Immersive AV", "Smart Lighting", "Valet Parking", "Live Streaming"] },
   carWash: { icon: "🚗", title: "Car Wash · Gas Station", type: "AUTOMOTIVE • ROBOTIC", intro: "The Gas Station & Car Wash uses robotic arms to wash 200 cars per day. AI dispenses exact fuel quantity, and electric vehicle charging stations are powered by the city's solar grid. Automatic payment via license plate recognition.", stats: [{ val: "200", lbl: "CARS/DAY" }, { val: "12", lbl: "FUEL PUMPS" }, { val: "24/7", lbl: "OPEN" }], features: ["Robotic Wash", "AI Fuel Dispenser", "EV Charging", "Plate Recognition", "Air Pump", "Tire Service"] },
   powerSupply: { icon: "⚡", title: "Power Supply Zone", type: "RENEWABLE • SMART GRID", intro: "The Power Supply Zone powers the entire city with 16 wind turbines, 10 solar arrays, and 10 battery storage units. AI balances the load in real-time, and every building receives clean energy through the smart grid.", stats: [{ val: "16", lbl: "TURBINES" }, { val: "10", lbl: "SOLAR ARRAYS" }, { val: "100MW", lbl: "CAPACITY" }], features: ["Wind Power", "Solar Power", "Battery Storage", "Smart Grid", "Load Balancing", "Zero Emissions"] },
-  filtration: { icon: "💧", title: "Filtration System", type: "WATER TREATMENT • AI", intro: "The Filtration System purifies 10 million liters of water daily using nano-membranes and AI quality control. Cameras monitor every stage, and the water is tested 24/7 before distribution to the city.", stats: [{ val: "10M L", lbl: "DAILY" }, { val: "99.9%", lbl: "PURITY" }, { val: "24/7", lbl: "MONITORED" }], features: ["Nano Membranes", "AI Quality Control", "Live Cameras", "Auto Cleaning", "UV Sterilization", "Smart Distribution"] },
+  filtration: { icon: "💧", title: "Filtration System", type: "WATER TREATMENT • AI", intro: "The Filtration System purifies 10 million liters of water daily using nano-membranes and AI quality control. Cameras monitor every stage, and water is tested 24/7 before distribution.", stats: [{ val: "10M L", lbl: "DAILY" }, { val: "99.9%", lbl: "PURITY" }, { val: "24/7", lbl: "MONITORED" }], features: ["Nano Membranes", "AI Quality Control", "Live Cameras", "Auto Cleaning", "UV Sterilization", "Smart Distribution"] },
   fertilizer: { icon: "🌱", title: "AI Fertilizer System", type: "AGRITECH • AI MANAGED", intro: "The AI Fertilizer System collects organic waste and converts it into nutrient-rich fertilizer. AI manages the entire process from collection to delivery, using trucks that visit farms and drop fertilizer at collection points.", stats: [{ val: "24 kg", lbl: "PER BATCH" }, { val: "8", lbl: "TANKS" }, { val: "AI", lbl: "MANAGED" }], features: ["Organic Processing", "AI Routing", "Smart Trucks", "Auto Delivery", "Batch Tracking", "Quality Control"] },
   wasteManagement: { icon: "♻", title: "Waste Management", type: "MUNICIPAL • RECYCLING", intro: "The Waste Management facility recycles 156 kg of waste daily using AI-powered sorting robots. Recyclables are separated at 98% accuracy, and organic waste is sent to the fertilizer system.", stats: [{ val: "156 kg", lbl: "DAILY" }, { val: "98%", lbl: "ACCURACY" }, { val: "3", lbl: "TRUCKS" }], features: ["AI Sorting Robots", "Auto Recycling", "Smart Bins", "Waste Tracking", "Organic Composting", "Zero Landfill"] },
   sewageCompany: { icon: "🏭", title: "Sewage & Filtration Co.", type: "INDUSTRIAL • WATER", intro: "The Sewage & Filtration Company treats industrial water using advanced bio-reactors and AI monitoring. Treated water is reused for cooling and irrigation, saving 40% of freshwater consumption.", stats: [{ val: "5M L", lbl: "TREATED" }, { val: "40%", lbl: "WATER SAVED" }, { val: "24/7", lbl: "MONITORED" }], features: ["Bio-Reactors", "AI Monitoring", "Water Reuse", "Auto Filtration", "Industrial Grade", "Compliance"] },
-  trafficController: { icon: "🤖", title: "AI Traffic Controller", type: "TRANSPORTATION • AI CORE", intro: "The AI Traffic Controller is the brain of the city's transport system. It monitors all 4 entry routes, controls traffic signals in real-time, extends green times when queues build, and reroutes trucks to collection points to prevent jams.", stats: [{ val: "4", lbl: "AXES" }, { val: "12+", lbl: "CARS" }, { val: "AI", lbl: "CONTROL" }], features: ["Live Signal Control", "Queue Detection", "Adaptive Green", "Truck Routing", "4-Axis Balance", "Reroute Logic"] },
-  verticalFarm: { icon: "🌾", title: "Vertical Farming", type: "AGRITECH • FUTURE FOOD", intro: "The Vertical Farming Zone consists of 6 tall towers that grow crops year-round using hydroponics and LED grow lights. Each tower has 7-10 floors of crops, tended by farmers using AI-guided harvesting. This produces 50x more food per square meter than traditional farming.", stats: [{ val: "6", lbl: "TOWERS" }, { val: "50x", lbl: "OUTPUT" }, { val: "20", lbl: "FARMERS" }], features: ["Hydroponic Towers", "LED Grow Lights", "AI Harvesting", "Year-Round Crops", "Water Recycling", "Zero Pesticides"] }
+  trafficController: { icon: "🤖", title: "AI Traffic Controller", type: "TRANSPORTATION • AI CORE", intro: "The AI Traffic Controller is the brain of the city's transport system. It monitors all 4 entry routes, controls traffic signals in real-time, extends green times when queues build, and reroutes trucks to collection points to prevent jams.", stats: [{ val: "4", lbl: "AXES" }, { val: "16+", lbl: "CARS" }, { val: "AI", lbl: "CONTROL" }], features: ["Live Signal Control", "Queue Detection", "Adaptive Green", "Truck Routing", "4-Axis Balance", "Reroute Logic"] },
+  verticalFarm: { icon: "🌾", title: "Vertical Farming", type: "AGRITECH • FUTURE FOOD", intro: "The Vertical Farming Zone consists of 6 tall towers that grow crops year-round using hydroponics and LED grow lights. Each tower has 7-10 floors of crops, tended by farmers using AI-guided harvesting. This produces 50x more food per square meter than traditional farming.", stats: [{ val: "6", lbl: "TOWERS" }, { val: "50x", lbl: "OUTPUT" }, { val: "20", lbl: "FARMERS" }], features: ["Hydroponic Towers", "LED Grow Lights", "AI Harvesting", "Year-Round Crops", "Water Recycling", "Zero Pesticides"] },
+  aggregate: { icon: "🏗", title: "Aggregate Plant", type: "CONSTRUCTION • HEAVY", intro: "The Aggregate Plant processes stone, gravel, and sand for city construction projects. AI-controlled crushers break rocks into precise sizes, and conveyor belts load them into trucks heading to construction sites across the smart city.", stats: [{ val: "500T", lbl: "DAILY" }, { val: "6", lbl: "PILES" }, { val: "3", lbl: "BELTS" }], features: ["Stone Crusher", "AI Grading", "Conveyor Belts", "Auto Loading", "Dust Control", "Truck Routing"] }
 };
 function openPlacePopup(key){
   const info = PLACE_INFO[key];
@@ -1818,10 +1948,10 @@ function openPlacePopup(key){
   document.getElementById("ppType").textContent = info.type;
   document.getElementById("ppIntro").textContent = info.intro;
   let statsHtml = "";
-  info.stats.forEach(s => { statsHtml += `<div class="ppStat"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`; });
+  info.stats.forEach(s => { statsHtml += '<div class="ppStat"><div class="val">' + s.val + '</div><div class="lbl">' + s.lbl + '</div></div>'; });
   document.getElementById("ppStats").innerHTML = statsHtml;
   let featHtml = "";
-  info.features.forEach(f => { featHtml += `<div class="ppFeat">${f}</div>`; });
+  info.features.forEach(f => { featHtml += '<div class="ppFeat">' + f + '</div>'; });
   document.getElementById("ppFeatures").innerHTML = featHtml;
   document.getElementById("popupOverlay").classList.add("show");
   document.getElementById("placePopup").classList.add("show");
@@ -1918,6 +2048,7 @@ function setState(s){
     tLevelEl.textContent = "NORMAL"; tFlowEl.textContent = "92%"; aModeEl.textContent = "MONITORING";
     incEl.innerHTML = "<span>LIVE:</span> Traffic flowing normally";
     aiReasonEl.style.display = "none";
+    addLog("Traffic normal — monitoring 4 axes", "ok");
   }
   if(s === 1){
     tStateEl.textContent = "TRAFFIC JAM"; tStateEl.style.color = "#ffd15a";
@@ -1928,6 +2059,7 @@ function setState(s){
     document.getElementById("aiReasonTitle").textContent = "🔴 PROBLEM DETECTED";
     document.getElementById("aiReasonText").innerHTML = "<strong>REASON:</strong> Too many cars & trucks at central intersection.";
     document.getElementById("aiResultText").innerHTML = "AI is <strong>reading the queue</strong> to figure out the best fix.";
+    addLog("JAM detected at central intersection", "warn");
   }
   if(s === 2){
     tStateEl.textContent = "AI REROUTING"; tStateEl.style.color = "#67e4ff";
@@ -1938,6 +2070,7 @@ function setState(s){
     document.getElementById("aiReasonTitle").textContent = "🔵 AI IS ACTING";
     document.getElementById("aiReasonText").innerHTML = "<strong>AI DID THIS:</strong> Extended green on busy axis and rerouted trucks via outer roads.";
     document.getElementById("aiResultText").innerHTML = "Result: <strong>queue shrinking → jam clearing.</strong>";
+    addLog("AI extended green + rerouting trucks", "act");
   }
   if(s === 3){
     tStateEl.textContent = "TRAFFIC CLEAR"; tStateEl.style.color = "#6aff9d";
@@ -1948,6 +2081,7 @@ function setState(s){
     document.getElementById("aiReasonTitle").textContent = "🟢 RESOLVED BY AI";
     document.getElementById("aiReasonText").innerHTML = "<strong>AI RESOLVED IT</strong> by extending green and clearing queue.";
     document.getElementById("aiResultText").innerHTML = "Jam cleared in <strong>15 seconds</strong>.";
+    addLog("Jam cleared — all routes flowing", "ok");
   }
 }
 function updateCycle(){
@@ -2008,12 +2142,17 @@ function updateVerticalFarms(t){
     for(let fi = 0; fi < tower.floors.length; fi++){
       const floor = tower.floors[fi];
       for(const row of floor.rows){
-        row.mesh.position.y += Math.sin(t * 2 + row.phase) * 0.002;
+        if(row.plants){
+          for(const plant of row.plants){
+            const s = plant.userData.baseScale * (0.7 + Math.sin(t * 1.5 + plant.userData.phase) * 0.3);
+            plant.scale.set(s, 0.8 + Math.sin(t * 1.5 + plant.userData.phase) * 0.4, s);
+          }
+        }
       }
-      floor.stripMat.emissiveIntensity = 2 + Math.sin(t * 3 + fi) * 1.2;
+      floor.stripMat.emissiveIntensity = 2 + Math.sin(t * 3 + fi) * 1.5;
     }
-    tower.beacon.material.emissiveIntensity = 3 + Math.sin(t * 4) * 2;
-    tower.beacon.scale.setScalar(1 + Math.sin(t * 4) * 0.15);
+    tower.beacon.material.emissiveIntensity = 4 + Math.sin(t * 4) * 3;
+    tower.beacon.scale.setScalar(1 + Math.sin(t * 4) * 0.2);
   }
 }
 function updateWaterParticles(t){
@@ -2086,6 +2225,7 @@ function animate(){
   applyJamEffect(delta);
   updateInterCars(delta);
   updateSignalUI();
+  autoLogTick(delta);
   updatePeople(t);
   updateFarmers(t);
   updateVerticalFarms(t);
@@ -2102,6 +2242,7 @@ function animate(){
   if(garbageWarn) garbageWarn.material.emissiveIntensity = blink;
   if(fertTruck1Obj.warn) fertTruck1Obj.warn.material.emissiveIntensity = blink;
   if(fertTruck2Obj.warn) fertTruck2Obj.warn.material.emissiveIntensity = blink;
+  if(aggWarn) aggWarn.material.emissiveIntensity = (Math.floor(t * 2) % 2 === 0) ? 4 : 0.5;
   if(fc % 2 === 0){ for(let i = 0; i < turbines.length; i++) turbines[i].rotation.z = t * 2.4; }
   radar.rotation.z = t * 1.7;
   controllerRing.rotation.z = t * 0.5;
@@ -2127,7 +2268,14 @@ window.addEventListener("keydown", (e) => {
 });
 cycleStart = 0;
 setState(0);
+addLog("AI Traffic System initialized", "ok");
+addLog("Tracking 4 axes + 16 vehicles", "info");
+addLog("Signal cycle: NS <-> EW (8s each)", "info");
 animate();
 </script>
 </body>
+</html>
+</script>
+</body>
+  
 </html>
