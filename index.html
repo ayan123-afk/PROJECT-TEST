@@ -106,31 +106,314 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 #aiLogPanel .logList::-webkit-scrollbar-thumb{background:rgba(34,207,255,.4);border-radius:2px}
 #logRestore{position:fixed;bottom:100px;left:340px;z-index:57;padding:8px 14px;border-radius:12px;background:rgba(3,13,22,.94);border:1px solid rgba(34,207,255,.5);color:#22cfff;font-size:10px;font-weight:900;letter-spacing:1.5px;cursor:pointer;display:none;align-items:center;gap:6px}
 #logRestore.show{display:flex}
-#placePopup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.6);z-index:200;width:620px;max-width:92vw;max-height:88vh;overflow-y:auto;background:linear-gradient(135deg,rgba(4,20,34,.98),rgba(2,10,20,.99));border:2px solid rgba(90,225,255,.7);border-radius:22px;opacity:0;pointer-events:none;transition:all .45s cubic-bezier(.34,1.56,.64,1);box-shadow:0 30px 100px rgba(0,0,0,.9),0 0 60px rgba(34,207,255,.4)}
-#placePopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-#placePopup .ppHero{height:170px;background:linear-gradient(135deg,#0a3a5c,#1a5c7a);border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:center;font-size:90px;text-shadow:0 0 30px rgba(90,225,255,.8);animation:ppHeroPulse 3s infinite}
-@keyframes ppHeroPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
-#placePopup .ppClose{position:absolute;top:14px;right:14px;width:38px;height:38px;border:0;border-radius:10px;background:rgba(0,0,0,.55);color:white;font-size:22px;cursor:pointer;z-index:5;transition:.2s}
-#placePopup .ppClose:hover{background:#c22b1a;transform:rotate(90deg)}
-#placePopup .ppBody{padding:24px 28px 28px}
-#placePopup .ppTitle{font-size:26px;font-weight:900;color:#22cfff;letter-spacing:1.5px;margin-bottom:6px;text-shadow:0 0 20px rgba(34,207,255,.5)}
-#placePopup .ppType{display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(34,207,255,.18);border:1px solid rgba(34,207,255,.5);color:#8ee6ff;font-size:10px;letter-spacing:2px;font-weight:900;margin-bottom:16px}
-#placePopup .ppIntro{color:#d8e8f0;font-size:13.5px;line-height:1.85;margin-bottom:16px}
-#placePopup .ppStats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-#placePopup .ppStat{padding:12px;border-radius:12px;background:rgba(34,207,255,.08);border:1px solid rgba(34,207,255,.25);text-align:center}
-#placePopup .ppStat .val{font-size:20px;font-weight:900;color:#22cfff;margin-bottom:3px}
-#placePopup .ppStat .lbl{font-size:9px;letter-spacing:1.5px;color:#91a5ae}
-#placePopup .ppFeatures{display:flex;flex-wrap:wrap;gap:6px}
-#placePopup .ppFeat{padding:6px 12px;border-radius:8px;background:rgba(106,255,157,.12);border:1px solid rgba(106,255,157,.4);color:#8affb3;font-size:10px;font-weight:700}
-#placePopup .ppBody > *{opacity:0;animation:ppSlide .5s forwards}
-#placePopup .ppBody > *:nth-child(1){animation-delay:.1s}
-#placePopup .ppBody > *:nth-child(2){animation-delay:.2s}
-#placePopup .ppBody > *:nth-child(3){animation-delay:.3s}
-#placePopup .ppBody > *:nth-child(4){animation-delay:.4s}
-#placePopup .ppBody > *:nth-child(5){animation-delay:.5s}
-@keyframes ppSlide{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-#popupOverlay{position:fixed;inset:0;background:rgba(0,5,12,.75);z-index:190;opacity:0;pointer-events:none;transition:.4s;backdrop-filter:blur(4px)}
+
+/* ============================================================
+   NEW PROFESSIONAL POPUP SYSTEM (no emojis, glassmorphism)
+   ============================================================ */
+#placePopup{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(.92);
+  z-index:200;width:720px;max-width:94vw;max-height:88vh;
+  background:rgba(8,18,30,.92);
+  backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid rgba(64,200,255,.30);
+  border-radius:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s cubic-bezier(.22,1,.36,1), transform .35s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 40px 100px rgba(0,0,0,.85), 0 0 80px rgba(34,207,255,.08), inset 0 1px 0 rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#placePopup.show{
+  opacity:1;pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+#placePopup .ppHeader{
+  position:relative;
+  padding:26px 30px 20px;
+  background:linear-gradient(135deg,rgba(12,30,50,.95),rgba(6,16,28,.98));
+  border-bottom:1px solid rgba(64,200,255,.18);
+  flex-shrink:0;
+}
+#placePopup .ppHeader .ppIconWrap{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(34,207,255,.18),rgba(34,207,255,.06));
+  border:1px solid rgba(34,207,255,.35);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  box-shadow:0 0 24px rgba(34,207,255,.12);
+}
+#placePopup .ppHeader .ppIconWrap svg{
+  width:26px;height:26px;stroke:#4fd8ff;fill:none;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+#placePopup .ppTitle{
+  font-size:24px;font-weight:800;color:#eaf6ff;
+  letter-spacing:.3px;margin-bottom:4px;line-height:1.2;
+}
+#placePopup .ppTypeRow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+#placePopup .ppType{
+  display:inline-block;padding:3px 12px;border-radius:20px;
+  background:rgba(34,207,255,.10);
+  border:1px solid rgba(34,207,255,.30);
+  color:#7adcff;font-size:10px;letter-spacing:1.6px;
+  font-weight:700;text-transform:uppercase;
+}
+#placePopup .ppStatus{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 12px;border-radius:20px;
+  background:rgba(52,211,153,.08);
+  border:1px solid rgba(52,211,153,.28);
+  color:#6ee7b7;font-size:10px;letter-spacing:1.2px;
+  font-weight:700;text-transform:uppercase;
+}
+#placePopup .ppStatus .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#34d399;box-shadow:0 0 8px #34d399;
+  animation:statusPulse 2s infinite;
+}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.4}}
+#placePopup .ppClose{
+  position:absolute;top:18px;right:18px;
+  width:34px;height:34px;border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;background:rgba(255,255,255,.04);
+  color:#9ab8c8;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;line-height:1;
+}
+#placePopup .ppClose:hover{
+  background:rgba(239,68,68,.15);
+  border-color:rgba(239,68,68,.4);
+  color:#fca5a5;transform:rotate(90deg);
+}
+#placePopup .ppScroll{
+  overflow-y:auto;overflow-x:hidden;
+  padding:24px 30px 28px;
+  flex:1;
+}
+#placePopup .ppScroll::-webkit-scrollbar{width:6px}
+#placePopup .ppScroll::-webkit-scrollbar-track{background:transparent}
+#placePopup .ppScroll::-webkit-scrollbar-thumb{background:rgba(34,207,255,.25);border-radius:3px}
+#placePopup .ppScroll::-webkit-scrollbar-thumb:hover{background:rgba(34,207,255,.45)}
+
+#placePopup .ppSection{margin-bottom:22px}
+#placePopup .ppSection:last-child{margin-bottom:0}
+#placePopup .ppSectionTitle{
+  font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:#5a8ca8;font-weight:800;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+#placePopup .ppSectionTitle::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(64,200,255,.20),transparent);
+}
+#placePopup .ppIntro{
+  color:#b8d0de;font-size:13.5px;line-height:1.8;
+  letter-spacing:.15px;
+}
+#placePopup .ppIntro strong{color:#7adcff;font-weight:700}
+
+#placePopup .ppStats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:10px;
+}
+#placePopup .ppStat{
+  padding:14px 12px;border-radius:12px;
+  background:rgba(34,207,255,.05);
+  border:1px solid rgba(34,207,255,.14);
+  text-align:center;transition:all .25s;
+}
+#placePopup .ppStat:hover{
+  background:rgba(34,207,255,.10);
+  border-color:rgba(34,207,255,.30);
+  transform:translateY(-2px);
+}
+#placePopup .ppStat .val{
+  font-size:20px;font-weight:800;color:#4fd8ff;
+  margin-bottom:3px;letter-spacing:.5px;
+}
+#placePopup .ppStat .lbl{
+  font-size:9px;letter-spacing:1.6px;color:#5a8ca8;
+  text-transform:uppercase;font-weight:700;
+}
+
+#placePopup .ppFeatures{
+  display:flex;flex-wrap:wrap;gap:7px;
+}
+#placePopup .ppFeat{
+  padding:7px 14px;border-radius:9px;
+  background:rgba(52,211,153,.06);
+  border:1px solid rgba(52,211,153,.22);
+  color:#8ae6b8;font-size:11px;font-weight:600;
+  letter-spacing:.3px;transition:all .2s;
+}
+#placePopup .ppFeat:hover{
+  background:rgba(52,211,153,.13);
+  border-color:rgba(52,211,153,.40);
+}
+
+/* Process flow */
+#placePopup .ppFlow{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+}
+#placePopup .ppFlowStep{
+  padding:8px 14px;border-radius:10px;
+  background:rgba(34,207,255,.06);
+  border:1px solid rgba(34,207,255,.16);
+  color:#9ad8f0;font-size:11px;font-weight:600;
+  letter-spacing:.2px;white-space:nowrap;
+}
+#placePopup .ppFlowArrow{
+  color:#3a6a80;font-size:14px;font-weight:300;
+  user-select:none;
+}
+
+/* Connected systems */
+#placePopup .ppConnections{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:8px;
+}
+#placePopup .ppConnItem{
+  padding:10px 12px;border-radius:10px;
+  background:rgba(34,207,255,.04);
+  border:1px solid rgba(34,207,255,.12);
+  color:#8ab8cc;font-size:11px;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  transition:all .2s;cursor:default;
+}
+#placePopup .ppConnItem:hover{
+  background:rgba(34,207,255,.10);
+  border-color:rgba(34,207,255,.28);
+  color:#b0e0f4;
+}
+#placePopup .ppConnItem .connDot{
+  width:5px;height:5px;border-radius:50%;
+  background:#22cfff;box-shadow:0 0 6px #22cfff;
+  flex-shrink:0;
+}
+
+/* Live status grid */
+#placePopup .ppLiveGrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+#placePopup .ppLiveItem{
+  padding:10px 14px;border-radius:10px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;justify-content:space-between;align-items:center;
+}
+#placePopup .ppLiveItem .liveLbl{
+  color:#5a8ca8;font-size:10px;letter-spacing:1.2px;
+  text-transform:uppercase;font-weight:700;
+}
+#placePopup .ppLiveItem .liveVal{
+  color:#4fd8ff;font-size:12px;font-weight:800;
+  letter-spacing:.5px;
+}
+#placePopup .ppLiveItem .liveVal.green{color:#6ee7b7}
+#placePopup .ppLiveItem .liveVal.amber{color:#fbbf24}
+#placePopup .ppLiveItem .liveVal.red{color:#f87171}
+
+/* Popup actions */
+#placePopup .ppActions{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding-top:20px;margin-top:6px;
+  border-top:1px solid rgba(64,200,255,.12);
+}
+#placePopup .ppActionBtn{
+  padding:10px 18px;border-radius:10px;
+  font-size:11px;font-weight:800;letter-spacing:1.2px;
+  text-transform:uppercase;cursor:pointer;
+  transition:all .2s;font-family:inherit;
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid transparent;
+}
+#placePopup .ppActionBtn.primary{
+  background:linear-gradient(135deg,rgba(34,207,255,.22),rgba(34,207,255,.10));
+  border-color:rgba(34,207,255,.45);
+  color:#7adcff;
+}
+#placePopup .ppActionBtn.primary:hover{
+  background:linear-gradient(135deg,rgba(34,207,255,.35),rgba(34,207,255,.18));
+  border-color:rgba(34,207,255,.7);
+  color:#c0f0ff;
+  box-shadow:0 0 20px rgba(34,207,255,.15);
+}
+#placePopup .ppActionBtn.secondary{
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.12);
+  color:#9ab8c8;
+}
+#placePopup .ppActionBtn.secondary:hover{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.22);
+  color:#d0e4f0;
+}
+#placePopup .ppActionBtn svg{
+  width:14px;height:14px;stroke:currentColor;fill:none;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* Highlight overlay label */
+#highlightLabel{
+  position:fixed;bottom:110px;left:50%;transform:translateX(-50%);
+  z-index:180;padding:12px 24px;border-radius:12px;
+  background:rgba(3,13,22,.94);
+  border:1px solid rgba(34,207,255,.5);
+  color:#7adcff;font-size:11px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:none;align-items:center;gap:12px;
+  box-shadow:0 15px 50px rgba(0,0,0,.7);
+}
+#highlightLabel.show{display:flex}
+#highlightLabel .hlDot{
+  width:8px;height:8px;border-radius:50%;
+  background:#22cfff;box-shadow:0 0 12px #22cfff;
+  animation:statusPulse 1.5s infinite;
+}
+#highlightLabel .hlClear{
+  padding:5px 12px;border:1px solid rgba(255,255,255,.15);
+  border-radius:7px;background:rgba(255,255,255,.06);
+  color:#c0d8e8;font-size:10px;font-weight:700;
+  cursor:pointer;letter-spacing:1px;font-family:inherit;
+  transition:all .2s;
+}
+#highlightLabel .hlClear:hover{
+  background:rgba(239,68,68,.15);
+  border-color:rgba(239,68,68,.4);
+  color:#fca5a5;
+}
+
+#popupOverlay{
+  position:fixed;inset:0;background:rgba(0,5,12,.78);
+  z-index:190;opacity:0;pointer-events:none;transition:.35s;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
 #popupOverlay.show{opacity:1;pointer-events:auto}
+
+/* Responsive */
+@media(max-width:860px){
+  #placePopup{width:96vw;max-height:90vh}
+  #placePopup .ppHeader{padding:22px 22px 16px}
+  #placePopup .ppScroll{padding:20px 22px 24px}
+  #placePopup .ppTitle{font-size:20px}
+  #placePopup .ppStats{grid-template-columns:repeat(auto-fit,minmax(90px,1fr))}
+  #placePopup .ppLiveGrid{grid-template-columns:1fr}
+  #placePopup .ppConnections{grid-template-columns:1fr}
+  #placePopup .ppFlow{flex-direction:column;align-items:flex-start}
+  #placePopup .ppFlowArrow{transform:rotate(90deg)}
+}
+@media(max-width:480px){
+  #placePopup{width:98vw;border-radius:16px}
+  #placePopup .ppHeader{padding:18px 16px 14px}
+  #placePopup .ppScroll{padding:16px 16px 20px}
+  #placePopup .ppTitle{font-size:17px}
+  #placePopup .ppStats{grid-template-columns:1fr 1fr}
+  #placePopup .ppActionBtn{padding:9px 12px;font-size:10px}
+}
 </style>
 </head>
 <body>
@@ -242,15 +525,24 @@ body{overflow:hidden;background:#9edcf5;font-family:Arial,Helvetica,sans-serif;c
 
 <div id="popupOverlay" onclick="closePlacePopup()"></div>
 <div id="placePopup">
-  <button class="ppClose" onclick="closePlacePopup()">×</button>
-  <div class="ppHero" id="ppHero">🏙</div>
-  <div class="ppBody">
+  <div class="ppHeader">
+    <div class="ppIconWrap" id="ppIcon"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg></div>
     <div class="ppTitle" id="ppTitle">Title</div>
-    <div class="ppType" id="ppType">TYPE</div>
-    <div class="ppIntro" id="ppIntro">Introduction</div>
-    <div class="ppStats" id="ppStats"></div>
-    <div class="ppFeatures" id="ppFeatures"></div>
+    <div class="ppTypeRow">
+      <span class="ppType" id="ppType">TYPE</span>
+      <span class="ppStatus" id="ppStatus"><span class="dot"></span><span id="ppStatusText">OPERATIONAL</span></span>
+    </div>
+    <button class="ppClose" onclick="closePlacePopup()" aria-label="Close">✕</button>
   </div>
+  <div class="ppScroll" id="ppScroll">
+    <!-- dynamically filled -->
+  </div>
+</div>
+
+<div id="highlightLabel">
+  <span class="hlDot"></span>
+  <span id="hlText">HIGHLIGHTING CONNECTED SYSTEMS</span>
+  <button class="hlClear" onclick="clearHighlight()">CLEAR</button>
 </div>
 
 <div id="hint">
@@ -2000,63 +2292,568 @@ function showPanel(title, type, text){
 }
 window.closePanel = function(){ document.getElementById("panel").style.display = "none"; };
 
-/* PLACE INFO */
+/* ============================================================
+   PLACE_INFO — ENHANCED PROFESSIONAL DATA (no emojis in UI)
+   ============================================================ */
 const PLACE_INFO = {
-  school: { icon: "🏫", title: "American High School", type: "EDUCATION • SMART CAMPUS", intro: "The American High School is a state-of-the-art educational facility equipped with AI-powered smart classrooms, digital libraries, and interactive learning spaces. Students learn from world-class faculty using cutting-edge technology. The campus includes science labs, sports facilities, an auditorium, and a smart cafeteria that uses IoT for efficient food management.", stats: [{ val: "2,400+", lbl: "STUDENTS" }, { val: "180", lbl: "TEACHERS" }, { val: "98%", lbl: "PASS RATE" }], features: ["Smart Classrooms", "AI Tutor System", "Digital Library", "Science Labs", "Sports Complex", "Auditorium"] },
-  hospital: { icon: "🏥", title: "BSS Smart Hospital", type: "HEALTHCARE • AI-POWERED", intro: "The BSS Smart Hospital is a fully automated healthcare facility using AI diagnostics, robotic surgery, and real-time patient monitoring. Every bed is connected to central AI that predicts health deterioration before it happens. Emergency drones deliver medicine within 90 seconds.", stats: [{ val: "500", lbl: "BEDS" }, { val: "24/7", lbl: "EMERGENCY" }, { val: "12s", lbl: "RESPONSE" }], features: ["AI Diagnostics", "Robotic Surgery", "Med Drones", "ICU Smart Beds", "Telemedicine", "Smart Pharmacy"] },
-  society: { icon: "🏘", title: "BSS Smart Society", type: "RESIDENTIAL • SMART LIVING", intro: "The BSS Smart Society is a futuristic residential community with automated homes, solar power, smart waste management, and AI-driven security. Residents enjoy 24/7 surveillance with facial recognition, drone delivery, and seamless public transport connectivity.", stats: [{ val: "3,200", lbl: "RESIDENTS" }, { val: "850", lbl: "HOMES" }, { val: "100%", lbl: "SOLAR" }], features: ["Smart Homes", "Solar Grid", "AI Security", "Drone Delivery", "Smart Parking", "Community Center"] },
-  bank: { icon: "🏦", title: "Smart City State Bank", type: "FINANCIAL • BLOCKCHAIN", intro: "The State Bank of the Smart City uses blockchain for every transaction, ensuring 100% security. AI predicts fraud in real-time, and customers enjoy instant loans, zero paperwork, and 24/7 digital banking.", stats: [{ val: "$2.4B", lbl: "DEPOSITS" }, { val: "180K", lbl: "ACCOUNTS" }, { val: "0.2s", lbl: "TRANSFER" }], features: ["Blockchain Ledger", "AI Fraud Detection", "Instant Loans", "Digital Wallet", "24/7 ATMs", "Biometric Login"] },
-  farm: { icon: "🌾", title: "Smart Eco Farm", type: "AGRICULTURE • AUTOMATED", intro: "The Smart Eco Farm uses drones for crop monitoring, AI for soil analysis, and automated irrigation. Crops grow 40% faster with sensor-controlled nutrients. Solar-powered robots plant and harvest with precision.", stats: [{ val: "1200", lbl: "ACRES" }, { val: "40%", lbl: "FASTER" }, { val: "18", lbl: "DRONES" }], features: ["Drone Monitoring", "AI Soil Analysis", "Auto Irrigation", "Solar Robots", "Organic Farming", "Greenhouse"] },
-  marriageHall: { icon: "💒", title: "Grand Marriage Hall", type: "EVENT VENUE • LUXURY", intro: "The Grand Marriage Hall is a luxurious event venue with 3D holographic decorations, AI-powered lighting, and robotic catering service. It can host 2,000 guests with 360-degree immersive audio-visual experiences.", stats: [{ val: "2,000", lbl: "GUESTS" }, { val: "12", lbl: "HALLS" }, { val: "5★", lbl: "RATING" }], features: ["Holographic Decor", "Robotic Catering", "Immersive AV", "Smart Lighting", "Valet Parking", "Live Streaming"] },
-  carWash: { icon: "🚗", title: "Car Wash · Gas Station", type: "AUTOMOTIVE • ROBOTIC", intro: "The Gas Station & Car Wash uses robotic arms to wash 200 cars per day. AI dispenses exact fuel quantity, and electric vehicle charging stations are powered by the city's solar grid. Automatic payment via license plate recognition.", stats: [{ val: "200", lbl: "CARS/DAY" }, { val: "12", lbl: "FUEL PUMPS" }, { val: "24/7", lbl: "OPEN" }], features: ["Robotic Wash", "AI Fuel Dispenser", "EV Charging", "Plate Recognition", "Air Pump", "Tire Service"] },
-  powerSupply: { icon: "⚡", title: "Power Supply Zone", type: "RENEWABLE • SMART GRID", intro: "The Power Supply Zone powers the entire city with 16 wind turbines, 10 solar arrays, and 10 battery storage units. AI balances the load in real-time, and every building receives clean energy through the smart grid.", stats: [{ val: "16", lbl: "TURBINES" }, { val: "10", lbl: "SOLAR ARRAYS" }, { val: "100MW", lbl: "CAPACITY" }], features: ["Wind Power", "Solar Power", "Battery Storage", "Smart Grid", "Load Balancing", "Zero Emissions"] },
-  filtration: { icon: "💧", title: "Filtration System", type: "WATER TREATMENT • AI", intro: "The Filtration System purifies 10 million liters of water daily using nano-membranes and AI quality control. Cameras monitor every stage, and water is tested 24/7 before distribution.", stats: [{ val: "10M L", lbl: "DAILY" }, { val: "99.9%", lbl: "PURITY" }, { val: "24/7", lbl: "MONITORED" }], features: ["Nano Membranes", "AI Quality Control", "Live Cameras", "Auto Cleaning", "UV Sterilization", "Smart Distribution"] },
-  fertilizer: { icon: "🌱", title: "AI Fertilizer System", type: "AGRITECH • AI MANAGED", intro: "The AI Fertilizer System collects organic waste and converts it into nutrient-rich fertilizer. AI manages the entire process from collection to delivery, using trucks that visit farms and drop fertilizer at collection points.", stats: [{ val: "24 kg", lbl: "PER BATCH" }, { val: "8", lbl: "TANKS" }, { val: "AI", lbl: "MANAGED" }], features: ["Organic Processing", "AI Routing", "Smart Trucks", "Auto Delivery", "Batch Tracking", "Quality Control"] },
-  wasteManagement: { icon: "♻", title: "Waste Management", type: "MUNICIPAL • RECYCLING", intro: "The Waste Management facility recycles 156 kg of waste daily using AI-powered sorting robots. Recyclables are separated at 98% accuracy, and organic waste is sent to the fertilizer system.", stats: [{ val: "156 kg", lbl: "DAILY" }, { val: "98%", lbl: "ACCURACY" }, { val: "3", lbl: "TRUCKS" }], features: ["AI Sorting Robots", "Auto Recycling", "Smart Bins", "Waste Tracking", "Organic Composting", "Zero Landfill"] },
-  sewageCompany: { icon: "🏭", title: "Sewage & Filtration Co.", type: "INDUSTRIAL • WATER", intro: "The Sewage & Filtration Company treats industrial water using advanced bio-reactors and AI monitoring. Treated water is reused for cooling and irrigation, saving 40% of freshwater consumption.", stats: [{ val: "5M L", lbl: "TREATED" }, { val: "40%", lbl: "WATER SAVED" }, { val: "24/7", lbl: "MONITORED" }], features: ["Bio-Reactors", "AI Monitoring", "Water Reuse", "Auto Filtration", "Industrial Grade", "Compliance"] },
-  trafficController: { icon: "🤖", title: "AI Traffic Controller", type: "TRANSPORTATION • AI CORE", intro: "The AI Traffic Controller is the brain of the city's transport system. It monitors all 4 entry routes, controls traffic signals in real-time, extends green times when queues build, and reroutes trucks to collection points to prevent jams.", stats: [{ val: "4", lbl: "AXES" }, { val: "16+", lbl: "CARS" }, { val: "AI", lbl: "CONTROL" }], features: ["Live Signal Control", "Queue Detection", "Adaptive Green", "Truck Routing", "4-Axis Balance", "Reroute Logic"] },
-  verticalFarm: { icon: "🌾", title: "Vertical Farming", type: "AGRITECH • FUTURE FOOD", intro: "The Vertical Farming Zone consists of 6 tall towers that grow crops year-round using hydroponics and LED grow lights. Each tower has 7-10 floors, and each floor has 12 actively growing plants — you can watch them sway and grow in real-time. This produces 50x more food per square meter than traditional farming.", stats: [{ val: "6", lbl: "TOWERS" }, { val: "50x", lbl: "OUTPUT" }, { val: "500+", lbl: "PLANTS" }], features: ["Hydroponic Towers", "LED Grow Lights", "Live Growing Crops", "Year-Round Crops", "Water Recycling", "Zero Pesticides"] },
-  aggregate: { icon: "🏗", title: "Aggregate Plant", type: "CONSTRUCTION • HEAVY", intro: "The Aggregate Plant processes stone, gravel, and sand for city construction projects. AI-controlled crushers break rocks into precise sizes, and conveyor belts load them into trucks heading to construction sites across the smart city.", stats: [{ val: "500T", lbl: "DAILY" }, { val: "6", lbl: "PILES" }, { val: "3", lbl: "BELTS" }], features: ["Stone Crusher", "AI Grading", "Conveyor Belts", "Auto Loading", "Dust Control", "Truck Routing"] }
+  school: {
+    title: "American High School",
+    type: "EDUCATION • SMART CAMPUS",
+    status: "OPERATIONAL",
+    intro: "The American High School is a state-of-the-art educational facility equipped with AI-powered smart classrooms, digital libraries, and interactive learning spaces. Students learn from world-class faculty using cutting-edge technology. The campus includes science labs, sports facilities, an auditorium, and a smart cafeteria that uses IoT for efficient food management.",
+    stats: [
+      { val: "2,400+", lbl: "STUDENTS" },
+      { val: "180", lbl: "TEACHERS" },
+      { val: "98%", lbl: "PASS RATE" }
+    ],
+    features: ["Smart Classrooms", "AI Tutor System", "Digital Library", "Science Labs", "Sports Complex", "Auditorium"],
+    flow: ["Student Enrollment", "Smart Classroom", "AI-Assisted Learning", "Assessment", "Graduation"],
+    connections: ["Power Supply", "Water Filtration", "AI Traffic Controller", "Waste Management", "Smart Society"],
+    live: [
+      { lbl: "Campus Status", val: "OPERATIONAL", cls: "green" },
+      { lbl: "Smart Systems", val: "ONLINE", cls: "green" },
+      { lbl: "Transport Link", val: "CONNECTED", cls: "green" },
+      { lbl: "Energy Source", val: "RENEWABLE", cls: "green" }
+    ]
+  },
+  hospital: {
+    title: "BSS Smart Hospital",
+    type: "HEALTHCARE • AI-POWERED",
+    status: "OPERATIONAL",
+    intro: "The BSS Smart Hospital is a fully automated healthcare facility using AI diagnostics, robotic surgery, and real-time patient monitoring. Every bed is connected to central AI that predicts health deterioration before it happens. Emergency drones deliver medicine within 90 seconds.",
+    stats: [
+      { val: "500", lbl: "BEDS" },
+      { val: "24/7", lbl: "EMERGENCY" },
+      { val: "12s", lbl: "RESPONSE" }
+    ],
+    features: ["AI Diagnostics", "Robotic Surgery", "Med Drones", "ICU Smart Beds", "Telemedicine", "Smart Pharmacy"],
+    flow: ["Patient Intake", "AI Diagnosis", "Treatment Planning", "Robotic Surgery", "Recovery Monitoring"],
+    connections: ["Power Supply", "Water Filtration", "AI Traffic Controller", "Waste Management", "Smart Society"],
+    live: [
+      { lbl: "Emergency", val: "READY", cls: "green" },
+      { lbl: "AI Diagnostics", val: "ACTIVE", cls: "green" },
+      { lbl: "Power", val: "STABLE", cls: "green" },
+      { lbl: "Traffic Priority", val: "ENABLED", cls: "green" }
+    ]
+  },
+  society: {
+    title: "BSS Smart Society",
+    type: "RESIDENTIAL • SMART LIVING",
+    status: "OPERATIONAL",
+    intro: "The BSS Smart Society is a futuristic residential community with automated homes, solar power, smart waste management, and AI-driven security. Residents enjoy 24/7 surveillance with facial recognition, drone delivery, and seamless public transport connectivity.",
+    stats: [
+      { val: "3,200", lbl: "RESIDENTS" },
+      { val: "850", lbl: "HOMES" },
+      { val: "100%", lbl: "SOLAR" }
+    ],
+    features: ["Smart Homes", "Solar Grid", "AI Security", "Drone Delivery", "Smart Parking", "Community Center"],
+    flow: ["Resident Check-in", "Smart Home Setup", "Daily Automation", "Waste Collection", "Energy Optimization"],
+    connections: ["Power Supply", "Waste Management", "Water Filtration", "AI Traffic Controller", "Vertical Farming"],
+    live: [
+      { lbl: "Security", val: "ACTIVE", cls: "green" },
+      { lbl: "Solar Grid", val: "ONLINE", cls: "green" },
+      { lbl: "Waste System", val: "OPERATIONAL", cls: "green" },
+      { lbl: "Water Supply", val: "STABLE", cls: "green" }
+    ]
+  },
+  bank: {
+    title: "Smart City State Bank",
+    type: "FINANCIAL • BLOCKCHAIN",
+    status: "OPERATIONAL",
+    intro: "The State Bank of the Smart City uses blockchain for every transaction, ensuring 100% security. AI predicts fraud in real-time, and customers enjoy instant loans, zero paperwork, and 24/7 digital banking.",
+    stats: [
+      { val: "$2.4B", lbl: "DEPOSITS" },
+      { val: "180K", lbl: "ACCOUNTS" },
+      { val: "0.2s", lbl: "TRANSFER" }
+    ],
+    features: ["Blockchain Ledger", "AI Fraud Detection", "Instant Loans", "Digital Wallet", "24/7 ATMs", "Biometric Login"],
+    flow: ["Account Opening", "Blockchain Verification", "AI Fraud Scan", "Transaction Processing", "Instant Settlement"],
+    connections: ["Power Supply", "AI Traffic Controller", "Smart Society", "Hospital", "School"],
+    live: [
+      { lbl: "Blockchain", val: "SYNCED", cls: "green" },
+      { lbl: "AI Fraud Guard", val: "ACTIVE", cls: "green" },
+      { lbl: "Network", val: "SECURE", cls: "green" },
+      { lbl: "Transactions", val: "NORMAL", cls: "green" }
+    ]
+  },
+  farm: {
+    title: "Smart Eco Farm",
+    type: "AGRICULTURE • AUTOMATED",
+    status: "OPERATIONAL",
+    intro: "The Smart Eco Farm uses drones for crop monitoring, AI for soil analysis, and automated irrigation. Crops grow 40% faster with sensor-controlled nutrients. Solar-powered robots plant and harvest with precision.",
+    stats: [
+      { val: "1200", lbl: "ACRES" },
+      { val: "40%", lbl: "FASTER" },
+      { val: "18", lbl: "DRONES" }
+    ],
+    features: ["Drone Monitoring", "AI Soil Analysis", "Auto Irrigation", "Solar Robots", "Organic Farming", "Greenhouse"],
+    flow: ["Soil Analysis", "Smart Planting", "Drone Monitoring", "Auto Irrigation", "Precision Harvest"],
+    connections: ["AI Fertilizer System", "Water Filtration", "Power Supply", "Vertical Farming", "Waste Management"],
+    live: [
+      { lbl: "Crop Health", val: "OPTIMAL", cls: "green" },
+      { lbl: "Irrigation", val: "AUTOMATED", cls: "green" },
+      { lbl: "Drone Fleet", val: "ACTIVE", cls: "green" },
+      { lbl: "Soil Quality", val: "GOOD", cls: "green" }
+    ]
+  },
+  marriageHall: {
+    title: "Grand Marriage Hall",
+    type: "EVENT VENUE • LUXURY",
+    status: "OPERATIONAL",
+    intro: "The Grand Marriage Hall is a luxurious event venue with 3D holographic decorations, AI-powered lighting, and robotic catering service. It can host 2,000 guests with 360-degree immersive audio-visual experiences.",
+    stats: [
+      { val: "2,000", lbl: "GUESTS" },
+      { val: "12", lbl: "HALLS" },
+      { val: "5★", lbl: "RATING" }
+    ],
+    features: ["Holographic Decor", "Robotic Catering", "Immersive AV", "Smart Lighting", "Valet Parking", "Live Streaming"],
+    flow: ["Event Booking", "AI Setup Planning", "Holographic Decoration", "Smart Catering", "Event Execution"],
+    connections: ["Power Supply", "Water Filtration", "AI Traffic Controller", "Waste Management", "Smart Society"],
+    live: [
+      { lbl: "Venue Status", val: "AVAILABLE", cls: "green" },
+      { lbl: "Smart Systems", val: "READY", cls: "green" },
+      { lbl: "Power", val: "STABLE", cls: "green" },
+      { lbl: "Traffic Access", val: "NORMAL", cls: "green" }
+    ]
+  },
+  carWash: {
+    title: "Car Wash · Gas Station",
+    type: "AUTOMOTIVE • ROBOTIC",
+    status: "OPERATIONAL",
+    intro: "The Gas Station & Car Wash uses robotic arms to wash 200 cars per day. AI dispenses exact fuel quantity, and electric vehicle charging stations are powered by the city's solar grid. Automatic payment via license plate recognition.",
+    stats: [
+      { val: "200", lbl: "CARS/DAY" },
+      { val: "12", lbl: "FUEL PUMPS" },
+      { val: "24/7", lbl: "OPEN" }
+    ],
+    features: ["Robotic Wash", "AI Fuel Dispenser", "EV Charging", "Plate Recognition", "Air Pump", "Tire Service"],
+    flow: ["Vehicle Detection", "Plate Recognition", "Service Selection", "Robotic Wash / Refuel", "Auto Payment"],
+    connections: ["Power Supply", "Water Filtration", "AI Traffic Controller", "Waste Management", "Smart Society"],
+    live: [
+      { lbl: "Fuel Pumps", val: "AVAILABLE", cls: "green" },
+      { lbl: "Robotic Wash", val: "READY", cls: "green" },
+      { lbl: "EV Charging", val: "ACTIVE", cls: "green" },
+      { lbl: "Payment System", val: "ONLINE", cls: "green" }
+    ]
+  },
+  powerSupply: {
+    title: "Power Supply Zone",
+    type: "RENEWABLE • SMART GRID",
+    status: "STABLE",
+    intro: "The Power Supply Zone powers the entire city with 16 wind turbines, 10 solar arrays, and 10 battery storage units. AI balances the load in real-time, and every building receives clean energy through the smart grid.",
+    stats: [
+      { val: "16", lbl: "TURBINES" },
+      { val: "10", lbl: "SOLAR ARRAYS" },
+      { val: "100MW", lbl: "CAPACITY" }
+    ],
+    features: ["Wind Power", "Solar Power", "Battery Storage", "Smart Grid", "Load Balancing", "Zero Emissions"],
+    flow: ["Solar + Wind Capture", "Energy Storage", "AI Load Balancing", "Smart Grid Distribution", "City Consumption"],
+    connections: ["Smart Buildings", "Traffic Infrastructure", "Water Systems", "Vertical Farming", "City Services"],
+    live: [
+      { lbl: "Grid Status", val: "STABLE", cls: "green" },
+      { lbl: "Solar Output", val: "OPTIMAL", cls: "green" },
+      { lbl: "Wind Output", val: "GOOD", cls: "green" },
+      { lbl: "Battery Reserve", val: "CHARGED", cls: "green" }
+    ]
+  },
+  filtration: {
+    title: "Filtration System",
+    type: "WATER TREATMENT • AI",
+    status: "OPERATIONAL",
+    intro: "The Filtration System purifies 10 million liters of water daily using nano-membranes and AI quality control. Cameras monitor every stage, and water is tested 24/7 before distribution.",
+    stats: [
+      { val: "10M L", lbl: "DAILY" },
+      { val: "99.9%", lbl: "PURITY" },
+      { val: "24/7", lbl: "MONITORED" }
+    ],
+    features: ["Nano Membranes", "AI Quality Control", "Live Cameras", "Auto Cleaning", "UV Sterilization", "Smart Distribution"],
+    flow: ["Water Collection", "Filtration", "Quality Monitoring", "Storage", "Smart Distribution"],
+    connections: ["Vertical Farming", "Smart Buildings", "Irrigation", "Cooling", "Sewage Treatment"],
+    live: [
+      { lbl: "Water Quality", val: "99.9%", cls: "green" },
+      { lbl: "AI Monitor", val: "ACTIVE", cls: "green" },
+      { lbl: "Distribution", val: "NORMAL", cls: "green" },
+      { lbl: "Storage Level", val: "STABLE", cls: "green" }
+    ]
+  },
+  fertilizer: {
+    title: "AI Fertilizer System",
+    type: "AGRITECH • AI MANAGED",
+    status: "OPERATIONAL",
+    intro: "The AI Fertilizer System collects organic waste and converts it into nutrient-rich fertilizer. AI manages the entire process from collection to delivery, using trucks that visit farms and drop fertilizer at collection points.",
+    stats: [
+      { val: "24 kg", lbl: "PER BATCH" },
+      { val: "8", lbl: "TANKS" },
+      { val: "AI", lbl: "MANAGED" }
+    ],
+    features: ["Organic Processing", "AI Routing", "Smart Trucks", "Auto Delivery", "Batch Tracking", "Quality Control"],
+    flow: ["Organic Collection", "AI Sorting", "Processing", "Fertilizer Production", "Farm Delivery"],
+    connections: ["Waste Management", "Vertical Farming", "Smart Eco Farm", "AI Traffic Controller", "Power Supply"],
+    live: [
+      { lbl: "Processing", val: "ACTIVE", cls: "green" },
+      { lbl: "Batch Status", val: "F-1023", cls: "green" },
+      { lbl: "Truck Fleet", val: "2 ACTIVE", cls: "green" },
+      { lbl: "Output Quality", val: "PREMIUM", cls: "green" }
+    ]
+  },
+  wasteManagement: {
+    title: "Waste Management",
+    type: "MUNICIPAL • RECYCLING",
+    status: "OPERATIONAL",
+    intro: "The Waste Management facility recycles 156 kg of waste daily using AI-powered sorting robots. Recyclables are separated at 98% accuracy, and organic waste is sent to the fertilizer system.",
+    stats: [
+      { val: "156 kg", lbl: "DAILY" },
+      { val: "98%", lbl: "ACCURACY" },
+      { val: "3", lbl: "TRUCKS" }
+    ],
+    features: ["AI Sorting Robots", "Auto Recycling", "Smart Bins", "Waste Tracking", "Organic Composting", "Zero Landfill"],
+    flow: ["Waste Collection", "AI Sorting", "Recyclable Recovery", "Organic Processing", "Fertilizer → Farming"],
+    connections: ["AI Fertilizer System", "Vertical Farming", "Smart Eco Farm", "Power Supply", "Smart Society"],
+    live: [
+      { lbl: "Sorting Robots", val: "ACTIVE", cls: "green" },
+      { lbl: "Recycling Rate", val: "98%", cls: "green" },
+      { lbl: "Truck Fleet", val: "ON ROUTE", cls: "green" },
+      { lbl: "Organic Output", val: "TO FERTILIZER", cls: "green" }
+    ]
+  },
+  sewageCompany: {
+    title: "Sewage & Filtration Co.",
+    type: "INDUSTRIAL • WATER",
+    status: "OPERATIONAL",
+    intro: "The Sewage & Filtration Company treats industrial water using advanced bio-reactors and AI monitoring. Treated water is reused for cooling and irrigation, saving 40% of freshwater consumption.",
+    stats: [
+      { val: "5M L", lbl: "TREATED" },
+      { val: "40%", lbl: "WATER SAVED" },
+      { val: "24/7", lbl: "MONITORED" }
+    ],
+    features: ["Bio-Reactors", "AI Monitoring", "Water Reuse", "Auto Filtration", "Industrial Grade", "Compliance"],
+    flow: ["Industrial Water Intake", "Bio-Reactor Treatment", "AI Quality Check", "Reuse Distribution", "Cooling / Irrigation"],
+    connections: ["Filtration System", "Power Supply", "Aggregate Plant", "Smart Buildings", "Vertical Farming"],
+    live: [
+      { lbl: "Treatment", val: "ACTIVE", cls: "green" },
+      { lbl: "Water Quality", val: "COMPLIANT", cls: "green" },
+      { lbl: "Reuse Rate", val: "40%", cls: "green" },
+      { lbl: "AI Monitor", val: "ONLINE", cls: "green" }
+    ]
+  },
+  trafficController: {
+    title: "AI Traffic Controller",
+    type: "TRANSPORTATION • AI CORE",
+    status: "ACTIVE",
+    intro: "The AI Traffic Controller is the brain of the city's transport system. It monitors all 4 entry routes, controls traffic signals in real-time, extends green times when queues build, and reroutes trucks to collection points to prevent jams.",
+    stats: [
+      { val: "4", lbl: "AXES" },
+      { val: "16+", lbl: "CARS" },
+      { val: "AI", lbl: "CONTROL" }
+    ],
+    features: ["Live Signal Control", "Queue Detection", "Adaptive Green", "Truck Routing", "4-Axis Balance", "Reroute Logic"],
+    flow: ["Problem Detected", "Traffic Analysed", "Best Route Calculated", "Signal Timing Adjusted", "Vehicles Rerouted", "Traffic Stabilised"],
+    connections: ["Four Entry Routes", "Traffic Signals", "Emergency Vehicles", "Vehicle Routing", "Congestion Detection"],
+    live: [
+      { lbl: "System Status", val: "ACTIVE", cls: "green" },
+      { lbl: "Network Coverage", val: "4 ENTRY ROUTES", cls: "green" },
+      { lbl: "Traffic State", val: "DYNAMIC", cls: "green" },
+      { lbl: "AI Mode", val: "MONITORING", cls: "green" }
+    ]
+  },
+  verticalFarm: {
+    title: "Vertical Farming",
+    type: "AGRITECH • FUTURE FOOD",
+    status: "OPERATIONAL",
+    intro: "The Vertical Farming Zone consists of 6 tall towers that grow crops year-round using hydroponics and LED grow lights. Each tower has 7-10 floors, and each floor has 12 actively growing plants — you can watch them sway and grow in real-time. This produces 50x more food per square meter than traditional farming.",
+    stats: [
+      { val: "6", lbl: "TOWERS" },
+      { val: "50x", lbl: "OUTPUT" },
+      { val: "500+", lbl: "PLANTS" }
+    ],
+    features: ["Hydroponic Towers", "LED Grow Lights", "Live Growing Crops", "Year-Round Crops", "Water Recycling", "Zero Pesticides"],
+    flow: ["Water → Filtration", "Vertical Farm", "Crop Production", "Organic Waste", "Fertilizer", "Crops (Loop)"],
+    connections: ["Water Filtration", "Power Supply", "AI Fertilizer", "Food Management", "Waste Management"],
+    live: [
+      { lbl: "Tower Status", val: "GROWING", cls: "green" },
+      { lbl: "LED Systems", val: "ACTIVE", cls: "green" },
+      { lbl: "Water Loop", val: "CLOSED", cls: "green" },
+      { lbl: "Crop Health", val: "OPTIMAL", cls: "green" }
+    ]
+  },
+  aggregate: {
+    title: "Aggregate Plant",
+    type: "CONSTRUCTION • HEAVY",
+    status: "OPERATIONAL",
+    intro: "The Aggregate Plant processes stone, gravel, and sand for city construction projects. AI-controlled crushers break rocks into precise sizes, and conveyor belts load them into trucks heading to construction sites across the smart city.",
+    stats: [
+      { val: "500T", lbl: "DAILY" },
+      { val: "6", lbl: "PILES" },
+      { val: "3", lbl: "BELTS" }
+    ],
+    features: ["Stone Crusher", "AI Grading", "Conveyor Belts", "Auto Loading", "Dust Control", "Truck Routing"],
+    flow: ["Raw Material Intake", "AI Grading", "Crusher Processing", "Conveyor Loading", "Construction Delivery"],
+    connections: ["Power Supply", "AI Traffic Controller", "Sewage Company", "Smart Society", "Waste Management"],
+    live: [
+      { lbl: "Crusher", val: "RUNNING", cls: "green" },
+      { lbl: "Conveyor Belts", val: "ACTIVE", cls: "green" },
+      { lbl: "Dust Control", val: "ONLINE", cls: "green" },
+      { lbl: "Truck Loading", val: "IN PROGRESS", cls: "amber" }
+    ]
+  }
 };
+
+/* SVG icon set for popups (professional line icons) */
+const ICONS = {
+  default: '<svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>',
+  school: '<svg viewBox="0 0 24 24"><path d="M3 10l9-5 9 5-9 5-9-5z"/><path d="M5 10v6c0 1 2 3 7 3s7-2 7-3v-6"/><path d="M12 15v4"/></svg>',
+  hospital: '<svg viewBox="0 0 24 24"><path d="M12 3l8 5v8l-8 5-8-5V8l8-5z"/><path d="M12 8v8M8 12h8"/></svg>',
+  society: '<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5"/><path d="M9 12h.01M15 12h.01"/></svg>',
+  bank: '<svg viewBox="0 0 24 24"><path d="M3 21h18M4 10h16M5 6l7-3 7 3M6 10v11M18 10v11M10 14v3M14 14v3"/></svg>',
+  farm: '<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5"/><path d="M9 12h.01M15 12h.01"/><path d="M2 21h20"/></svg>',
+  marriageHall: '<svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z"/></svg>',
+  carWash: '<svg viewBox="0 0 24 24"><path d="M5 17h14v-4H5v4z"/><path d="M3 13l2-5h14l2 5"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 7V4h6v3"/></svg>',
+  powerSupply: '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+  filtration: '<svg viewBox="0 0 24 24"><path d="M12 2C8 7 5 11 5 15a7 7 0 1014 0c0-4-3-8-7-13z"/><path d="M12 18a4 4 0 01-4-4"/></svg>',
+  fertilizer: '<svg viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M8 9c0 4-3 6-3 9a7 7 0 1014 0c0-3-3-5-3-9"/><path d="M8 9h8"/></svg>',
+  wasteManagement: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13h10l1-13"/><path d="M10 12v5M14 12v5"/></svg>',
+  sewageCompany: '<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5"/><path d="M2 21h20"/><path d="M8 11h2M14 11h2"/></svg>',
+  trafficController: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/></svg>',
+  verticalFarm: '<svg viewBox="0 0 24 24"><path d="M12 22V8"/><path d="M12 8c0-4 3-6 3-6s0 5-3 6z"/><path d="M12 12c0-4-3-6-3-6s0 5 3 6z"/><path d="M12 16c0-4 3-6 3-6s0 5-3 6z"/></svg>',
+  aggregate: '<svg viewBox="0 0 24 24"><path d="M3 21h18M6 21V9l6-4 6 4v12"/><path d="M9 21v-6h6v6"/><path d="M9 12h.01M15 12h.01"/></svg>'
+};
+
+/* ============================================================
+   POPUP RENDERING SYSTEM
+   ============================================================ */
+let currentPopupKey = null;
+let highlightState = null;
+
 function openPlacePopup(key){
   const info = PLACE_INFO[key];
   if(!info) return;
-  document.getElementById("ppHero").textContent = info.icon;
+  currentPopupKey = key;
+
   document.getElementById("ppTitle").textContent = info.title;
   document.getElementById("ppType").textContent = info.type;
-  document.getElementById("ppIntro").textContent = info.intro;
-  let statsHtml = "";
-  info.stats.forEach(s => { statsHtml += '<div class="ppStat"><div class="val">' + s.val + '</div><div class="lbl">' + s.lbl + '</div></div>'; });
-  document.getElementById("ppStats").innerHTML = statsHtml;
-  let featHtml = "";
-  info.features.forEach(f => { featHtml += '<div class="ppFeat">' + f + '</div>'; });
-  document.getElementById("ppFeatures").innerHTML = featHtml;
+  document.getElementById("ppStatusText").textContent = info.status || "OPERATIONAL";
+  document.getElementById("ppIcon").innerHTML = ICONS[key] || ICONS.default;
+
+  const scroll = document.getElementById("ppScroll");
+  let html = "";
+
+  // OVERVIEW
+  html += `<div class="ppSection">
+    <div class="ppSectionTitle">Overview</div>
+    <div class="ppIntro">${info.intro}</div>
+  </div>`;
+
+  // KEY METRICS
+  if(info.stats && info.stats.length){
+    html += `<div class="ppSection">
+      <div class="ppSectionTitle">Key Metrics</div>
+      <div class="ppStats">`;
+    info.stats.forEach(s => {
+      html += `<div class="ppStat"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // FEATURES
+  if(info.features && info.features.length){
+    html += `<div class="ppSection">
+      <div class="ppSectionTitle">Features</div>
+      <div class="ppFeatures">`;
+    info.features.forEach(f => {
+      html += `<div class="ppFeat">${f}</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // HOW IT WORKS / PROCESS
+  if(info.flow && info.flow.length){
+    html += `<div class="ppSection">
+      <div class="ppSectionTitle">How It Works</div>
+      <div class="ppFlow">`;
+    info.flow.forEach((step, i) => {
+      html += `<div class="ppFlowStep">${step}</div>`;
+      if(i < info.flow.length - 1) html += `<div class="ppFlowArrow">→</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // CONNECTED SYSTEMS
+  if(info.connections && info.connections.length){
+    html += `<div class="ppSection">
+      <div class="ppSectionTitle">Connected Systems</div>
+      <div class="ppConnections">`;
+    info.connections.forEach(c => {
+      html += `<div class="ppConnItem"><span class="connDot"></span>${c}</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // LIVE STATUS
+  if(info.live && info.live.length){
+    html += `<div class="ppSection">
+      <div class="ppSectionTitle">Live Status</div>
+      <div class="ppLiveGrid">`;
+    info.live.forEach(l => {
+      const cls = l.cls || "green";
+      html += `<div class="ppLiveItem"><span class="liveLbl">${l.lbl}</span><span class="liveVal ${cls}">${l.val}</span></div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ACTIONS
+  html += `<div class="ppActions">
+    <button class="ppActionBtn primary" onclick="popupViewLocation('${key}')">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      View Location
+    </button>
+    <button class="ppActionBtn secondary" onclick="popupTopView('${key}')">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg>
+      Top View
+    </button>
+    <button class="ppActionBtn secondary" onclick="popupHighlight('${key}')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+      Connected Systems
+    </button>
+    <button class="ppActionBtn secondary" onclick="closePlacePopup()">
+      <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Close
+    </button>
+  </div>`;
+
+  scroll.innerHTML = html;
+  scroll.scrollTop = 0;
+
   document.getElementById("popupOverlay").classList.add("show");
   document.getElementById("placePopup").classList.add("show");
 }
+
 function closePlacePopup(){
   document.getElementById("popupOverlay").classList.remove("show");
   document.getElementById("placePopup").classList.remove("show");
+  currentPopupKey = null;
 }
 window.closePlacePopup = closePlacePopup;
 
-/* RAYCASTER */
+function popupViewLocation(key){
+  closePlacePopup();
+  if(LOCATIONS[key]){
+    goToLocation(key);
+  } else {
+    // fallback: try to find in LOCATIONS by matching keys
+    const map = {
+      carWash: "carWash",
+      gasStation: "carWash"
+    };
+    const k = map[key] || key;
+    if(LOCATIONS[k]) goToLocation(k);
+  }
+}
+window.popupViewLocation = popupViewLocation;
+
+function popupTopView(key){
+  closePlacePopup();
+  const map = {
+    carWash: "carWash",
+    gasStation: "carWash"
+  };
+  const k = map[key] || key;
+  if(LOCATIONS[k]){
+    goToLocationCamera(k, "Top View");
+  }
+}
+window.popupTopView = popupTopView;
+
+function popupHighlight(key){
+  const info = PLACE_INFO[key];
+  if(!info || !info.connections) return;
+  closePlacePopup();
+
+  // Determine which facility objects to highlight
+  const highlightMap = {
+    powerSupply: ["powerZone"],
+    filtration: ["filtZone"],
+    fertilizer: ["fertZone"],
+    wasteManagement: ["wasteZone"],
+    verticalFarm: ["verticalFarmZone"],
+    aggregate: ["aggZone"],
+    school: ["school"],
+    hospital: ["hospital"],
+    society: ["society"],
+    bank: ["bank"],
+    farm: ["farm"],
+    marriageHall: ["marriageHall"],
+    carWash: ["carWash"],
+    sewageCompany: ["sewageCompany"],
+    trafficController: ["trafficController"]
+  };
+
+  // Show highlight label
+  const hlText = document.getElementById("hlText");
+  hlText.textContent = "CONNECTED SYSTEMS — " + info.title.toUpperCase();
+  document.getElementById("highlightLabel").classList.add("show");
+  highlightState = { key: key };
+}
+window.popupHighlight = popupHighlight;
+
+function clearHighlight(){
+  document.getElementById("highlightLabel").classList.remove("show");
+  highlightState = null;
+}
+window.clearHighlight = clearHighlight;
+
+/* ============================================================
+   RAYCASTER — UNIFIED POPUP SYSTEM
+   ============================================================ */
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 renderer.domElement.addEventListener("click", (e) => {
   if(isLocked) return;
   if(e.target !== renderer.domElement) return;
+  // Don't open popup if clicking through overlay
+  if(document.getElementById("popupOverlay").classList.contains("show")) return;
+
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
+
   for(const item of clickable){
     const hit = raycaster.intersectObject(item.object, true);
     if(hit.length){
-      if(PLACE_INFO[item.type]){
-        openPlacePopup(item.type);
+      // Map item.type to PLACE_INFO key
+      const typeMap = {
+        school: "school",
+        hospital: "hospital",
+        society: "society",
+        bank: "bank",
+        farm: "farm",
+        marriageHall: "marriageHall",
+        gasStation: "carWash",
+        sewageCompany: "sewageCompany",
+        verticalFarm: "verticalFarm",
+        aggregate: "aggregate",
+        wasteTruck: "wasteManagement",
+        wasteBin: "wasteManagement",
+        filtrationMachine: "filtration",
+        filtrationBox: "filtration",
+        battery: "powerSupply",
+        antenna: "powerSupply",
+        garbageTruck: "wasteManagement",
+        fertTruck: "fertilizer",
+        aggTruck: "aggregate",
+        shop: "school"
+      };
+      const key = typeMap[item.type];
+      if(key && PLACE_INFO[key]){
+        openPlacePopup(key);
         return;
       }
-      showPanel(item.name || "Location", "INFO", "Details available.");
+      // Fallback: show the unified popup for traffic controller
+      if(item.type === "trafficController"){
+        openPlacePopup("trafficController");
+        return;
+      }
+      // Generic fallback
+      showPanel(item.name || "Location", "FACILITY INFO", "This facility is part of the BSS World Smart City ecosystem. Click on major buildings to see detailed information.");
       return;
     }
   }
@@ -2220,13 +3017,10 @@ function updateVerticalFarms(t){
     for(let fi = 0; fi < tower.floors.length; fi++){
       const floor = tower.floors[fi];
       for(const plant of floor.plants){
-        /* Grow animation: plants sway and scale */
         const s = 0.85 + Math.sin(t * 1.5 + plant.userData.phase) * 0.25;
         plant.scale.set(s, 0.9 + Math.sin(t * 1.5 + plant.userData.phase) * 0.3, s);
-        /* Sway leaves */
         plant.userData.leafL.rotation.z = 0.6 + Math.sin(t * 2 + plant.userData.phase) * 0.15;
         plant.userData.leafR.rotation.z = -0.6 - Math.sin(t * 2 + plant.userData.phase) * 0.15;
-        /* Fruit pulse */
         const fruitScale = 1 + Math.sin(t * 3 + plant.userData.phase) * 0.15;
         plant.userData.fruit.scale.setScalar(fruitScale);
         plant.userData.fruit.material.emissiveIntensity = 1.8 + Math.sin(t * 3 + plant.userData.phase) * 0.8;
@@ -2343,6 +3137,7 @@ window.addEventListener("resize", () => {
 window.addEventListener("keydown", (e) => {
   if(e.key === "Escape"){
     if(document.getElementById("placePopup").classList.contains("show")) closePlacePopup();
+    else if(highlightState) clearHighlight();
     else if(isLocked || followTarget) exitCameraView();
     else mainMenu.classList.remove("open");
   }
@@ -2354,9 +3149,6 @@ addLog("AI Traffic System initialized", "ok");
 addLog("Tracking 4 axes + 16 vehicles", "info");
 addLog("Signal cycle: NS ↔ EW (8s each)", "info");
 animate();
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
